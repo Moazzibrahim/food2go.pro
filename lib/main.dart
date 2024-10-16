@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food2go_app/view/screens/onboarding/logo_onboarding.dart';
+import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 
 void main() {
   runApp(const MyApp());
