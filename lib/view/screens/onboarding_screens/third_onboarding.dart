@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/onboarding_screens/second_onboarding.dart';
+import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class OnboardingScreen1 extends StatelessWidget {
-  const OnboardingScreen1({super.key});
+class ThirdOnboarding extends StatelessWidget {
+  const ThirdOnboarding({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PageController pageController = PageController(initialPage: 0);
+    final PageController pageController = PageController(initialPage: 2);
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/f1.png', // Replace with your actual image
+              'assets/images/third.png', // Replace with your actual image
               fit: BoxFit.cover,
             ),
           ),
@@ -48,7 +47,7 @@ class OnboardingScreen1 extends StatelessWidget {
 
                 // Main heading text
                 const Text(
-                  'Your Meal In An Instant',
+                  'A Unique Dining Experience',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -59,8 +58,8 @@ class OnboardingScreen1 extends StatelessWidget {
 
                 // Subheading text
                 const Text(
-                  'Order Your Favorite Meal From Your Favorite Restaurants '
-                  'And Have It Delivered Wherever You Are, With The Click Of A Button',
+                  'Enjoy a unique dining experience with  '
+                  'exclusive offers and Great discounts',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -93,10 +92,10 @@ class OnboardingScreen1 extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>const SecondOnboarding()));
+                              builder: (context) => const LoginScreen()));
                     },
                     child: const Text(
-                      'Next',
+                      'Start',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

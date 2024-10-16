@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/onboarding_screens/second_onboarding.dart';
+import 'package:food2go_app/view/screens/onboarding_screens/third_onboarding.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class OnboardingScreen1 extends StatelessWidget {
-  const OnboardingScreen1({super.key});
+class SecondOnboarding extends StatelessWidget {
+  const SecondOnboarding({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PageController pageController = PageController(initialPage: 0);
+    final PageController pageController = PageController(initialPage: 1);
     return Scaffold(
       body: Stack(
         children: [
           // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/f1.png', // Replace with your actual image
+              'assets/images/second.png', // Replace with your actual image
               fit: BoxFit.cover,
             ),
           ),
@@ -48,7 +48,7 @@ class OnboardingScreen1 extends StatelessWidget {
 
                 // Main heading text
                 const Text(
-                  'Your Meal In An Instant',
+                  'Save Your Time And Effort',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -59,11 +59,11 @@ class OnboardingScreen1 extends StatelessWidget {
 
                 // Subheading text
                 const Text(
-                  'Order Your Favorite Meal From Your Favorite Restaurants '
-                  'And Have It Delivered Wherever You Are, With The Click Of A Button',
+                  'Let Us Take Care Of Your '
+                  'Food Order, And Enjoy Your Free Time',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 19,
                     height: 1.5,
                   ),
                 ),
@@ -93,13 +93,13 @@ class OnboardingScreen1 extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>const SecondOnboarding()));
+                              builder: (context) => const ThirdOnboarding()));
                     },
                     child: const Text(
                       'Next',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 19,
                       ),
                     ),
                   ),
