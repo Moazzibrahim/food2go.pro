@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/home_screen.dart';
+import 'package:food2go_app/view/widgets/bottom_navigation_bar_widget.dart';
 
 class FavouritesScreen extends StatefulWidget {
   const FavouritesScreen({super.key});
@@ -12,7 +13,7 @@ class FavouritesScreen extends StatefulWidget {
 class _FavouritesScreenState extends State<FavouritesScreen> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -62,32 +63,9 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
-  }
-
-  Widget buildBottomNavigationBar() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(30),
-        topRight: Radius.circular(30),
-      ),
-      child: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_outline), label: 'Favorites'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined), label: 'Cart'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Profile'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        backgroundColor: maincolor,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        onItemTapped: onItemTapped,
+        selectedIndex: _selectedIndex,
       ),
     );
   }
