@@ -89,51 +89,71 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: 20),
                       TextField(
                         controller: fNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'First name',
-                          labelStyle: TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                        decoration: InputDecoration(
+                          labelText: ' First name',
+                          labelStyle: const TextStyle(color: Colors.black45),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                          fillColor: const Color(0xFFF7F7F7),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: lNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Last name',
-                          labelStyle: TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                        decoration: InputDecoration(
+                          labelText: ' Last name',
+                          labelStyle: const TextStyle(color: Colors.black45),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                          fillColor: const Color(0xFFF7F7F7),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone',
-                          labelStyle: TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                        decoration: InputDecoration(
+                          labelText: ' Phone',
+                          labelStyle: const TextStyle(color: Colors.black45),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                          fillColor: const Color(0xFFF7F7F7),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                        decoration: InputDecoration(
+                          labelText: ' Email',
+                          labelStyle: const TextStyle(color: Colors.black45),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+                          fillColor: const Color(0xFFF7F7F7),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -142,11 +162,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: passwordController,
                         obscureText: !isPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: ' Password',
                           labelStyle: const TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
+                          fillColor: const Color(0xFFF7F7F7),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 16.0),
                           suffixIcon: IconButton(
@@ -169,11 +193,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: confPasswordController,
                         obscureText: !isConfirmPasswordVisible,
                         decoration: InputDecoration(
-                          labelText: 'Confirm Password',
+                          labelText: ' Confirm Password',
                           labelStyle: const TextStyle(color: Colors.black45),
-                          border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
                           filled: true,
-                          fillColor: Colors.transparent,
+                          fillColor: const Color(0xFFF7F7F7),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 16.0),
                           suffixIcon: IconButton(
@@ -210,7 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           backgroundColor: maincolor,
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         child: const Text(

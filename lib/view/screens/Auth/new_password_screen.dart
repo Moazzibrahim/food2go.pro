@@ -1,46 +1,39 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-import 'package:food2go_app/controllers/Auth/login_provider.dart';
-import 'package:food2go_app/view/screens/Auth/forget_password_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/Auth/sign_up_screen.dart';
+import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class NewPasswordScreen extends StatefulWidget {
+  const NewPasswordScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _NewPasswordScreenState extends State<NewPasswordScreen> {
   bool isVisible = false; // To track password visibility
-  final TextEditingController _emailController = TextEditingController();
+  bool isVisibleee = false;
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _confirmPasswordController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginProvider = Provider.of<LoginProvider>(context);
-
     return Scaffold(
       body: Stack(
         children: [
-          // Background image (burger image)
           Positioned.fill(
             child: Image.asset(
               'assets/images/burger1.png', // Replace with your image path
               fit: BoxFit.cover,
             ),
           ),
-
           Positioned(
             top: MediaQuery.of(context).size.height * 0.10, // Adjust as needed
             left: 0,
@@ -56,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          // Card with curved bottom
           Positioned(
             top: MediaQuery.of(context).size.height * 0.25,
             left: 0,
@@ -75,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       const Center(
                         child: Text(
-                          'Welcome Back',
+                          'New password',
                           style: TextStyle(
                             fontSize: 22,
                             color: Colors.black87,
@@ -86,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 5),
                       const Center(
                         child: Text(
-                          'Log In To Your Account',
+                          'Create a new password',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.black45,
@@ -95,24 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 30),
                       // Email TextField
-                      TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: const TextStyle(color: Colors.black45),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(20.0), // Rounded corners
-                            borderSide: BorderSide.none, // No border
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF7F7F7),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Password TextField with visibility toggle
                       TextField(
                         controller: _passwordController,
                         obscureText: !isVisible,
@@ -142,41 +116,45 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgetPasswordScreen()));
-                          },
-                          child: const Text(
-                            'Forgot Password?',
-                            style: TextStyle(color: maincolor),
+                      const SizedBox(height: 20),
+                      // Password TextField with visibility toggle
+                      TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: !isVisibleee,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          labelStyle: const TextStyle(color: Colors.black45),
+                          filled: true,
+                          fillColor: const Color(0xFFF7F7F7),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0), // Rounded corners
+                            borderSide: BorderSide.none, // No border
+                          ),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isVisibleee
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isVisibleee = !isVisibleee;
+                              });
+                            },
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {
-                          try {
-                            await loginProvider.login(_emailController.text,
-                                _passwordController.text, context);
-                            // Handle successful login navigation
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Login Successful'),
-                              ),
-                            );
-                          } catch (error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(error.toString()),
-                              ),
-                            );
-                          }
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: maincolor, // Background color
@@ -185,37 +163,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: loginProvider.isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : const Text(
-                                'Login',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("I Don't Have An Account?"),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignUpScreen()));
-                            },
-                            child: const Text(
-                              'Sign Up',
-                              style: TextStyle(color: maincolor),
-                            ),
+                        child: const Text(
+                          'completed',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
