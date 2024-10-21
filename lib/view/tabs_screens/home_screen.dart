@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/favourites/favourites_screen.dart';
-import 'package:food2go_app/view/widgets/bottom_navigation_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,18 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 1) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const FavouritesScreen()));
-    }
-  }
+  String selectedCategory = 'All'; 
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildPopularFoodHeader(),
             const SizedBox(height: 16),
             _buildFoodItemsList(),
+            const SizedBox(height: 16),
+            _buildDiscountHeader(),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        onItemTapped: _onItemTapped,
-        selectedIndex: _selectedIndex,
       ),
     );
   }
@@ -126,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _buildCategoryItem('All', 'assets/images/bb.png', isSelected: true),
+          _buildCategoryItem('All', 'assets/images/bb.png'),
           _buildCategoryItem('Burger', 'assets/images/bb.png'),
           _buildCategoryItem('Pastries', 'assets/images/bb.png'),
           _buildCategoryItem('Pasta', 'assets/images/bb.png'),
@@ -136,30 +121,45 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDealsSection() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: maincolor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Text(
-              'Deals',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+    return Row(
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              Container(
+                height: 64,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: maincolor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                        'Deals',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                      'assets/images/bigburger.png',
+                      width: 135,
+                    ),
+                ],
+              ),
+            ],
           ),
-          Image.asset(
-            'assets/images/bigburger.png',
-            width: 100,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -169,6 +169,27 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Text(
           'Popular Food',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          'See All',
+          style: TextStyle(
+            color: maincolor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDiscountHeader() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Discount',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -197,31 +218,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(String title, String image,
-      {bool isSelected = false}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isSelected ? maincolor : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: isSelected ? Colors.white : maincolor,
-            child: Image.asset(image),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+  Widget _buildCategoryItem(String title, String image) {
+    bool isSelected = selectedCategory == title;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCategory = title;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? maincolor : Colors.white,
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: isSelected ? Colors.white : maincolor,
+              child: Image.asset(image),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -247,21 +275,13 @@ class _FoodCardState extends State<FoodCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         children: [
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 child: Image.asset(
                   widget.foodItem.imageUrl,
                   height: 110,

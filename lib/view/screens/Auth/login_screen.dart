@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           filled: true,
                           fillColor: const Color(0xFFF7F7F7),
                           contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0),
+                              const EdgeInsets.symmetric(vertical: 16.0,horizontal: 10),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderSide: BorderSide.none, // No border
                           ),
                           contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0),
+                              const EdgeInsets.symmetric(vertical: 16.0,horizontal: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
                               isVisible

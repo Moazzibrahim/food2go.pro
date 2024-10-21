@@ -14,7 +14,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -22,10 +21,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => SignUpProvider()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(
+          scaffoldBackgroundColor: const Color(0xFFF7F7F7),
+          appBarTheme: const AppBarTheme(
+            backgroundColor:  Color(0xFFF7F7F7)
+          )
+        ),
         debugShowCheckedModeBanner: false,
         title: 'Food2go',
-        home: LogoOnboarding(),
+        home: const LogoOnboarding(),
       ),
     );
   }

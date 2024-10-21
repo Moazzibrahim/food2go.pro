@@ -3,7 +3,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/models/Auth/login_model.dart';
-import 'package:food2go_app/view/screens/home_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +39,7 @@ class LoginProvider with ChangeNotifier {
         // Navigate to HomeScreen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const TabsScreen()),
         );
 
         // Handle successful login, save token, etc.

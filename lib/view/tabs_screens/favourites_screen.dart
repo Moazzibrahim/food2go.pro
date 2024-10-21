@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/home_screen.dart';
-import 'package:food2go_app/view/widgets/bottom_navigation_bar_widget.dart';
 
 class FavouritesScreen extends StatefulWidget {
   const FavouritesScreen({super.key});
@@ -11,18 +9,6 @@ class FavouritesScreen extends StatefulWidget {
 }
 
 class _FavouritesScreenState extends State<FavouritesScreen> {
-  int _selectedIndex = 0;
-
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 0) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +48,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        onItemTapped: onItemTapped,
-        selectedIndex: _selectedIndex,
       ),
     );
   }
