@@ -23,9 +23,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0xFFF7F7F7),
-          appBarTheme: const AppBarTheme(
-            backgroundColor:  Color(0xFFF7F7F7)
+          fontFamily: 'Poppins',
+          scaffoldBackgroundColor: Colors.grey.shade50,
+          appBarTheme:  AppBarTheme(
+            backgroundColor:  Colors.grey.shade50
           )
         ),
         debugShowCheckedModeBanner: false,

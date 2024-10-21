@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,13 +11,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedCategory = 'All'; 
+  String selectedCategory = 'All';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: [
             _buildHeader(),
@@ -31,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildFoodItemsList(),
             const SizedBox(height: 16),
             _buildDiscountHeader(),
+            const SizedBox(height: 16,),
+            _buildDiscountList(),
+            const SizedBox(height: 100,),
           ],
         ),
       ),
@@ -50,24 +55,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {},
-              ),
-              const Positioned(
-                right: 0,
-                child: CircleAvatar(
-                  radius: 10,
-                  backgroundColor: maincolor,
-                  child: Text(
-                    '10',
-                    style: TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
+          child: Container(
+            width: 70,
+            height: 44,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('10',style: TextStyle(color: maincolor,fontSize: 22,fontWeight: FontWeight.w400),),
+                const SizedBox(width: 5,),
+                SvgPicture.asset('assets/images/coin.svg')
+              ],
+            ),
           ),
         ),
       ],
@@ -79,16 +81,20 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Expanded(
           child: Container(
+            height: 56,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
             ),
-            child: const TextField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.search),
-                hintText: 'Search',
-                border: InputBorder.none,
+            child: const Center(
+              child: TextField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.search,color: Colors.grey,),
+                  hintText: 'Search',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                ),
               ),
             ),
           ),
@@ -97,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
         CircleAvatar(
           backgroundColor: maincolor,
           child: IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.white),
+            icon: SvgPicture.asset('assets/images/filter.svg'),
             onPressed: () {},
           ),
         ),
@@ -121,43 +127,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDealsSection() {
-    return Row(
+    return Stack(
       children: [
-        Expanded(
-          child: Stack(
-            children: [
-              Container(
-                height: 64,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: maincolor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                        'Deals',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset(
-                      'assets/images/bigburger.png',
-                      width: 135,
-                    ),
-                ],
-              ),
-            ],
-          ),
+        SvgPicture.asset(
+          'assets/images/deals.svg',
+          width: 345,
+        ),
+        Positioned(
+          right: -14,
+          child: Image.asset('assets/images/bigburger.png'),
         ),
       ],
     );
@@ -207,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildFoodItemsList() {
     return SizedBox(
-      height: 250,
+      height: 180,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: foodItems.length,
@@ -215,6 +193,19 @@ class _HomeScreenState extends State<HomeScreen> {
           return FoodCard(foodItem: foodItems[index]);
         },
       ),
+    );
+  }
+
+  Widget _buildDiscountList() {
+    return SizedBox(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return const DiscountCard();
+        },
+        ),
     );
   }
 
@@ -270,11 +261,12 @@ class _FoodCardState extends State<FoodCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: 120,
+      height: 180,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         children: [
@@ -284,14 +276,12 @@ class _FoodCardState extends State<FoodCard> {
                 borderRadius: BorderRadius.circular(24),
                 child: Image.asset(
                   widget.foodItem.imageUrl,
-                  height: 110,
-                  width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
               Positioned(
-                top: 8,
-                right: 8,
+                top: 4,
+                right: -2,
                 child: GestureDetector(
                   onTap: () {
                     setState(() {
@@ -310,19 +300,21 @@ class _FoodCardState extends State<FoodCard> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.foodItem.name,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   widget.foodItem.description,
                   style: const TextStyle(
-                    fontSize: 10,
+                    fontSize: 7,
+                    fontWeight: FontWeight.w400,
                     color: Colors.grey,
                   ),
                   maxLines: 2,
@@ -340,16 +332,20 @@ class _FoodCardState extends State<FoodCard> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle add to cart
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: maincolor,
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(8),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: (){},
+                      child: Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: maincolor
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.add, color: Colors.white,size: 16),
+                        ),
                       ),
-                      child: const Icon(Icons.add, color: Colors.white),
                     ),
                   ],
                 ),
@@ -381,19 +377,19 @@ final List<FoodItem> foodItems = [
   FoodItem(
     name: 'Big Burger',
     description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
-    imageUrl: 'assets/images/bigburger.png',
+    imageUrl: 'assets/images/medium.png',
     price: 50.0,
   ),
   FoodItem(
     name: 'Double Burger',
     description: 'Two beef patties with cheese, lettuce, and tomatoes.',
-    imageUrl: 'assets/images/bigburger.png',
+    imageUrl: 'assets/images/medium.png',
     price: 70.0,
   ),
   FoodItem(
     name: 'Cheese Burger',
     description: 'Classic cheeseburger with melted cheese and pickles.',
-    imageUrl: 'assets/images/bigburger.png',
+    imageUrl: 'assets/images/medium.png',
     price: 60.0,
   ),
 ];

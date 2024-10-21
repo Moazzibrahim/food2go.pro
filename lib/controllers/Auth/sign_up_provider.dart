@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/models/Auth/sign_up_model.dart';
-import 'package:food2go_app/view/tabs_screens/home_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/home_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

@@ -68,7 +68,8 @@ class _FoodCardState extends State<FoodCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: 150,
+      height: 180,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -90,7 +91,6 @@ class _FoodCardState extends State<FoodCard> {
                 borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
                   widget.foodItem.imageUrl,
-                  height: 110,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -116,12 +116,13 @@ class _FoodCardState extends State<FoodCard> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.foodItem.name,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -146,16 +147,20 @@ class _FoodCardState extends State<FoodCard> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle add to cart
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: maincolor,
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(8),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: (){},
+                      child: Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: maincolor
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.add, color: Colors.white,size: 16,),
+                        ),
                       ),
-                      child: const Icon(Icons.add, color: Colors.white),
                     ),
                   ],
                 ),
