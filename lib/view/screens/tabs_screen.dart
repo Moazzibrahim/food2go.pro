@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/tabs_screens/favourites_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/cart_details_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/home_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/profile_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/cart_details_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});

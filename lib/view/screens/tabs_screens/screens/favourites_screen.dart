@@ -37,8 +37,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio:
-                      0.75, // Adjust based on the desired card size
+                  mainAxisExtent: 230
                 ),
                 itemCount: foodItems.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -68,20 +67,10 @@ class _FoodCardState extends State<FoodCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      height: 180,
-      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -135,7 +124,7 @@ class _FoodCardState extends State<FoodCard> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
