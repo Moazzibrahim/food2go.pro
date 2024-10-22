@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/categories/categories_provider.dart';
+import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +15,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = 'All';
+
+  @override
+  void initState() {
+    Provider.of<CategoriesProvider>(context,listen: false).fetchCategories(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,19 +121,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryList() {
-    return SizedBox(
-      height: 110,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildCategoryItem('All', 'assets/images/bb.png'),
-          _buildCategoryItem('Burger', 'assets/images/bb.png'),
-          _buildCategoryItem('Pastries', 'assets/images/bb.png'),
-          _buildCategoryItem('Pasta', 'assets/images/bb.png'),
-        ],
-      ),
-    );
-  }
+    return LayoutBuilder(
+    builder: (context, constraints) {
+      double itemWidth = (constraints.maxWidth - 35) / 4;
+      return SizedBox(
+        height: 230,
+        child: Center(
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 15, // Vertical spacing between rows
+            children: [
+              _buildCategoryItem('All', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Pastries', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('candies', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Pastries', 'assets/images/bb.png', itemWidth),
+              _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   Widget _buildDealsSection() {
     return Stack(
@@ -209,34 +230,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(String title, String image) {
-    bool isSelected = selectedCategory == title;
+  Widget _buildCategoryItem(String title, String image,double width) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedCategory = title;
-        });
+        if(title == 'All'){
+          Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx)=> const CategoriesScreen())
+        );
+        }else{}
       },
       child: Container(
-        margin: const EdgeInsets.only(right: 16),
-        padding: const EdgeInsets.all(16),
+        width: width,
+        height: 110,
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isSelected ? maincolor : Colors.white,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 25,
-              backgroundColor: isSelected ? Colors.white : maincolor,
+              radius: 30,
+              backgroundColor: maincolor,
               child: Image.asset(image),
             ),
             const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.black,
+                ),
               ),
             ),
           ],

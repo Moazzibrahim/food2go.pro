@@ -12,7 +12,9 @@ AppBar buildAppBar(BuildContext context, String title){
       child: Container(
         height: 32,
         width: 32,
+        margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
         ),
         child: const Center(child: Icon(Icons.arrow_back_ios,color: maincolor,)),

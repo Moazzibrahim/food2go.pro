@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/controllers/Auth/sign_up_provider.dart';
+import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 import 'package:provider/provider.dart';
 
@@ -20,13 +21,14 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => SignUpProvider()),
+        ChangeNotifierProvider(create: (_) => CategoriesProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
           fontFamily: 'Poppins',
-          scaffoldBackgroundColor: Colors.grey.shade50,
+          scaffoldBackgroundColor: Colors.grey.shade100,
           appBarTheme:  AppBarTheme(
-            backgroundColor:  Colors.grey.shade50
+            backgroundColor:  Colors.grey.shade100
           )
         ),
         debugShowCheckedModeBanner: false,

@@ -1,0 +1,1 @@
+const String categoriesUrl = 'https://backend.food2go.pro/customer/home';
