@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
 
@@ -64,20 +65,27 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: 70,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('10',style: TextStyle(color: maincolor,fontSize: 22,fontWeight: FontWeight.w400),),
-                const SizedBox(width: 5,),
-                SvgPicture.asset('assets/images/coin.svg')
-              ],
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (ctx)=> const PointsItemsScreen())
+              );
+            },
+            child: Container(
+              width: 70,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('10',style: TextStyle(color: maincolor,fontSize: 22,fontWeight: FontWeight.w400),),
+                  const SizedBox(width: 5,),
+                  SvgPicture.asset('assets/images/coin.svg')
+                ],
+              ),
             ),
           ),
         ),
