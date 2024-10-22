@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
@@ -156,17 +157,24 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
   Widget _buildDealsSection() {
-    return Stack(
-      children: [
-        SvgPicture.asset(
-          'assets/images/deals.svg',
-          width: 345,
-        ),
-        Positioned(
-          right: -14,
-          child: Image.asset('assets/images/bigburger.png'),
-        ),
-      ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx)=> const DealsScreen())
+        );
+      },
+      child: Stack(
+        children: [
+          SvgPicture.asset(
+            'assets/images/deals.svg',
+            width: 345,
+          ),
+          Positioned(
+            right: -14,
+            child: Image.asset('assets/images/bigburger.png'),
+          ),
+        ],
+      ),
     );
   }
 
