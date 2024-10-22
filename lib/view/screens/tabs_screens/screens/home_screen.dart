@@ -4,6 +4,7 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    Provider.of<CategoriesProvider>(context,listen: false).fetchCategories(context);
+    Provider.of<CategoriesProvider>(context, listen: false)
+        .fetchCategories(context);
     super.initState();
   }
 
@@ -44,9 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildFoodItemsList(),
             const SizedBox(height: 16),
             _buildDiscountHeader(),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             _buildDiscountList(),
-            const SizedBox(height: 100,),
+            const SizedBox(
+              height: 100,
+            ),
           ],
         ),
       ),
@@ -68,9 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx)=> const PointsItemsScreen())
-              );
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const PointsItemsScreen()));
             },
             child: Container(
               width: 70,
@@ -82,8 +87,16 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('10',style: TextStyle(color: maincolor,fontSize: 22,fontWeight: FontWeight.w400),),
-                  const SizedBox(width: 5,),
+                  const Text(
+                    '10',
+                    style: TextStyle(
+                        color: maincolor,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   SvgPicture.asset('assets/images/coin.svg')
                 ],
               ),
@@ -108,7 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Center(
               child: TextField(
                 decoration: InputDecoration(
-                  icon: Icon(Icons.search,color: Colors.grey,),
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.grey,
+                  ),
                   hintText: 'Search',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
@@ -122,7 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: maincolor,
           child: IconButton(
             icon: SvgPicture.asset('assets/images/filter.svg'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FilterScreen()));
+            },
           ),
         ),
       ],
@@ -131,37 +152,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCategoryList() {
     return LayoutBuilder(
-    builder: (context, constraints) {
-      double itemWidth = (constraints.maxWidth - 35) / 4;
-      return SizedBox(
-        height: 230,
-        child: Center(
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 15, // Vertical spacing between rows
-            children: [
-              _buildCategoryItem('All', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Pastries', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('candies', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Pastries', 'assets/images/bb.png', itemWidth),
-              _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
-            ],
+      builder: (context, constraints) {
+        double itemWidth = (constraints.maxWidth - 35) / 4;
+        return SizedBox(
+          height: 230,
+          child: Center(
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 15, // Vertical spacing between rows
+              children: [
+                _buildCategoryItem('All', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem(
+                    'Pastries', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem(
+                    'candies', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem(
+                    'Pastries', 'assets/images/bb.png', itemWidth),
+                _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Widget _buildDealsSection() {
     return GestureDetector(
-      onTap: (){
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx)=> const DealsScreen())
-        );
+      onTap: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (ctx) => const DealsScreen()));
       },
       child: Stack(
         children: [
@@ -242,18 +265,17 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           return const DiscountCard();
         },
-        ),
+      ),
     );
   }
 
-  Widget _buildCategoryItem(String title, String image,double width) {
+  Widget _buildCategoryItem(String title, String image, double width) {
     return GestureDetector(
       onTap: () {
-        if(title == 'All'){
+        if (title == 'All') {
           Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx)=> const CategoriesScreen())
-        );
-        }else{}
+              MaterialPageRoute(builder: (ctx) => const CategoriesScreen()));
+        } else {}
       },
       child: Container(
         width: width,
@@ -375,16 +397,15 @@ class _FoodCardState extends State<FoodCard> {
                     ),
                     InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: (){},
+                      onTap: () {},
                       child: Container(
                         height: 24,
                         width: 24,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: maincolor
-                        ),
+                            borderRadius: BorderRadius.circular(8),
+                            color: maincolor),
                         child: const Center(
-                          child: Icon(Icons.add, color: Colors.white,size: 16),
+                          child: Icon(Icons.add, color: Colors.white, size: 16),
                         ),
                       ),
                     ),

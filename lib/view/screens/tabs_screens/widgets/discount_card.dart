@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 
-class DiscountCard extends StatelessWidget {
+class DiscountCard extends StatefulWidget {
   const DiscountCard({super.key});
 
+  @override
+  State<DiscountCard> createState() => _DiscountCardState();
+}
+
+class _DiscountCardState extends State<DiscountCard> {
+  bool isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,20 +45,28 @@ class DiscountCard extends StatelessWidget {
             ),
           ),
           // Favorite Button
-          const Positioned(
+          Positioned(
             top: 5,
             right: 5,
-            child: Icon(
-              Icons.favorite_border,
-              color: maincolor
-            ),
+            child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    isFavorite = !isFavorite;
+                  });
+                },
+                icon: Icon(isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border_outlined),
+                color: isFavorite ? maincolor : Colors.grey),
           ),
           // Product Image
           Align(
             alignment: Alignment.topCenter,
             child: Column(
               children: [
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
                 Image.asset(
                   'assets/images/stake.png',
                 ),
@@ -116,20 +130,18 @@ class DiscountCard extends StatelessWidget {
             bottom: 5,
             right: 10,
             child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: (){},
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: maincolor
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.add, color: Colors.white,size: 16),
-                        ),
-                      ),
-                    ),
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {},
+              child: Container(
+                height: 24,
+                width: 24,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8), color: maincolor),
+                child: const Center(
+                  child: Icon(Icons.add, color: Colors.white, size: 16),
+                ),
+              ),
+            ),
           ),
         ],
       ),
