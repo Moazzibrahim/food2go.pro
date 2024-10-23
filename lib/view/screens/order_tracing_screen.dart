@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
-class OrderTracingScreen extends StatelessWidget {
-  const OrderTracingScreen({super.key});
+class OrderTrackingScreen extends StatelessWidget {
+  const OrderTrackingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class OrderTracingScreen extends StatelessWidget {
               icon: Icons.check_circle_outline,
               title: 'Order Delivered',
               isActive: false,
-              isLast: true, 
+              isLast: true,
             ),
           ],
         ),
@@ -110,11 +110,11 @@ class OrderTracingScreen extends StatelessWidget {
 class CustomDashedLine extends StatelessWidget {
   final bool isActive;
 
-  const CustomDashedLine({required this.isActive});
+  const CustomDashedLine({super.key, required this.isActive});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 40,
       width: 2,
       child: CustomPaint(
