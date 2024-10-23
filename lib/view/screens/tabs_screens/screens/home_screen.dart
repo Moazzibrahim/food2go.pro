@@ -3,6 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
+import 'package:food2go_app/view/screens/discount/discount_screen.dart';
+import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
+import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
@@ -202,28 +205,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPopularFoodHeader() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        const Text(
           'Popular Food',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          'See All',
-          style: TextStyle(
-            color: maincolor,
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PopularFoodScreen()),
+            );
+          },
+          child: const Text(
+            'See All',
+            style: TextStyle(
+              color: maincolor,
+            ),
           ),
-        ),
+        )
       ],
     );
   }
 
   Widget _buildDiscountHeader() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -233,19 +245,27 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          'See All',
-          style: TextStyle(
-            color: maincolor,
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DiscountScreen()),
+            );
+          },
+          child: Text(
+            'See All',
+            style: TextStyle(
+              color: maincolor,
+            ),
           ),
-        ),
+        )
       ],
     );
   }
 
   Widget _buildFoodItemsList() {
     return SizedBox(
-      height: 180,
+      height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: foodItems.length,
@@ -308,150 +328,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-class FoodCard extends StatefulWidget {
-  final FoodItem foodItem;
-
-  const FoodCard({super.key, required this.foodItem});
-
-  @override
-  State<FoodCard> createState() => _FoodCardState();
-}
-
-class _FoodCardState extends State<FoodCard> {
-  bool isFavorite = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      height: 180,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Image.asset(
-                  widget.foodItem.imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 4,
-                right: -2,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isFavorite = !isFavorite;
-                    });
-                  },
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? maincolor : Colors.grey,
-                    size: 28,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.foodItem.name,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  widget.foodItem.description,
-                  style: const TextStyle(
-                    fontSize: 7,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 3),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${widget.foodItem.price} EGP',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: maincolor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {},
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: maincolor),
-                        child: const Center(
-                          child: Icon(Icons.add, color: Colors.white, size: 16),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FoodItem {
-  final String name;
-  final String description;
-  final String imageUrl;
-  final double price;
-
-  FoodItem({
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-  });
-}
-
-// Sample food items list
-final List<FoodItem> foodItems = [
-  FoodItem(
-    name: 'Big Burger',
-    description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
-    imageUrl: 'assets/images/medium.png',
-    price: 50.0,
-  ),
-  FoodItem(
-    name: 'Double Burger',
-    description: 'Two beef patties with cheese, lettuce, and tomatoes.',
-    imageUrl: 'assets/images/medium.png',
-    price: 70.0,
-  ),
-  FoodItem(
-    name: 'Cheese Burger',
-    description: 'Classic cheeseburger with melted cheese and pickles.',
-    imageUrl: 'assets/images/medium.png',
-    price: 60.0,
-  ),
-];

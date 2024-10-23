@@ -10,6 +10,7 @@ class DiscountCard extends StatefulWidget {
 
 class _DiscountCardState extends State<DiscountCard> {
   bool isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,6 +23,7 @@ class _DiscountCardState extends State<DiscountCard> {
       ),
       child: Stack(
         children: [
+          // Discount Badge
           Positioned(
             top: 0,
             left: 0,
@@ -44,20 +46,20 @@ class _DiscountCardState extends State<DiscountCard> {
               ),
             ),
           ),
-          // Favorite Button
-          Positioned(
-            top: 5,
-            right: 5,
+          // Favorite Button using Align
+          Align(
+            alignment: Alignment.topRight,
             child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  });
-                },
-                icon: Icon(isFavorite
-                    ? Icons.favorite
-                    : Icons.favorite_border_outlined),
-                color: isFavorite ? maincolor : Colors.grey),
+              onPressed: () {
+                setState(() {
+                  isFavorite = !isFavorite;
+                });
+              },
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+              ),
+              color: isFavorite ? maincolor : Colors.grey,
+            ),
           ),
           // Product Image
           Align(
@@ -136,7 +138,9 @@ class _DiscountCardState extends State<DiscountCard> {
                 height: 24,
                 width: 24,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8), color: maincolor),
+                  borderRadius: BorderRadius.circular(8),
+                  color: maincolor,
+                ),
                 child: const Center(
                   child: Icon(Icons.add, color: Colors.white, size: 16),
                 ),
