@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/cart_details_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen.dart';
 
@@ -34,7 +34,7 @@ class _TabsScreenState extends State<TabsScreen> {
               children: const [
                 HomeScreen(),
                 FavouritesScreen(),
-                CartDetailsScreen(),
+                CartDetailssScreen(),
                 ProfileScreen(),
               ],
             ),
@@ -50,7 +50,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   height: 50,
-                  color: maincolor, 
+                  color: maincolor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

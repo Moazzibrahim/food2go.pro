@@ -238,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        const Text(
           'Discount',
           style: TextStyle(
             fontSize: 18,
@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(builder: (context) => const DiscountScreen()),
             );
           },
-          child: Text(
+          child: const Text(
             'See All',
             style: TextStyle(
               color: maincolor,

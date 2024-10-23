@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 
 class FoodCard extends StatefulWidget {
   final FoodItem foodItem;
@@ -91,7 +92,13 @@ class _FoodCardState extends State<FoodCard> {
                     ),
                     InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ProductDetailsScreen()));
+                      },
                       child: Container(
                         height: 24,
                         width: 24,
