@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/checkout/checkout_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+
 class CartDetailssScreen extends StatefulWidget {
   const CartDetailssScreen({super.key});
 
@@ -162,7 +164,10 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                             horizontal: 32, vertical: 16),
                       ),
                       onPressed: () {
-                        // Checkout Action
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CheckoutScreen()));
                       },
                       child: const Text('Checkout',
                           style: TextStyle(

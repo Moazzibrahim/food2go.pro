@@ -4,7 +4,7 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/profile_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
