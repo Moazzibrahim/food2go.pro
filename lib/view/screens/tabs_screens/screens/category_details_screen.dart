@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 
-
 class CategoryDetailsScreen extends StatelessWidget {
   const CategoryDetailsScreen({super.key});
 
@@ -30,21 +29,32 @@ class CategoryDetailsScreen extends StatelessWidget {
                 top: 40,
                 left: 16,
                 child: Container(
-        height: 32,
-        width: 32,
-        margin: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: const Center(child: Icon(Icons.arrow_back_ios,color: maincolor,)),
-      ),
+                  height: 32,
+                  width: 32,
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Center(
+                      child: InkWell(
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      color: maincolor,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  )),
+                ),
               ),
               const Align(
                 alignment: Alignment.center,
                 child: Column(
                   children: [
-                    SizedBox(height: 44,),
+                    SizedBox(
+                      height: 44,
+                    ),
                     Text(
                       'Burger', // Category name
                       style: TextStyle(
@@ -70,20 +80,19 @@ class CategoryDetailsScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              mainAxisExtent: 230
-                        ),
-                        itemCount: foodItems.length,
-                        itemBuilder: (context, index) {
-              return FoodCard(foodItem: foodItems[index]);
-                        },
-                      ),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  mainAxisExtent: 230),
+              itemCount: foodItems.length,
+              itemBuilder: (context, index) {
+                return FoodCard(foodItem: foodItems[index]);
+              },
             ),
+          ),
         ],
       ),
     );
@@ -110,10 +119,10 @@ class _SelectableFilterChipState extends State<SelectableFilterChip> {
         label: Text(
           widget.label,
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-            color: _isSelected ? Colors.white : maincolor // Text color
-          ),
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+              color: _isSelected ? Colors.white : maincolor // Text color
+              ),
         ),
         selected: _isSelected,
         onSelected: (selected) {
