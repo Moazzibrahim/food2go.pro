@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/result_screen.dart';
+import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -19,18 +21,7 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Filter'),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: maincolor,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: buildAppBar(context, 'Filter'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -89,6 +80,23 @@ class _FilterScreenState extends State<FilterScreen> {
                   _discount = value;
                 });
               },
+            ),
+            const SizedBox(height: 50,),
+            SizedBox(
+              height: 56,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: (){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx)=> const ResultScreen())
+                  );
+                }, 
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: maincolor,
+                  foregroundColor: Colors.white
+                ),
+              child: const Text('Done'),
+              ),
             ),
           ],
         ),

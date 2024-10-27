@@ -36,13 +36,19 @@ class PointsCard extends StatelessWidget {
               const SizedBox(height: 5,),
               Container(
                 height: 21,
-                width: 48,
+                width: status == 0 ? 72 : 48,
                 decoration: BoxDecoration(
                   border: Border.all(color: maincolor),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(status == 0 ? 16 : 4),
                   color: status == 0 ? Colors.white : maincolor
                 ),
-                child: Center(child: Text('150 PTS',style: TextStyle(color: status == 0 ? maincolor : Colors.white,fontSize: 11),)),
+                child: Center(child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    status == 0 ? const Icon(Icons.lock,size: 15,color: maincolor,) : const SizedBox(),
+                    Text('150 PTS',style: TextStyle(color: status == 0 ? maincolor : Colors.white,fontSize: 11),),
+                  ],
+                )),
               ),
             ],
           ),
@@ -53,25 +59,7 @@ class PointsCard extends StatelessWidget {
             color: Colors.black.withOpacity(0.2),
             borderRadius: BorderRadius.circular(24),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 112,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: maincolor
-                  ),
-                  child: const Center(
-                    child: Text('Unavailable Now',style: TextStyle(color: Colors.white,fontSize: 12),),
-                  ),
-                ),
-                const SizedBox(height: 75,)
-              ],
-            ),
-          ),
+          
         ) : const SizedBox()
       ],
     );

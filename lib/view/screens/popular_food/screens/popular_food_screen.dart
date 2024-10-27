@@ -17,6 +17,7 @@ class PopularFoodScreen extends StatelessWidget {
             childAspectRatio: 1,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
+            mainAxisExtent: 230
           ),
           itemCount: foodItems.length,
           itemBuilder: (context, index) {

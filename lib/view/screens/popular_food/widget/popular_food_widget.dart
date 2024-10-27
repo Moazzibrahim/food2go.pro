@@ -19,7 +19,9 @@ class _FoodCardState extends State<FoodCard> {
     return Container(
       width: 120,
       height: 240,
-      margin: const EdgeInsets.only(right: 16),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 8
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),

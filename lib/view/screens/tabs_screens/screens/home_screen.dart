@@ -6,6 +6,7 @@ import 'package:food2go_app/view/screens/categories/screens/categories_screen.da
 import 'package:food2go_app/view/screens/discount/discount_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/category_details_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
@@ -295,7 +296,10 @@ class _HomeScreenState extends State<HomeScreen> {
         if (title == 'All') {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx) => const CategoriesScreen()));
-        } else {}
+        } else if (title == 'Burger') {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const CategoryDetailsScreen()));
+        }
       },
       child: Container(
         width: width,
