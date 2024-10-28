@@ -12,7 +12,7 @@ class Product {
   final int status;
   final int reccomended;
   final bool inStock;
-  final bool isFav;
+  bool isFav;
   final double price;
   final String discountId;
   final String taxId;

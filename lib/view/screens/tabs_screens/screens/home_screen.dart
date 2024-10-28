@@ -85,7 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (ctx) => const PointsItemsScreen()));
             },
             child: Container(
-              width: 70,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+              ),
               height: 44,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -95,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    '10',
+                    '100',
                     style: TextStyle(
                         color: maincolor,
                         fontSize: 22,
@@ -274,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, productProvider, _) {
           return ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: productProvider.products.length,
+          itemCount: productProvider.popularProducts.length,
           itemBuilder: (context, index) {
                 final product = productProvider.popularProducts[index];
                 return FoodCard(
@@ -282,6 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   image: 'assets/images/medium.png', 
                   description: product.description, 
                   price: product.price,
+                  productId: product.id,
+                  isFav: product.isFav,
                   );
           },
         );
