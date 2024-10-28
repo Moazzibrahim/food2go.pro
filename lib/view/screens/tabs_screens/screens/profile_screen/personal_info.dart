@@ -1,93 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../constants/colors.dart';
 
-class PersonalInfo extends StatelessWidget {
+class PersonalInfo extends StatefulWidget {
   const PersonalInfo({super.key});
 
   @override
+  State<PersonalInfo> createState() => _PersonalInfoState();
+}
+
+class _PersonalInfoState extends State<PersonalInfo> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user profile when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GetProfileProvider>(context, listen: false)
+          .fetchUserProfile(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profilesProvider = Provider.of<GetProfileProvider>(context);
     return Scaffold(
       appBar: buildAppBar(context, 'Personal Info'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(
-                          'https://randomuser.me/api/portraits/men/1.jpg'),
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: CircleAvatar(
-                        backgroundColor: maincolor,
-                        radius: 16,
-                        child: Icon(Icons.edit, color: Colors.white, size: 16),
+      body: profilesProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : profilesProvider.userProfile == null
+              ? const Center(child: Text("Failed to load profile data"))
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundImage: NetworkImage(
+                                    profilesProvider.userProfile!.imageLink),
+                              ),
+                              const Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: CircleAvatar(
+                                  backgroundColor: maincolor,
+                                  radius: 16,
+                                  child: Icon(Icons.edit,
+                                      color: Colors.white, size: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${profilesProvider.userProfile!.fName} ${profilesProvider.userProfile!.lName} ',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text(
+                                'I love fast food',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(width: 30),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Amal Ghanem',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 32),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              _buildInfoRow(Icons.person, 'FULL NAME',
+                                  '${profilesProvider.userProfile!.fName} ${profilesProvider.userProfile!.lName}'),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              _buildInfoRow(Icons.email, 'EMAIL',
+                                  profilesProvider.userProfile!.email),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              _buildInfoRow(
+                                  Icons.phone, 'PHONE NUMBER', profilesProvider.userProfile!.phone),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(
-                      'I love fast food',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    _buildInfoRow(Icons.person, 'FULL NAME', 'Amal Ghanem'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _buildInfoRow(
-                        Icons.email, 'EMAIL', 'amalghanrm555@gmail.com'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _buildInfoRow(Icons.phone, 'PHONE NUMBER', '408-841-0926'),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
