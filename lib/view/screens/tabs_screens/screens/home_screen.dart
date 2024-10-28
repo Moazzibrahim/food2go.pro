@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/controllers/categories/categories_provider.dart';
-import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
 import 'package:food2go_app/view/screens/discount/discount_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
@@ -10,9 +7,13 @@ import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget
 import 'package:food2go_app/view/screens/tabs_screens/screens/category_details_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
+import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/categories/categories_provider.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,11 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    super.initState();
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
-    Provider.of<ProductProvider>(context, listen: false)
-        .fetchProducts(context);
-    super.initState();
+    Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
+    Provider.of<GetProfileProvider>(context, listen: false)
+        .fetchUserProfile(context);
   }
 
   @override
@@ -53,13 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildFoodItemsList(),
             const SizedBox(height: 16),
             _buildDiscountHeader(),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             _buildDiscountList(),
-            const SizedBox(
-              height: 100,
-            ),
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -77,40 +75,40 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const PointsItemsScreen()));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-              ),
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    '100',
-                    style: TextStyle(
+        Consumer<GetProfileProvider>(
+          builder: (context, profileProvider, child) {
+            final points = profileProvider.userProfile?.points ?? 0;
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const PointsItemsScreen(),
+                ));
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      points.toString(),
+                      style: const TextStyle(
                         color: maincolor,
                         fontSize: 22,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  SvgPicture.asset('assets/images/coin.svg')
-                ],
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    SvgPicture.asset('assets/images/coin.svg'),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
     );
@@ -272,25 +270,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFoodItemsList() {
     return SizedBox(
       height: 200,
-      child: Consumer<ProductProvider>(
-        builder: (context, productProvider, _) {
-          return ListView.builder(
+      child: Consumer<ProductProvider>(builder: (context, productProvider, _) {
+        return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: productProvider.popularProducts.length,
           itemBuilder: (context, index) {
-                final product = productProvider.popularProducts[index];
-                return FoodCard(
-                  name: product.name, 
-                  image: 'assets/images/medium.png', 
-                  description: product.description, 
-                  price: product.price,
-                  productId: product.id,
-                  isFav: product.isFav,
-                  );
+            final product = productProvider.popularProducts[index];
+            return FoodCard(
+              name: product.name,
+              image: 'assets/images/medium.png',
+              description: product.description,
+              price: product.price,
+              productId: product.id,
+              isFav: product.isFav,
+            );
           },
         );
-        }
-      ),
+      }),
     );
   }
 
@@ -314,8 +310,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx) => const CategoriesScreen()));
         } else if (title == 'Burger') {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const CategoryDetailsScreen()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (ctx) => const CategoryDetailsScreen()));
         }
       },
       child: Container(

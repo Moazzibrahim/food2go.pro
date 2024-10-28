@@ -181,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 'login successful',
                                 Icons.check,
-                                Colors.green,
+                                maincolor,
                                 const Duration(seconds: 2));
                           } catch (error) {
                             ScaffoldMessenger.of(context).showSnackBar(

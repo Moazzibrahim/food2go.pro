@@ -13,11 +13,11 @@ class AddAddressScreen extends StatefulWidget {
 }
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
-  final _formKey = GlobalKey<FormState>(); // Add form key
+  final _formKey = GlobalKey<FormState>(); 
   String selectedCategory = 'Home';
   GoogleMapController? _mapController;
-  final LatLng _initialPosition = const LatLng(30.0444, 31.2357); // Cairo, Egypt
-  LatLng _selectedPosition = const LatLng(30.0444, 31.2357); // Cairo, Egypt
+  final LatLng _initialPosition = const LatLng(30.0444, 31.2357); 
+  LatLng _selectedPosition = const LatLng(30.0444, 31.2357); 
   Set<Marker> _markers = {};
   final loc.Location _location = loc.Location();
   late GooglePlace googlePlace;
@@ -26,7 +26,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   @override
   void initState() {
     super.initState();
-    googlePlace = GooglePlace('AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www'); // Replace with your API key
+    googlePlace = GooglePlace('AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www'); 
     _getUserLocation();
   }
 
@@ -63,7 +63,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   Future<void> _handleSearch(String query) async {
     var result = await googlePlace.autocomplete.get(
       query,
-      components: [Component("country", "eg")], // Restrict search to Egypt
+      components: [Component("country", "eg")], 
     );
 
     if (result != null && result.predictions != null) {
