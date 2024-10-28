@@ -20,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Fetch user profile when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
-          .fetchUserProfile();
+          .fetchUserProfile(context);
     });
   }
 
