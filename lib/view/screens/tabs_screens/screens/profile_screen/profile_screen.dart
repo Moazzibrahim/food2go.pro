@@ -3,7 +3,6 @@ import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/address_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/personal_info.dart';
-import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -11,7 +10,10 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, 'Profile'),
+      appBar: AppBar(
+        title: const Center(child: Text('profile')),
+        automaticallyImplyLeading: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/checkout/checkout_screen.dart';
-import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
 class CartDetailssScreen extends StatefulWidget {
   const CartDetailssScreen({super.key});
@@ -16,7 +15,10 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, 'Details cart'),
+      appBar: AppBar(
+        title: const Center(child: Text('Details cart')),
+        automaticallyImplyLeading: false,
+      ),
       body: Column(
         children: [
           // Cart Item Card

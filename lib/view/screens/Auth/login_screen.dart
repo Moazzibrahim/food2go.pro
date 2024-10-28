@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/view/screens/Auth/forget_password_screen.dart';
+import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/Auth/sign_up_screen.dart';
@@ -163,12 +164,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           if (_emailController.text.isEmpty ||
                               _passwordController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Please enter both email and password.'),
-                              ),
-                            );
+                            showTopSnackBar(
+                                context,
+                                'Please enter both email and password.',
+                                Icons.cancel,
+                                maincolor,
+                                const Duration(seconds: 2));
                             return; // Exit the function if fields are empty
                           }
 
@@ -176,11 +177,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             await loginProvider.login(_emailController.text,
                                 _passwordController.text, context);
                             // Handle successful login navigation
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Login Successful'),
-                              ),
-                            );
+                            showTopSnackBar(
+                                context,
+                                'login successful',
+                                Icons.check,
+                                Colors.green,
+                                const Duration(seconds: 2));
                           } catch (error) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
