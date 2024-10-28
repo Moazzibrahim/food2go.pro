@@ -3,10 +3,11 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 
 class FoodCard extends StatefulWidget {
-  final FoodItem foodItem;
-
-  const FoodCard({super.key, required this.foodItem});
-
+  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price});
+  final String name;
+  final String image;
+  final String description;
+  final double price;
   @override
   State<FoodCard> createState() => _FoodCardState();
 }
@@ -51,7 +52,7 @@ class _FoodCardState extends State<FoodCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: Image.asset(
-                  widget.foodItem.imageUrl,
+                  widget.image,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -63,7 +64,7 @@ class _FoodCardState extends State<FoodCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.foodItem.name,
+                  widget.name,
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -71,7 +72,7 @@ class _FoodCardState extends State<FoodCard> {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  widget.foodItem.description,
+                  widget.description,
                   style: const TextStyle(
                     fontSize: 7,
                     fontWeight: FontWeight.w400,
@@ -85,7 +86,7 @@ class _FoodCardState extends State<FoodCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${widget.foodItem.price} EGP',
+                      '${widget.price} EGP',
                       style: const TextStyle(
                         fontSize: 14,
                         color: maincolor,

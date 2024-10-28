@@ -21,7 +21,12 @@ class PopularFoodScreen extends StatelessWidget {
           ),
           itemCount: foodItems.length,
           itemBuilder: (context, index) {
-            return FoodCard(foodItem: foodItems[index]);
+            return FoodCard(
+              name: 'Big Burger',
+                  description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
+                  image: 'assets/images/medium.png',
+                  price: 50.0,
+            );
           },
         ),
       ),

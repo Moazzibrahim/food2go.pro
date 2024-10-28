@@ -68,7 +68,12 @@ class _ResultScreenState extends State<ResultScreen> {
                         ),
                         itemCount: foodItems.length,
                         itemBuilder: (context, index) {
-              return FoodCard(foodItem: foodItems[index]);
+              return const FoodCard(
+                name: 'Big Burger',
+                  description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
+                  image: 'assets/images/medium.png',
+                  price: 50.0,
+              );
                         },
                       ),
             ),

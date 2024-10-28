@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
 import 'package:food2go_app/view/screens/discount/discount_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
@@ -27,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
+    Provider.of<ProductProvider>(context, listen: false)
+        .fetchProducts(context);
     super.initState();
   }
 
@@ -267,12 +270,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFoodItemsList() {
     return SizedBox(
       height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: foodItems.length,
-        itemBuilder: (context, index) {
-          return FoodCard(foodItem: foodItems[index]);
-        },
+      child: Consumer<ProductProvider>(
+        builder: (context, productProvider, _) {
+          return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: productProvider.products.length,
+          itemBuilder: (context, index) {
+                final product = productProvider.popularProducts[index];
+                return FoodCard(
+                  name: product.name, 
+                  image: 'assets/images/medium.png', 
+                  description: product.description, 
+                  price: product.price,
+                  );
+          },
+        );
+        }
       ),
     );
   }

@@ -89,7 +89,12 @@ class CategoryDetailsScreen extends StatelessWidget {
                   mainAxisExtent: 230),
               itemCount: foodItems.length,
               itemBuilder: (context, index) {
-                return FoodCard(foodItem: foodItems[index]);
+                return const FoodCard(
+                  name: 'Big Burger',
+                  description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
+                  image: 'assets/images/medium.png',
+                  price: 50.0,
+                );
               },
             ),
           ),

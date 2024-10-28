@@ -49,7 +49,6 @@ class _OnboardingState extends State<Onboarding> {
                           ),
                         ),
                       ),
-            
                 Positioned(
                           bottom: 100,
                           right: MediaQuery.sizeOf(context).width/2.4,
