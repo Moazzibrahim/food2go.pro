@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/screens/onboarding_screens/first_onboarding.dart';
+import 'package:food2go_app/view/screens/onboarding_screens/onboarding.dart';
 
 class LogoOnboarding extends StatefulWidget {
   const LogoOnboarding({super.key});
@@ -21,7 +21,7 @@ class _LogoOnboardingState extends State<LogoOnboarding> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const OnboardingScreen1(),
+            builder: (context) => const Onboarding(),
           ),
         );
       },
