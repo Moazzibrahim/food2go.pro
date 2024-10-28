@@ -2,8 +2,10 @@
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/models/Auth/login_model.dart';
 import 'package:food2go_app/view/screens/tabs_screen.dart';
+import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -44,11 +46,8 @@ class LoginProvider with ChangeNotifier {
 
         // Handle successful login, save token, etc.
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Wrong email or password'),
-          ),
-        );
+        showTopSnackBar(context, 'wrong email or password.', Icons.cancel,
+            maincolor, const Duration(seconds: 2));
         // Handle login failure, for example by throwing an error
         throw Exception('Failed to login');
       }
