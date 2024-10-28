@@ -3,7 +3,13 @@
     <application
         android:label="food2go_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/logo">
+
+         <!-- Google Maps API Key -->
+         <meta-data
+         android:name="com.google.android.geo.API_KEY"
+         android:value="AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

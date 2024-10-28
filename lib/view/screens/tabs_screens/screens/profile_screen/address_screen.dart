@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/add_address_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
 class AddressScreen extends StatelessWidget {
@@ -47,7 +48,6 @@ class AddressScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -70,8 +70,6 @@ class AddressScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Add New Address Button
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: SizedBox(
@@ -85,7 +83,10 @@ class AddressScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Action to add a new address
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddAddressScreen()));
                   },
                   child: const Text(
                     'Add New Address',
@@ -100,7 +101,6 @@ class AddressScreen extends StatelessWidget {
     );
   }
 
-  // Address Card Builder
   Widget _buildAddressCard(BuildContext context,
       {required IconData icon,
       required String title,
@@ -128,7 +128,6 @@ class AddressScreen extends StatelessWidget {
           ),
           const SizedBox(width: 10),
 
-          // Address Info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,18 +146,13 @@ class AddressScreen extends StatelessWidget {
             ),
           ),
 
-          // Edit and Delete Icons
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.grey),
-            onPressed: () {
-              // Action to edit the address
-            },
+            onPressed: () {},
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.grey),
-            onPressed: () {
-              // Action to delete the address
-            },
+            onPressed: () {},
           ),
         ],
       ),
