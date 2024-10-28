@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
+import 'package:provider/provider.dart';
 
 class FoodCard extends StatefulWidget {
-  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price});
+  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price, this.productId, this.isFav});
   final String name;
   final String image;
   final String description;
   final double price;
+  final int? productId;
+  final bool? isFav;
   @override
   State<FoodCard> createState() => _FoodCardState();
 }
@@ -16,10 +20,15 @@ class _FoodCardState extends State<FoodCard> {
   bool isFavorite = false;
 
   @override
+  void initState() {
+    isFavorite = widget.isFav ?? false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: 120,
-      height: 240,
       margin: const EdgeInsets.symmetric(
         horizontal: 8
       ),
@@ -33,17 +42,22 @@ class _FoodCardState extends State<FoodCard> {
             padding: const EdgeInsets.only(top: 8.0, right: 8.0),
             child: Align(
               alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  });
+              child: Consumer<ProductProvider>(
+                builder: (context, favProvider, _) {
+                  return GestureDetector(
+                  onTap: () {
+                    favProvider.makeFavourites(context,isFavorite ? 0 : 1,widget.productId ?? 0);
+                    setState(() {
+                      isFavorite = !isFavorite;
+                    });
+                  },
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? maincolor : Colors.grey,
+                    size: 23,
+                  ),
+                );
                 },
-                child: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? maincolor : Colors.grey,
-                  size: 23,
-                ),
               ),
             ),
           ),
