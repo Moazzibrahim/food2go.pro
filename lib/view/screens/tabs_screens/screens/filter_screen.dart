@@ -15,7 +15,6 @@ class FilterScreen extends StatefulWidget {
 class _FilterScreenState extends State<FilterScreen> {
   double _priceStart = 33;
   double _priceEnd = 200;
-  double _discount = 60;
   String _selectedCategory = 'Burger';
 
   @override
@@ -63,39 +62,20 @@ class _FilterScreenState extends State<FilterScreen> {
                 });
               },
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Discount',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            const SizedBox(
+              height: 50,
             ),
-            Slider(
-              activeColor: maincolor,
-              value: _discount,
-              min: 0,
-              max: 100,
-              divisions: 100,
-              label: '$_discount%',
-              onChanged: (double value) {
-                setState(() {
-                  _discount = value;
-                });
-              },
-            ),
-            const SizedBox(height: 50,),
             SizedBox(
               height: 56,
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: (){
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx)=> const ResultScreen())
-                  );
-                }, 
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const ResultScreen()));
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: maincolor,
-                  foregroundColor: Colors.white
-                ),
-              child: const Text('Done'),
+                    backgroundColor: maincolor, foregroundColor: Colors.white),
+                child: const Text('Done'),
               ),
             ),
           ],

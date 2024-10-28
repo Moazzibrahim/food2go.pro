@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
+
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key});
 
@@ -13,6 +14,7 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int quantity = 1;
   String selectedSize = "S"; // Track the selected size
+  bool isFavorited = false;
 
   void increaseQuantity() {
     setState(() {
@@ -67,10 +69,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.favorite_border,
-                            color: Colors.white),
-                        onPressed: () {},
-                      ),
+                        icon: Icon(
+                          isFavorited ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorited ? maincolor : Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isFavorited = !isFavorited; // Toggle favorite state
+                          });
+                        },
+                      )
                     ],
                   ),
                 ),

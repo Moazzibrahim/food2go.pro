@@ -13,21 +13,20 @@ class AddAddressScreen extends StatefulWidget {
 }
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
+  final _formKey = GlobalKey<FormState>(); // Add form key
   String selectedCategory = 'Home';
   GoogleMapController? _mapController;
-  final LatLng _initialPosition =
-      const LatLng(30.0444, 31.2357); // Cairo, Egypt
+  final LatLng _initialPosition = const LatLng(30.0444, 31.2357); // Cairo, Egypt
   LatLng _selectedPosition = const LatLng(30.0444, 31.2357); // Cairo, Egypt
   Set<Marker> _markers = {};
-  final loc.Location _location = loc.Location(); // Use alias here
+  final loc.Location _location = loc.Location();
   late GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
 
   @override
   void initState() {
     super.initState();
-    googlePlace = GooglePlace(
-        'AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www'); // Replace with your API key
+    googlePlace = GooglePlace('AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www'); // Replace with your API key
     _getUserLocation();
   }
 
@@ -79,9 +78,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     if (details != null && details.result != null) {
       final location = details.result!.geometry!.location;
       if (location != null) {
-        // Check if location is not null
-        final lat = location.lat ?? 0.0; // Use default if lat is null
-        final lng = location.lng ?? 0.0; // Use default if lng is null
+        final lat = location.lat ?? 0.0;
+        final lng = location.lng ?? 0.0;
         _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
 
         setState(() {
@@ -104,120 +102,124 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       appBar: buildAppBar(context, 'Add Address'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search for a place',
+        child: Form(
+          key: _formKey, // Wrap fields in Form
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Search for a place',
+                ),
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    _handleSearch(value);
+                  } else {
+                    setState(() => predictions.clear());
+                  }
+                },
               ),
-              onChanged: (value) {
-                if (value.isNotEmpty) {
-                  _handleSearch(value);
-                } else {
-                  setState(() => predictions.clear());
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            _mapController = controller;
-                            _getUserLocation();
-                          },
-                          initialCameraPosition: CameraPosition(
-                            target: _initialPosition,
-                            zoom: 14,
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: GoogleMap(
+                            onMapCreated: (controller) {
+                              _mapController = controller;
+                              _getUserLocation();
+                            },
+                            initialCameraPosition: CameraPosition(
+                              target: _initialPosition,
+                              zoom: 14,
+                            ),
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: false,
+                            markers: _markers,
+                            onTap: _onMapTap,
                           ),
-                          myLocationEnabled: true,
-                          myLocationButtonEnabled: false,
-                          markers: _markers,
-                          onTap: _onMapTap,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: predictions.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(predictions[index].description ?? ""),
-                          onTap: () {
-                            _selectPlace(predictions[index].placeId!);
-                            setState(() => predictions.clear());
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildCategoryButton(context, 'Home'),
-                        _buildCategoryButton(context, 'Work'),
-                        _buildCategoryButton(context, 'Other'),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    _buildTextField(context, 'Selection Zone',
-                        isDropdown: true),
-                    const SizedBox(height: 16),
-                    _buildTextField(context, 'Street'),
-                    const SizedBox(height: 16),
-                    _buildTextField(context, 'Building No.'),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(child: _buildTextField(context, 'Floor No')),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildTextField(context, 'Apartment')),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(context, 'Additional Data'),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle button press to save the address
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: maincolor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Save Address',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                      const SizedBox(height: 24),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: predictions.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(predictions[index].description ?? ""),
+                            onTap: () {
+                              _selectPlace(predictions[index].placeId!);
+                              setState(() => predictions.clear());
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildCategoryButton(context, 'Home'),
+                          _buildCategoryButton(context, 'Work'),
+                          _buildCategoryButton(context, 'Other'),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildTextField(context, 'Selection Zone', isDropdown: true, isRequired: true),
+                      const SizedBox(height: 16),
+                      _buildTextField(context, 'Street', isRequired: true),
+                      const SizedBox(height: 16),
+                      _buildTextField(context, 'Building No.', isRequired: true),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(child: _buildTextField(context, 'Floor No', isRequired: true)),
+                          const SizedBox(width: 16),
+                          Expanded(child: _buildTextField(context, 'Apartment', isRequired: true)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(context, 'Additional Data'),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // Form is valid; proceed with saving the address
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: maincolor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    'Save Address',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -250,8 +252,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     );
   }
 
-  Widget _buildTextField(BuildContext context, String label,
-      {bool isDropdown = false}) {
+  Widget _buildTextField(BuildContext context, String label, {bool isDropdown = false, bool isRequired = false}) {
     if (isDropdown) {
       return DropdownButtonFormField<String>(
         decoration: InputDecoration(
@@ -259,8 +260,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
           hintStyle: TextStyle(color: Colors.grey.shade600),
           filled: true,
           fillColor: Colors.grey.shade100,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
@@ -273,6 +273,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 ))
             .toList(),
         onChanged: (value) {},
+        validator: isRequired ? (value) => value == null || value.isEmpty ? 'This field is required' : null : null,
         style: const TextStyle(color: Colors.black87),
       );
     } else {
@@ -282,13 +283,13 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
           hintStyle: TextStyle(color: Colors.grey.shade600),
           filled: true,
           fillColor: Colors.grey.shade100,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
         ),
+        validator: isRequired ? (value) => value == null || value.isEmpty ? 'This field is required' : null : null,
       );
     }
   }

@@ -107,8 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           filled: true,
                           fillColor: const Color(0xFFF7F7F7),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0,horizontal: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 10),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -126,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 BorderRadius.circular(20.0), // Rounded corners
                             borderSide: BorderSide.none, // No border
                           ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0,horizontal: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
                               isVisible
@@ -161,6 +161,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
+                          if (_emailController.text.isEmpty ||
+                              _passwordController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Please enter both email and password.'),
+                              ),
+                            );
+                            return; // Exit the function if fields are empty
+                          }
+
                           try {
                             await loginProvider.login(_emailController.text,
                                 _passwordController.text, context);
