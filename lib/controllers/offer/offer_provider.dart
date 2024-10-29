@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ Future<List<Offer>> fetchOffers(context) async {
           .map((offerJson) => Offer.fromJson(offerJson))
           .toList();
     } else {
-      print(response.body);
+      log(response.body);
       throw Exception('Failed to load offers');
     }
   } catch (e) {
