@@ -1,9 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({super.key});
+  final String email;
+  final String code;
+
+  const NewPasswordScreen({super.key, required this.email, required this.code});
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
@@ -23,19 +30,52 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     super.dispose();
   }
 
+  void _changePassword(BuildContext context) {
+    final otpProvider = Provider.of<OtpProvider>(context, listen: false);
+    final newPassword = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    if (newPassword != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    otpProvider
+        .changePassword(widget.email, widget.code, newPassword)
+        .then((_) {
+      if (otpProvider.errorMessage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Password changed successfully")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(otpProvider.errorMessage!)),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final otpProvider = Provider.of<OtpProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/burger1.png', // Replace with your image path
+              'assets/images/burger1.png',
               fit: BoxFit.cover,
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.10, // Adjust as needed
+            top: MediaQuery.of(context).size.height * 0.10,
             left: 0,
             right: 0,
             child: const Center(
@@ -86,7 +126,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      // Email TextField
+                      // Password TextField
                       TextField(
                         controller: _passwordController,
                         obscureText: !isVisible,
@@ -96,9 +136,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           filled: true,
                           fillColor: const Color(0xFFF7F7F7),
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(20.0), // Rounded corners
-                            borderSide: BorderSide.none, // No border
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide.none,
                           ),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 16.0),
@@ -117,7 +156,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Password TextField with visibility toggle
+                      // Confirm Password TextField
                       TextField(
                         controller: _confirmPasswordController,
                         obscureText: !isVisibleee,
@@ -127,9 +166,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           filled: true,
                           fillColor: const Color(0xFFF7F7F7),
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(20.0), // Rounded corners
-                            borderSide: BorderSide.none, // No border
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide.none,
                           ),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 16.0),
@@ -147,29 +185,28 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()));
-                        },
+                        onPressed: otpProvider.isLoading
+                            ? null
+                            : () => _changePassword(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: maincolor, // Background color
+                          backgroundColor: maincolor,
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text(
-                          'completed',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
+                        child: otpProvider.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : const Text(
+                                'Completed',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
                       ),
                     ],
                   ),

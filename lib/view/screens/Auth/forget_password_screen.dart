@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/Auth/code_verification_screen.dart';
 
@@ -99,28 +101,57 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CodeVerificationScreen()));
+                      Consumer<OtpProvider>(
+                        builder: (context, otpProvider, child) {
+                          return Column(
+                            children: [
+                              if (otpProvider.isLoading)
+                                const CircularProgressIndicator(),
+                              SizedBox(
+                                width: double
+                                    .infinity, // Make the button full width
+                                child: ElevatedButton(
+                                  onPressed: otpProvider.isLoading
+                                      ? null
+                                      : () async {
+                                          final email =
+                                              emailController.text.trim();
+                                          await otpProvider.sendOtpCode(email);
+                                          if (otpProvider.errorMessage ==
+                                              null) {
+                                            Navigator.push(
+                                              // ignore: use_build_context_synchronously
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CodeVerificationScreen(
+                                                  email: email,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        maincolor, // Background color
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Reset password',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: maincolor, // Background color
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Reset password',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
                       ),
                     ],
                   ),

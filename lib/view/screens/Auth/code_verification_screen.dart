@@ -1,13 +1,16 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
+import 'package:provider/provider.dart'; // Import Provider
+import 'package:pinput/pinput.dart';
 import 'package:food2go_app/view/screens/Auth/new_password_screen.dart';
-import 'package:pinput/pinput.dart'; // Import Pinput
 import 'package:food2go_app/constants/colors.dart';
 
 class CodeVerificationScreen extends StatefulWidget {
-  const CodeVerificationScreen({super.key});
+  final String email;
+  const CodeVerificationScreen({super.key, required this.email});
 
   @override
   State<CodeVerificationScreen> createState() => _CodeVerificationScreenState();
@@ -50,17 +53,19 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final otpProvider = Provider.of<OtpProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/burger1.png', // Replace with your image path
+              'assets/images/burger1.png',
               fit: BoxFit.cover,
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.10, // Adjust as needed
+            top: MediaQuery.of(context).size.height * 0.10,
             left: 0,
             right: 0,
             child: const Center(
@@ -101,17 +106,16 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Center(
+                      Center(
                         child: Text(
-                          'We sent a reset link to contact@gmail.com. Enter the 4-digit code mentioned in the email.',
-                          style: TextStyle(
+                          'We sent a reset link to ${widget.email} Enter the 4-digit code mentioned in the email.',
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black45,
                           ),
                         ),
                       ),
                       const SizedBox(height: 30),
-                      // Pinput for OTP input
                       Pinput(
                         length: 4,
                         controller: codeController,
@@ -141,22 +145,15 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: maincolor, // Use your main color
+                              color: maincolor,
                             ),
                           ),
                         ),
                         onCompleted: (pin) {
-                          // Handle OTP completion
                           print('Completed: $pin');
                         },
-                        onChanged: (value) {
-                          // Handle input changes if needed
-                        },
                       ),
-
                       const SizedBox(height: 20),
-
-                      // Timer
                       Center(
                         child: Text(
                           getFormattedTime(),
@@ -167,8 +164,6 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-
-                      // Text for resending the code
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -182,10 +177,10 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                           const SizedBox(width: 5),
                           InkWell(
                             onTap: () {
-                              // Handle the resend functionality here
                               if (_seconds == 0) {
+                                otpProvider.sendOtpCode('contact@gmail.com');
                                 setState(() {
-                                  _seconds = 180; // Reset the timer
+                                  _seconds = 180;
                                 });
                                 startTimer();
                               }
@@ -202,32 +197,46 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-
-                      // Submit Button
                       ElevatedButton(
                         onPressed: () async {
-                          // Validate and process the OTP here
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NewPasswordScreen(),
-                            ),
-                          );
+                          await otpProvider.verifyOtpCode(
+                              widget.email, codeController.text);
+                          if (otpProvider.errorMessage == null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewPasswordScreen(
+                                  email: widget.email,
+                                  code: codeController.text,
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(otpProvider.errorMessage!),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: maincolor, // Background color
+                          backgroundColor: maincolor,
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text(
-                          'Verify code',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
+                        child: otpProvider.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                'Verify code',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
                       ),
                     ],
                   ),
