@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/add_address_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:provider/provider.dart';
 
-class AddressScreen extends StatelessWidget {
+class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
 
   @override
+  State<AddressScreen> createState() => _AddressScreenState();
+}
+
+class _AddressScreenState extends State<AddressScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user profile when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GetProfileProvider>(context, listen: false)
+          .fetchUserProfile(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profilesProvider = Provider.of<GetProfileProvider>(context);
     return Scaffold(
       appBar: buildAppBar(context, 'Addresses'),
       body: Padding(
@@ -15,32 +33,32 @@ class AddressScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Stack(
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: NetworkImage(
-                          'https://randomuser.me/api/portraits/men/1.jpg'),
+                      backgroundImage:
+                          NetworkImage(profilesProvider.userProfile!.imageLink),
                     ),
                   ],
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Amal Ghanem',
-                      style: TextStyle(
+                      profilesProvider.userProfile!.name,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'I love fast food',
-                      style: TextStyle(
+                      profilesProvider.userProfile!.bio!,
+                      style: const TextStyle(
                         color: Colors.grey,
                       ),
                     ),
