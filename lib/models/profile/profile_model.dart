@@ -56,7 +56,7 @@ class UserProfile {
       updatedAt: json['updated_at'],
       points: json['points'],
       address: List<dynamic>.from(json['address']),
-      bio: json['bio'],
+      bio: json['bio'] ?? '',
       code: json['code'],
       role: json['role'],
       imageLink: json['image_link'],

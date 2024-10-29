@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/edit_profile_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
 
@@ -48,14 +49,23 @@ class _PersonalInfoState extends State<PersonalInfo> {
                                 backgroundImage: NetworkImage(
                                     profilesProvider.userProfile!.imageLink),
                               ),
-                              const Positioned(
+                              Positioned(
                                 right: 0,
                                 bottom: 0,
                                 child: CircleAvatar(
                                   backgroundColor: maincolor,
                                   radius: 16,
-                                  child: Icon(Icons.edit,
-                                      color: Colors.white, size: 16),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const EditProfileScreen()));
+                                    },
+                                    child: const Icon(Icons.edit,
+                                        color: Colors.white, size: 16),
+                                  ),
                                 ),
                               ),
                             ],
@@ -71,9 +81,9 @@ class _PersonalInfoState extends State<PersonalInfo> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Text(
-                                'I love fast food',
-                                style: TextStyle(
+                              Text(
+                                '${profilesProvider.userProfile!.bio}',
+                                style: const TextStyle(
                                   color: Colors.grey,
                                 ),
                               ),
@@ -101,8 +111,8 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              _buildInfoRow(
-                                  Icons.phone, 'PHONE NUMBER', profilesProvider.userProfile!.phone),
+                              _buildInfoRow(Icons.phone, 'PHONE NUMBER',
+                                  profilesProvider.userProfile!.phone),
                               const SizedBox(
                                 height: 15,
                               ),

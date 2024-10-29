@@ -6,6 +6,7 @@ import 'package:food2go_app/controllers/Auth/sign_up_provider.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/deal/deal_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/controllers/profile/edit_profile_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => GetProfileProvider()),
         ChangeNotifierProvider(create: (_) => DealProvider()),
+        ChangeNotifierProvider(create: (_) => EditProfileProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
