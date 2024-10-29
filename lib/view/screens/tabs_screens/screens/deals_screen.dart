@@ -16,7 +16,9 @@ class _DealsScreenState extends State<DealsScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DealProvider>(context, listen: false).fetchDeals(context);
+    Future.microtask(() {
+      Provider.of<DealProvider>(context, listen: false).fetchDeals(context);
+    });
   }
 
   @override
