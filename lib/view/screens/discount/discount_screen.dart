@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:provider/provider.dart';
 import '../tabs_screens/widgets/discount_card.dart';
 
 class DiscountScreen extends StatelessWidget {
@@ -11,17 +13,28 @@ class DiscountScreen extends StatelessWidget {
       appBar: buildAppBar(context, 'Discount'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 0.9,
-          ),
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return const DiscountCard();
+        child: Consumer<ProductProvider>(
+          builder: (context,productProvider, _) {
+            return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.9,
+            ),
+            itemCount: productProvider.discounts.length,
+            itemBuilder: (context, index) {
+              final product = productProvider.discounts[index];
+              return DiscountCard(
+                name: product.name,
+              image: 'assets/images/stake.png',
+              description: product.description,
+              price: product.price,
+              );
+            },
+          );
           },
+          
         ),
       ),
     );

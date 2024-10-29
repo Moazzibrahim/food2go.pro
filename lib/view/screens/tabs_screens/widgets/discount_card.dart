@@ -3,7 +3,16 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 
 class DiscountCard extends StatefulWidget {
-  const DiscountCard({super.key});
+  const DiscountCard(
+      {super.key,
+      required this.name,
+      required this.image,
+      required this.price,
+      required this.description});
+  final String name;
+  final String image;
+  final double price;
+  final String description;
 
   @override
   State<DiscountCard> createState() => _DiscountCardState();
@@ -71,13 +80,13 @@ class _DiscountCardState extends State<DiscountCard> {
                   height: 30,
                 ),
                 Image.asset(
-                  'assets/images/stake.png',
+                  widget.image,
                 ),
               ],
             ),
           ),
           // Product Info
-          const Positioned(
+          Positioned(
             bottom: 40,
             left: 10,
             right: 10,
@@ -85,15 +94,15 @@ class _DiscountCardState extends State<DiscountCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Croissant',
-                  style: TextStyle(
+                  widget.name,
+                  style: const TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 11,
                   ),
                 ),
                 Text(
-                  'Sesame, Butter',
-                  style: TextStyle(
+                  widget.description,
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 7,
                   ),
@@ -102,22 +111,22 @@ class _DiscountCardState extends State<DiscountCard> {
             ),
           ),
           // Price Info
-          const Positioned(
+          Positioned(
             bottom: 10,
             left: 10,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '150 Egp',
-                  style: TextStyle(
+                  widget.price.toString(),
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 12,
                     decoration: TextDecoration.lineThrough,
                   ),
                 ),
-                SizedBox(width: 5),
-                Text(
+                const SizedBox(width: 5),
+                const Text(
                   '90 Egp',
                   style: TextStyle(
                     color: maincolor,

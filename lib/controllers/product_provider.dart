@@ -20,6 +20,9 @@ class ProductProvider with ChangeNotifier {
   List<Product> _favorites = [];
   List<Product> get favorites => _favorites;
 
+  List<Product> _discounts = [];
+  List<Product> get discounts => _discounts;
+
   Future<void> fetchProducts(BuildContext context) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
@@ -38,6 +41,8 @@ class ProductProvider with ChangeNotifier {
         _products = products.products.map((e) => Product.fromJson(e),).toList();
         _popularProducts = _products.where((e) => e.reccomended == 1,).toList();
         _favorites = _products.where((e) => e.isFav,).toList();
+        _discounts = _products.where((e)=> e.discountId != 'null').toList();
+        log('discounts: ${_discounts[0].name}');
         notifyListeners();
       } else {
         log('fail with status code: ${response.statusCode}');

@@ -293,11 +293,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDiscountList() {
     return SizedBox(
       height: 180,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return const DiscountCard();
+      child: Consumer<ProductProvider>(
+        builder: (context, productProvider, _) {
+          return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: productProvider.discounts.length,
+          itemBuilder: (context, index) {
+            final product = productProvider.discounts[index];
+            return DiscountCard(
+              name: product.name,
+              image: 'assets/images/stake.png',
+              description: product.description,
+              price: product.price,
+            );
+          },
+        );
         },
       ),
     );
