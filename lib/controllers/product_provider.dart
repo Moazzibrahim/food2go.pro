@@ -41,8 +41,8 @@ class ProductProvider with ChangeNotifier {
         _products = products.products.map((e) => Product.fromJson(e),).toList();
         _popularProducts = _products.where((e) => e.reccomended == 1,).toList();
         _favorites = _products.where((e) => e.isFav,).toList();
-        _discounts = _products.where((e)=> e.discountId != 'null').toList();
-        log('discounts: ${_discounts[0].name}');
+        _discounts = _products.where((e)=> e.discountId.isNotEmpty).toList();
+        log('discounts: ${_discounts.map((e)=> e.name)}');
         notifyListeners();
       } else {
         log('fail with status code: ${response.statusCode}');

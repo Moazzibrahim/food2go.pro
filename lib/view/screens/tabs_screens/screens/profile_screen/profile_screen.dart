@@ -14,15 +14,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Fetch user profile when the screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<GetProfileProvider>(context, listen: false)
-          .fetchUserProfile(context);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

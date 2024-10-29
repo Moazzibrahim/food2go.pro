@@ -31,8 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
     Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
-    Provider.of<GetProfileProvider>(context, listen: false)
-        .fetchUserProfile(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Provider.of<GetProfileProvider>(context, listen: false).fetchUserProfile(context);
+  });
   }
 
   @override
