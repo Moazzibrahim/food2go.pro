@@ -3,6 +3,7 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -21,6 +22,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   Set<Marker> _markers = {};
   late GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
+  TextEditingController addressController = TextEditingController();
 
   @override
   void initState() {
@@ -33,13 +35,11 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
 
-    // Check location permissions
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -51,7 +51,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       return Future.error('Location permissions are permanently denied.');
     }
 
-    // Get the current position
     Position position = await Geolocator.getCurrentPosition();
     setState(() {
       _initialPosition = LatLng(position.latitude, position.longitude);
@@ -65,13 +64,14 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       );
     });
 
-    // Move camera to the user's current location
     _mapController?.animateCamera(
       CameraUpdate.newLatLng(_initialPosition),
     );
+
+    await _getAddressFromLatLng(_initialPosition);
   }
 
-  void _onMapTap(LatLng position) {
+  void _onMapTap(LatLng position) async {
     setState(() {
       _selectedPosition = position;
       _markers = {
@@ -82,6 +82,24 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
       };
     });
+    await _getAddressFromLatLng(position);
+  }
+
+  Future<void> _getAddressFromLatLng(LatLng position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      Placemark place = placemarks[0];
+      String address =
+          '${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}';
+      setState(() {
+        addressController.text = address;
+      });
+    } catch (e) {
+      addressController.text = 'Unable to get address';
+    }
   }
 
   Future<void> _handleSearch(String query) async {
@@ -104,17 +122,20 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       if (location != null) {
         final lat = location.lat ?? 0.0;
         final lng = location.lng ?? 0.0;
-        _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
+        LatLng selectedLatLng = LatLng(lat, lng);
 
+        _mapController?.animateCamera(CameraUpdate.newLatLng(selectedLatLng));
         setState(() {
           _markers.add(
             Marker(
               markerId: const MarkerId('searchLocation'),
-              position: LatLng(lat, lng),
+              position: selectedLatLng,
               infoWindow: InfoWindow(title: details.result!.name),
             ),
           );
         });
+
+        await _getAddressFromLatLng(selectedLatLng);
       }
     }
   }
@@ -134,8 +155,17 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
             children: [
               const SizedBox(height: 16),
               TextField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Search for a place',
+                  filled: true,
+                  fillColor:
+                      Colors.grey.shade100, // Background color for the field
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                    borderSide: BorderSide.none, // Removes the outline border
+                  ),
                 ),
                 onChanged: (value) {
                   if (value.isNotEmpty) {
@@ -175,6 +205,24 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
+                      TextField(
+                        controller: addressController,
+                        decoration: InputDecoration(
+                          hintText: 'Selected Address',
+                          filled: true,
+                          fillColor: Colors.grey.shade100, // Background color
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 16),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30), // Rounded corners
+                            borderSide:
+                                BorderSide.none, // Removes the outline border
+                          ),
+                        ),
+                        readOnly: true,
+                      ),
+                      const SizedBox(height: 16),
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: predictions.length,
