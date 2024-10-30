@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
-import 'package:food2go_app/constants/colors.dart';
-import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -16,10 +16,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   String selectedCategory = 'Home';
   GoogleMapController? _mapController;
 
-  // Initial position set to Alexandria, Egypt
-  final LatLng _initialPosition = const LatLng(31.2001, 29.9187);
+  LatLng _initialPosition = const LatLng(31.2001, 29.9187); // Default location
   LatLng _selectedPosition = const LatLng(31.2001, 29.9187);
-
   Set<Marker> _markers = {};
   late GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
@@ -28,14 +26,48 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   void initState() {
     super.initState();
     googlePlace = GooglePlace('AIzaSyDuPxES-ul4k6UU4MiME97aoWHpxRt7Www');
+    _determinePosition();
+  }
 
-    // Set initial marker on Alexandria
-    _markers.add(
-      Marker(
-        markerId: const MarkerId('alexandriaLocation'),
-        position: _initialPosition,
-        infoWindow: const InfoWindow(title: 'Alexandria, Egypt'),
-      ),
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    // Check location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+
+    // Get the current position
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _initialPosition = LatLng(position.latitude, position.longitude);
+      _selectedPosition = _initialPosition;
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('currentLocation'),
+          position: _initialPosition,
+          infoWindow: const InfoWindow(title: 'Your Location'),
+        ),
+      );
+    });
+
+    // Move camera to the user's current location
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLng(_initialPosition),
     );
   }
 
@@ -91,11 +123,13 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(context, 'Add Address'),
+      appBar: AppBar(
+        title: const Text('Add Address'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
-          key: _formKey, // Wrap fields in Form
+          key: _formKey,
           child: Column(
             children: [
               const SizedBox(height: 16),
