@@ -91,7 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               backgroundImage: _selectedImage != null
                                   ? FileImage(_selectedImage!) as ImageProvider
                                   : AssetImage(profilesProvider.userProfile!
-                                      .imageLink), // Replace with actual image URL
+                                      .imageLink!), // Replace with actual image URL
                             ),
                             Positioned(
                               right: 0,
@@ -142,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profilesProvider.userProfile!.name,
+                              profilesProvider.userProfile!.name!,
                               style: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),

@@ -41,7 +41,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     CircleAvatar(
                       radius: 40,
                       backgroundImage:
-                          NetworkImage(profilesProvider.userProfile!.imageLink),
+                          NetworkImage(profilesProvider.userProfile!.imageLink!),
                     ),
                   ],
                 ),
@@ -50,7 +50,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      profilesProvider.userProfile!.name,
+                      profilesProvider.userProfile!.name!,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class _AddressScreenState extends State<AddressScreen> {
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.grey),
+            icon: const Icon(Icons.delete, color:maincolor),
             onPressed: () {},
           ),
         ],

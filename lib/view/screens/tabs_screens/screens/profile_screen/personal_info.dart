@@ -47,7 +47,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                               CircleAvatar(
                                 radius: 40,
                                 backgroundImage: NetworkImage(
-                                    profilesProvider.userProfile!.imageLink),
+                                    profilesProvider.userProfile!.imageLink!),
                               ),
                               Positioned(
                                 right: 0,
@@ -107,12 +107,12 @@ class _PersonalInfoState extends State<PersonalInfo> {
                                 height: 15,
                               ),
                               _buildInfoRow(Icons.email, 'EMAIL',
-                                  profilesProvider.userProfile!.email),
+                                  profilesProvider.userProfile!.email!),
                               const SizedBox(
                                 height: 15,
                               ),
                               _buildInfoRow(Icons.phone, 'PHONE NUMBER',
-                                  profilesProvider.userProfile!.phone),
+                                  profilesProvider.userProfile!.phone!),
                               const SizedBox(
                                 height: 15,
                               ),

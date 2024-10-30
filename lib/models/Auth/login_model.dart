@@ -28,14 +28,15 @@ class User {
   String? lName;
   String? email;
   String? phone;
-  dynamic image;
+  String? image;
   int? wallet;
   int? status;
-  dynamic emailVerifiedAt;
+  String? emailVerifiedAt;
   String? createdAt;
   String? updatedAt;
   int? points;
-  dynamic address;
+  String? bio;
+  String? code;
   String? role;
   String? token;
   String? imageLink;
@@ -55,7 +56,8 @@ class User {
     this.createdAt,
     this.updatedAt,
     this.points,
-    this.address,
+    this.bio,
+    this.code,
     this.role,
     this.token,
     this.imageLink,
@@ -77,7 +79,8 @@ class User {
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       points: json['points'],
-      address: json['address'],
+      bio: json['bio'],
+      code: json['code'],
       role: json['role'],
       token: json['token'],
       imageLink: json['image_link'],
@@ -100,7 +103,8 @@ class User {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'points': points,
-      'address': address,
+      'bio': bio,
+      'code': code,
       'role': role,
       'token': token,
       'image_link': imageLink,
