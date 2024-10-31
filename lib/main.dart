@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/controllers/Auth/sign_up_provider.dart';
+import 'package:food2go_app/controllers/address/get_address_provider.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/deal/deal_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DealProvider()),
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
         ChangeNotifierProvider(create: (_) => OtpProvider()),
+        ChangeNotifierProvider(create: (_) => AddressProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/address/get_address_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -14,15 +16,23 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   final _formKey = GlobalKey<FormState>();
+
   String selectedCategory = 'Home';
   GoogleMapController? _mapController;
-
-  LatLng _initialPosition = const LatLng(31.2001, 29.9187); // Default location
+  LatLng _initialPosition = const LatLng(31.2001, 29.9187);
   LatLng _selectedPosition = const LatLng(31.2001, 29.9187);
   Set<Marker> _markers = {};
   late GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
-  TextEditingController addressController = TextEditingController();
+
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController streetController = TextEditingController();
+  final TextEditingController buildingNumController = TextEditingController();
+  final TextEditingController floorNumController = TextEditingController();
+  final TextEditingController apartmentController = TextEditingController();
+  final TextEditingController additionalDataController =
+      TextEditingController();
+  String? selectedZoneId;
 
   @override
   void initState() {
@@ -150,9 +160,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
+            key: _formKey,
+            child: Column(children: [
               const SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
@@ -245,62 +254,127 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                           _buildCategoryButton(context, 'Other'),
                         ],
                       ),
-                      const SizedBox(height: 24),
-                      _buildTextField(context, 'Selection Zone',
-                          isDropdown: true, isRequired: true),
+                      _buildDropdownField(context, 'Select Zone'),
                       const SizedBox(height: 16),
-                      _buildTextField(context, 'Street', isRequired: true),
+                      _buildTextField(context, 'Street',
+                          controller: streetController, isRequired: true),
                       const SizedBox(height: 16),
                       _buildTextField(context, 'Building No.',
-                          isRequired: true),
+                          controller: buildingNumController, isRequired: true),
                       const SizedBox(height: 16),
                       Row(
                         children: [
                           Expanded(
-                              child: _buildTextField(context, 'Floor No',
-                                  isRequired: true)),
+                            child: _buildTextField(context, 'Floor No.',
+                                controller: floorNumController,
+                                isRequired: true),
+                          ),
                           const SizedBox(width: 16),
                           Expanded(
-                              child: _buildTextField(context, 'Apartment',
-                                  isRequired: true)),
+                            child: _buildTextField(context, 'Apartment',
+                                controller: apartmentController,
+                                isRequired: true),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _buildTextField(context, 'Additional Data'),
+                      _buildTextField(context, 'Additional Data',
+                          controller: additionalDataController),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              Provider.of<AddressProvider>(context,
+                                      listen: false)
+                                  .addAddress(
+                                context: context,
+                                zoneId: int.parse(selectedZoneId!),
+                                address: addressController.text,
+                                street: streetController.text,
+                                buildingNum: buildingNumController.text,
+                                floorNum: floorNumController.text,
+                                apartment: apartmentController.text,
+                                additionalData: additionalDataController.text,
+                                type: selectedCategory,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: maincolor,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'Save Address',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // Form is valid; proceed with saving the address
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: maincolor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text(
-                    'Save Address',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ])),
+      ),
+    );
+  }
+
+  Widget _buildDropdownField(BuildContext context, String label) {
+    return Consumer<AddressProvider>(
+      builder: (context, provider, child) {
+        return DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            hintText: label,
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
           ),
+          items: provider.zones.map((zone) {
+            return DropdownMenuItem(
+              value: zone.id.toString(),
+              child: Text(zone.zone),
+            );
+          }).toList(),
+          onChanged: (value) => setState(() => selectedZoneId = value),
+          validator: (value) =>
+              value == null || value.isEmpty ? 'Please select a zone' : null,
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField(BuildContext context, String label,
+      {TextEditingController? controller, bool isRequired = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: label,
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
         ),
       ),
+      validator: isRequired
+          ? (value) =>
+              value == null || value.isEmpty ? 'This field is required' : null
+          : null,
     );
   }
 
@@ -329,56 +403,5 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildTextField(BuildContext context, String label,
-      {bool isDropdown = false, bool isRequired = false}) {
-    if (isDropdown) {
-      return DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          hintText: label,
-          hintStyle: TextStyle(color: Colors.grey.shade600),
-          filled: true,
-          fillColor: Colors.grey.shade100,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        items: ['Zone 1', 'Zone 2', 'Zone 3']
-            .map((zone) => DropdownMenuItem(
-                  value: zone,
-                  child: Text(zone),
-                ))
-            .toList(),
-        onChanged: (value) {},
-        validator: isRequired
-            ? (value) =>
-                value == null || value.isEmpty ? 'This field is required' : null
-            : null,
-        style: const TextStyle(color: Colors.black87),
-      );
-    } else {
-      return TextFormField(
-        decoration: InputDecoration(
-          hintText: label,
-          hintStyle: TextStyle(color: Colors.grey.shade600),
-          filled: true,
-          fillColor: Colors.grey.shade100,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        validator: isRequired
-            ? (value) =>
-                value == null || value.isEmpty ? 'This field is required' : null
-            : null,
-      );
-    }
   }
 }

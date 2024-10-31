@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/address/get_address_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/add_address_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
-import 'package:provider/provider.dart';
-
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
 
@@ -16,16 +17,24 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch user profile when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+      final token = loginProvider.token!;
+
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
+      Provider.of<AddressProvider>(context, listen: false)
+          .fetchAddresses(token);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final profilesProvider = Provider.of<GetProfileProvider>(context);
+    final addressProvider = Provider.of<AddressProvider>(context);
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final token = loginProvider.token!;
+
     return Scaffold(
       appBar: buildAppBar(context, 'Addresses'),
       body: Padding(
@@ -36,14 +45,10 @@ class _AddressScreenState extends State<AddressScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage:
-                          NetworkImage(profilesProvider.userProfile!.imageLink!),
-                    ),
-                  ],
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage:
+                      NetworkImage(profilesProvider.userProfile!.imageLink!),
                 ),
                 const SizedBox(width: 30),
                 Column(
@@ -52,41 +57,40 @@ class _AddressScreenState extends State<AddressScreen> {
                     Text(
                       profilesProvider.userProfile!.name!,
                       style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       profilesProvider.userProfile!.bio!,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildAddressCard(
-                    context,
-                    icon: Icons.home,
-                    title: 'Home',
-                    address: '2464 Royal Ln. Mesa, New Jersey 45463',
-                  ),
-                  const SizedBox(height: 15),
-                  _buildAddressCard(
-                    context,
-                    icon: Icons.work,
-                    title: 'Work',
-                    address: '3891 Ranchview Dr. Richardson, California 62639',
-                  ),
-                ],
-              ),
+              child: addressProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : addressProvider.errorMessage != null
+                      ? Center(child: Text(addressProvider.errorMessage!))
+                      : ListView.builder(
+                          itemCount: addressProvider.addresses.length,
+                          itemBuilder: (context, index) {
+                            final address = addressProvider.addresses[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: _buildAddressCard(
+                                context,
+                                token: token,
+                                icon: Icons.home,
+                                title: address.type == 'work' ? 'Work' : 'Home',
+                                address:
+                                    '${address.zone.zone}, ${address.address}, ${address.street}, ${address.buildingNum}',
+                                addressId: address.id,
+                              ),
+                            );
+                          },
+                        ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -95,16 +99,18 @@ class _AddressScreenState extends State<AddressScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.all(16.0),
-                    backgroundColor: maincolor, // Change button color
+                    backgroundColor: maincolor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddAddressScreen()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddAddressScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Add New Address',
@@ -120,11 +126,16 @@ class _AddressScreenState extends State<AddressScreen> {
   }
 
   Widget _buildAddressCard(BuildContext context,
-      {required IconData icon,
+      {required String token,
+      required IconData icon,
       required String title,
-      required String address}) {
+      required String address,
+      required int addressId}) {
+    final addressProvider =
+        Provider.of<AddressProvider>(context, listen: false);
+
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -139,13 +150,11 @@ class _AddressScreenState extends State<AddressScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Address Icon
           CircleAvatar(
             backgroundColor: Colors.grey.shade200,
             child: Icon(icon, color: Colors.grey),
           ),
           const SizedBox(width: 10),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,14 +172,37 @@ class _AddressScreenState extends State<AddressScreen> {
               ],
             ),
           ),
-
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.grey),
-            onPressed: () {},
+            onPressed: () {
+              // Handle edit action
+            },
           ),
           IconButton(
-            icon: const Icon(Icons.delete, color:maincolor),
-            onPressed: () {},
+            icon: const Icon(Icons.delete, color: maincolor),
+            onPressed: () async {
+              bool? confirmDelete = await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Delete Address'),
+                  content: const Text(
+                      'Are you sure you want to delete this address?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmDelete == true) {
+                await addressProvider.deleteAddress(token, addressId);
+              }
+            },
           ),
         ],
       ),
