@@ -90,7 +90,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               radius: 40,
                               backgroundImage: _selectedImage != null
                                   ? FileImage(_selectedImage!) as ImageProvider
-                                  : AssetImage(profilesProvider.userProfile!
+                                  : NetworkImage(profilesProvider.userProfile!
                                       .imageLink!), // Replace with actual image URL
                             ),
                             Positioned(
