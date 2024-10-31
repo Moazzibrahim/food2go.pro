@@ -7,6 +7,8 @@ import 'package:food2go_app/controllers/Auth/sign_up_provider.dart';
 import 'package:food2go_app/controllers/address/get_address_provider.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/deal/deal_provider.dart';
+import 'package:food2go_app/controllers/orders/orders_history_provider.dart';
+import 'package:food2go_app/controllers/orders/orders_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/edit_profile_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
@@ -33,7 +35,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DealProvider()),
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
         ChangeNotifierProvider(create: (_) => OtpProvider()),
-        ChangeNotifierProvider(create: (_) => AddressProvider()),
+                ChangeNotifierProvider(create: (_) => OrdersProvider()),
+        ChangeNotifierProvider(create: (_) => OrdersHistoryProvider()),
+                ChangeNotifierProvider(create: (_) => AddressProvider()),
+      ],
+
       ],
       child: MaterialApp(
         theme: ThemeData(

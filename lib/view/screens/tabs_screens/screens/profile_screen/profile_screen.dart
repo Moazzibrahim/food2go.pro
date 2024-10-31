@@ -1,8 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/Auth/login_screen.dart';
-import 'package:food2go_app/view/screens/order_tracing_screen.dart';
+import 'package:food2go_app/view/screens/my_orders/my_orders_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'address_screen.dart';
 import 'personal_info.dart';
 
@@ -14,6 +22,39 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> _logout(BuildContext context) async {
+    final url = Uri.parse('https://backend.food2go.pro/api/logout');
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final String token = loginProvider.token!;
+    try {
+      final response = await http.post(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 &&
+          responseData['success'] == 'You logout success') {
+        // Navigate to the login screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+        log("you logged out successfully");
+      } else {
+        _showErrorSnackbar('Failed to log out. Please try again.');
+      }
+    } catch (error) {
+      _showErrorSnackbar('An error occurred. Please check your network.');
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +73,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      // Display profile information
                       Text(
                         'Welcome, ${profileProvider.userProfile!.name}',
                         style: const TextStyle(
@@ -67,12 +107,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       _buildProfileOption(
                         icon: Icons.shopping_bag_outlined,
-                        label: 'Order Tracking',
+                        label: 'My Orders ',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const OrderTrackingScreen(),
+                              builder: (context) => const MyOrderScreen(),
                             ),
                           );
                         },
@@ -81,12 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.logout,
                         label: 'Log Out',
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
-                          );
+                          _logout(context);
                         },
                       ),
                     ],
