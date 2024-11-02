@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider(create: (_) => AddressProvider()),
       ],
 
-      ],
       child: MaterialApp(
         theme: ThemeData(
             fontFamily: 'Poppins',
