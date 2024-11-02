@@ -4,12 +4,18 @@ import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/categories_model.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:food2go_app/models/categories/product_model.dart';
 
-class CategoryDetailsScreen extends StatelessWidget {
+class CategoryDetailsScreen extends StatefulWidget {
   final Category category;
 
   const CategoryDetailsScreen({super.key, required this.category});
+
+  @override
+  _CategoryDetailsScreenState createState() => _CategoryDetailsScreenState();
+}
+
+class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
+  String? selectedSubCategoryId;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                   bottomRight: Radius.circular(100.0),
                 ),
                 child: Image.network(
-                  category.imageLink,
+                  widget.category.imageLink,
                   width: double.infinity,
                   height: 250,
                   fit: BoxFit.cover,
@@ -60,7 +66,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 44),
                     Text(
-                      category.name, // Dynamic category name
+                      widget.category.name,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -76,15 +82,32 @@ class CategoryDetailsScreen extends StatelessWidget {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: category.subCategories.map((subCategory) {
-                return SelectableFilterChip(label: subCategory.name);
+              children: widget.category.subCategories.map((subCategory) {
+                return SelectableFilterChip(
+                  label: subCategory.name,
+                  isSelected:
+                      selectedSubCategoryId == subCategory.id.toString(),
+                  onSelected: (isSelected) {
+                    setState(() {
+                      selectedSubCategoryId =
+                          isSelected ? subCategory.id.toString() : null;
+                    });
+                  },
+                );
               }).toList(),
             ),
           ),
           Expanded(
             child: Consumer<ProductProvider>(
               builder: (context, productProvider, _) {
-                final products = productProvider.products;
+                final products =
+                    productProvider.getProductsByCategory(widget.category.id);
+                final filteredProducts = selectedSubCategoryId == null
+                    ? products
+                    : products
+                        .where((product) =>
+                            product.subCategoryId == selectedSubCategoryId)
+                        .toList();
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -93,11 +116,11 @@ class CategoryDetailsScreen extends StatelessWidget {
                     mainAxisSpacing: 10,
                     mainAxisExtent: 230,
                   ),
-                  itemCount: products.length,
+                  itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
-                    final product = products[index];
+                    final product = filteredProducts[index];
                     return FoodCard(
-                      
+                      product: product,
                       name: product.name,
                       description: product.description,
                       image: product.image,
@@ -114,16 +137,17 @@ class CategoryDetailsScreen extends StatelessWidget {
   }
 }
 
-class SelectableFilterChip extends StatefulWidget {
-  const SelectableFilterChip({super.key, required this.label});
+class SelectableFilterChip extends StatelessWidget {
   final String label;
+  final bool isSelected;
+  final ValueChanged<bool> onSelected;
 
-  @override
-  State<SelectableFilterChip> createState() => _SelectableFilterChipState();
-}
-
-class _SelectableFilterChipState extends State<SelectableFilterChip> {
-  bool _isSelected = false;
+  const SelectableFilterChip({
+    Key? key,
+    required this.label,
+    required this.isSelected,
+    required this.onSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -132,19 +156,15 @@ class _SelectableFilterChipState extends State<SelectableFilterChip> {
       child: ChoiceChip(
         showCheckmark: false,
         label: Text(
-          widget.label,
+          label,
           style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-              color: _isSelected ? Colors.white : maincolor // Text color
-              ),
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: isSelected ? Colors.white : maincolor, // Text color
+          ),
         ),
-        selected: _isSelected,
-        onSelected: (selected) {
-          setState(() {
-            _isSelected = selected;
-          });
-        },
+        selected: isSelected,
+        onSelected: onSelected,
         backgroundColor: Colors.white, // White background when unselected
         selectedColor: maincolor, // Red background when selected
         shape: const StadiumBorder(

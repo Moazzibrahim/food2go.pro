@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/constants/strings.dart';
@@ -38,18 +39,24 @@ class ProductProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.body);
         Products products = Products.fromJson(responseData);
-        _products = products.products.map((e) => Product.fromJson(e),).toList();
-        _popularProducts = _products.where((e) => e.reccomended == 1,).toList();
-        _favorites = _products.where((e) => e.isFav,).toList();
-        _discounts = _products.where((e)=> e.discountId.isNotEmpty).toList();
-        log('discounts: ${_discounts.map((e)=> e.name)}');
+        _products = products.products.map((e) => Product.fromJson(e)).toList();
+        _popularProducts = _products.where((e) => e.reccomended == 1).toList();
+        _favorites = _products.where((e) => e.isFav).toList();
+        _discounts = _products.where((e) => e.discountId.isNotEmpty).toList();
+        log('discounts: ${_discounts.map((e) => e.name)}');
         notifyListeners();
       } else {
-        log('fail with status code: ${response.statusCode}');
+        log('Failed with status code: ${response.statusCode}');
       }
     } catch (e) {
       log('Error in fetch products: $e');
     }
+  }
+
+  List<Product> getProductsByCategory(int categoryId) {
+    return _products
+        .where((product) => product.categoryId == categoryId)
+        .toList();
   }
 
   Future<void> makeFavourites(BuildContext context, int fav, int id) async {
@@ -65,29 +72,22 @@ class ProductProvider with ChangeNotifier {
           body: jsonEncode({'favourite': fav}));
       if (response.statusCode == 200) {
         for (var e in _products) {
-          if(e.id == id){
-            if(fav == 1){
-              e.isFav = true;
-              notifyListeners();
-            }else{
-              e.isFav = false;
-              notifyListeners();
-            }
+          if (e.id == id) {
+            e.isFav = (fav == 1);
           }
         }
-        _favorites = _products.where((e) => e.isFav,).toList();
+        _favorites = _products.where((e) => e.isFav).toList();
         notifyListeners();
-        if(fav == 1){
-          // ignore: use_build_context_synchronously
-        showTopSnackBar(context, 'Added to Favorites!', Icons.favorite,
-            maincolor, const Duration(seconds: 4));
-        }else{
-          // ignore: use_build_context_synchronously
-        showTopSnackBar(context, 'item removed', Icons.heart_broken,
-            maincolor, const Duration(seconds: 4));
+
+        if (fav == 1) {
+          showTopSnackBar(context, 'Added to Favorites!', Icons.favorite,
+              maincolor, const Duration(seconds: 4));
+        } else {
+          showTopSnackBar(context, 'Item removed', Icons.heart_broken,
+              maincolor, const Duration(seconds: 4));
         }
       } else {
-        log('fail with status code: ${response.statusCode}');
+        log('Failed with status code: ${response.statusCode}');
       }
     } catch (e) {
       log('Error in making fav: $e');

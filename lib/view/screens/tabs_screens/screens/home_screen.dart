@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildHeader(),
             const SizedBox(height: 16),
             _buildSearchAndFilter(),
-            const SizedBox(height: 16),
+            // const SizedBox(height: 16),
             _buildCategoryList(),
             const SizedBox(height: 16),
             _buildDealsSection(),
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, constraints) {
             double itemWidth = (constraints.maxWidth - 35) / 4;
             return SizedBox(
-              height: 230,
+              height: 150,
               child: Center(
                 child: Wrap(
                   spacing: 10,
