@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/orders/orders_history_provider.dart';
@@ -7,6 +8,7 @@ import 'package:food2go_app/models/orders/orders_model.dart';
 import 'package:food2go_app/view/screens/my_orders/single_order_history_screen.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MyOrderScreen extends StatelessWidget {
@@ -176,12 +178,65 @@ class MyOrderScreen extends StatelessWidget {
   }
 
   Widget _buildOrderCard(BuildContext context, Order order) {
+    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
+
+    // Convert cancelTime to DateTime format if it's in string format
+    DateTime? cancelTimeDate;
+    if (ordersProvider.cancelTime != null) {
+      cancelTimeDate = DateFormat("yyyy-MM-dd HH:mm:ss")
+          .parse(ordersProvider.cancelTime!); // Update format as per your API
+    }
+
+    // Check if the current time is before cancelTimeDate
+    final canCancelOrder =
+        cancelTimeDate != null && DateTime.now().isBefore(cancelTimeDate);
+
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OrderTrackingScreen(orderId: order.id)));
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Order Actions'),
+              content: const Text('Choose an action for your order.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // Navigate to OrderTrackingScreen or execute track order logic
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            OrderTrackingScreen(orderId: order.id),
+                      ),
+                    );
+                  },
+                  child: const Text('Track Order'),
+                ),
+                if (canCancelOrder)
+                  TextButton(
+                    onPressed: () async {
+                      await ordersProvider.cancelOrder(context, order.id!);
+                    },
+                    child: const Text(
+                      'Cancel Order',
+                      style: TextStyle(color: maincolor),
+                    ),
+                  )
+                else
+                  const TextButton(
+                    onPressed: null, // Disable the button
+                    child:  Text(
+                      'Cancellation Time Expired',
+                      style: TextStyle(
+                          color: Colors
+                              .grey), // Greyed-out text to indicate it's disabled
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
       },
       child: Card(
         shape: RoundedRectangleBorder(

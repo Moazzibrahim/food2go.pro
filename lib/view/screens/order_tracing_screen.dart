@@ -25,7 +25,7 @@ class OrderTrackingScreen extends StatelessWidget {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      log("${orderId}");
+      log("$orderId");
       return data['status'] ?? 'unknown';
     } else {
       throw Exception('Failed to load order status');
