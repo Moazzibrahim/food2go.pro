@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/models/categories/categories_model.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:food2go_app/models/categories/product_model.dart';
 
 class CategoryDetailsScreen extends StatelessWidget {
-  const CategoryDetailsScreen({super.key});
+  final Category category;
+
+  const CategoryDetailsScreen({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          // Header section with image and category title
           Stack(
             children: [
               ClipRRect(
@@ -18,8 +23,8 @@ class CategoryDetailsScreen extends StatelessWidget {
                   bottomLeft: Radius.circular(100.0),
                   bottomRight: Radius.circular(100.0),
                 ),
-                child: Image.asset(
-                  'assets/images/categoty_image.png', // Replace with your image asset
+                child: Image.network(
+                  category.imageLink,
                   width: double.infinity,
                   height: 250,
                   fit: BoxFit.cover,
@@ -37,27 +42,26 @@ class CategoryDetailsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
-                      child: InkWell(
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: maincolor,
+                    child: InkWell(
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: maincolor,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  )),
+                  ),
                 ),
               ),
-              const Align(
+              Align(
                 alignment: Alignment.center,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 44,
-                    ),
+                    const SizedBox(height: 44),
                     Text(
-                      'Burger', // Category name
-                      style: TextStyle(
+                      category.name, // Dynamic category name
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -69,31 +73,37 @@ class CategoryDetailsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const SingleChildScrollView(
+          SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: [
-                SelectableFilterChip(label: 'Cheese'),
-                SelectableFilterChip(label: 'Mushroom'),
-                SelectableFilterChip(label: 'Meat'),
-              ],
+              children: category.subCategories.map((subCategory) {
+                return SelectableFilterChip(label: subCategory.name);
+              }).toList(),
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  mainAxisExtent: 230),
-              itemCount: foodItems.length,
-              itemBuilder: (context, index) {
-                return const FoodCard(
-                  name: 'Big Burger',
-                  description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
-                  image: 'assets/images/medium.png',
-                  price: 50.0,
+            child: Consumer<ProductProvider>(
+              builder: (context, productProvider, _) {
+                final products = productProvider.products;
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    mainAxisExtent: 230,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return FoodCard(
+                      
+                      name: product.name,
+                      description: product.description,
+                      image: product.image,
+                      price: product.price,
+                    );
+                  },
                 );
               },
             ),

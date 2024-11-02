@@ -15,6 +15,8 @@ import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 
+import '../../../../models/categories/categories_model.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -32,8 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
         .fetchCategories(context);
     Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    Provider.of<GetProfileProvider>(context, listen: false).fetchUserProfile(context);
-  });
+      Provider.of<GetProfileProvider>(context, listen: false)
+          .fetchUserProfile(context);
+    });
   }
 
   @override
@@ -159,32 +162,106 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryList() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double itemWidth = (constraints.maxWidth - 35) / 4;
-        return SizedBox(
-          height: 230,
-          child: Center(
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 15, // Vertical spacing between rows
-              children: [
-                _buildCategoryItem('All', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem(
-                    'Pastries', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem(
-                    'candies', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem('Burger', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem(
-                    'Pastries', 'assets/images/bb.png', itemWidth),
-                _buildCategoryItem('Pasta', 'assets/images/bb.png', itemWidth),
-              ],
-            ),
-          ),
+    return Consumer<CategoriesProvider>(
+      builder: (context, categoriesProvider, child) {
+        final allCategory = Category(
+          name: 'All',
+          imageLink: 'assets/images/Onboarding3.png',
+          id: 0,
+          status: 1,
+          activity: 1,
+          priority: 0,
+          subCategories: [],
+        );
+
+        final categories = [allCategory, ...categoriesProvider.categories];
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            double itemWidth = (constraints.maxWidth - 35) / 4;
+            return SizedBox(
+              height: 230,
+              child: Center(
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 15,
+                  children: categories.map((category) {
+                    return _buildCategoryItem(
+                        category.name, category.imageLink, itemWidth);
+                  }).toList(),
+                ),
+              ),
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildCategoryItem(String title, String image, double width) {
+    return GestureDetector(
+      onTap: () {
+        if (title == 'All') {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => const CategoriesScreen()),
+          );
+        } else {
+          // Find the selected category from the provider or your list
+          final selectedCategory =
+              Provider.of<CategoriesProvider>(context, listen: false)
+                  .categories
+                  .firstWhere((category) => category.name == title);
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) =>
+                  CategoryDetailsScreen(category: selectedCategory),
+            ),
+          );
+        }
+      },
+      child: Container(
+        width: width,
+        height: 110,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: maincolor,
+              child: ClipOval(
+                child: title == 'All'
+                    ? Image.asset(
+                        'assets/images/Onboarding3.png',
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      )
+                    : Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -297,61 +374,19 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Consumer<ProductProvider>(
         builder: (context, productProvider, _) {
           return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: productProvider.discounts.length,
-          itemBuilder: (context, index) {
-            final product = productProvider.discounts[index];
-            return DiscountCard(
-              name: product.name,
-              image: 'assets/images/stake.png',
-              description: product.description,
-              price: product.price,
-            );
-          },
-        );
+            scrollDirection: Axis.horizontal,
+            itemCount: productProvider.discounts.length,
+            itemBuilder: (context, index) {
+              final product = productProvider.discounts[index];
+              return DiscountCard(
+                name: product.name,
+                image: 'assets/images/stake.png',
+                description: product.description,
+                price: product.price,
+              );
+            },
+          );
         },
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(String title, String image, double width) {
-    return GestureDetector(
-      onTap: () {
-        if (title == 'All') {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const CategoriesScreen()));
-        } else if (title == 'Burger') {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => const CategoryDetailsScreen()));
-        }
-      },
-      child: Container(
-        width: width,
-        height: 110,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(40),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: maincolor,
-              child: Image.asset(image),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
