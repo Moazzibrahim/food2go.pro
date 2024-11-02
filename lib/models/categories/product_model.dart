@@ -110,7 +110,7 @@ class Discount {
 
   factory Discount.fromJson(Map<String, dynamic> json) => Discount(
       name: json['name'],
-      amount: json['amount'] != null ? json['amount'].toDouble() : 0.0, // Ensure `double`
+      amount: json['amount'] != null ? json['amount'].toDouble() : 0.0,
       type: json['type'],
       id: json['id'],
     );

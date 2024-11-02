@@ -284,6 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
               price: product.price,
               productId: product.id,
               isFav: product.isFav,
+              product: product,
             );
           },
         );

@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key});
+  const ProductDetailsScreen({super.key,this.product});
+  final Product? product;
 
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
@@ -13,7 +15,7 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int quantity = 1;
-  String selectedSize = "S"; // Track the selected size
+  String? selectedOption; // Track the selected size
   bool isFavorited = false;
 
   void increaseQuantity() {
@@ -128,65 +130,35 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const Row(
-                    children: [
-                      Icon(Icons.star, color: maincolor),
-                      SizedBox(width: 4),
-                      Text("4.7"),
-                      SizedBox(width: 80),
-                      Icon(Icons.delivery_dining, color: maincolor),
-                      SizedBox(width: 4),
-                      Text("Free"),
-                      SizedBox(width: 80),
-                      Icon(Icons.timer, color: maincolor),
-                      SizedBox(width: 4),
-                      Text("20 Min"),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Size:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedSize = "S";
-                          });
-                        },
-                        child: SizeOption(
-                          text: "S",
-                          isSelected: selectedSize == "S",
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedSize = "M";
-                          });
-                        },
-                        child: SizeOption(
-                          text: "M",
-                          isSelected: selectedSize == "M",
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedSize = "L";
-                          });
-                        },
-                        child: SizeOption(
-                          text: "L",
-                          isSelected: selectedSize == "L",
-                        ),
-                      ),
-                    ],
-                  ),
+                  const SizedBox(height: 16,),
+                  ...List.generate(widget.product!.variations.length, (index) {
+                    final variation = widget.product!.variations[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(variation.name,style: const TextStyle(fontSize: 17,fontWeight: FontWeight.w700),),
+                        const SizedBox(height: 8,),
+                        Row(
+                          children: List.generate(widget.product!.variations[index].options.length,
+                          (j) {
+                            final option = widget.product!.variations[index].options[j];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedOption = option.name;
+                                });
+                              },
+                              child: SizeOption(
+                                text: option.name,
+                                isSelected: selectedOption == option.name,
+                                ),
+                            );
+                          },
+                          ),
+                        )
+                      ],
+                    );
+                  },),
                   const SizedBox(height: 16),
                   const Text(
                     "Ingredients:",
@@ -194,6 +166,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text("Pasta, Basil, Cheese"),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Add on order:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  ...List.generate(
+                  widget.product!.addons.length, 
+                  (index) {
+                    final addon = widget.product!.addons[index];
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(addon.name),
+                        Checkbox(value: false, onChanged: (value){})
+                      ],
+                    );
+                  },
+                  ),
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

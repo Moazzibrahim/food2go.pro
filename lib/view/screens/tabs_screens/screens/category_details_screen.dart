@@ -94,6 +94,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                   description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
                   image: 'assets/images/medium.png',
                   price: 50.0,
+                  
                 );
               },
             ),
