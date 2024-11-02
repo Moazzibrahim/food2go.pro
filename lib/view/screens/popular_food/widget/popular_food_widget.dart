@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class FoodCard extends StatefulWidget {
-  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price, this.productId, this.isFav});
+  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price, this.productId, this.isFav, this.product});
   final String name;
   final String image;
   final String description;
   final double price;
   final int? productId;
   final bool? isFav;
+  final Product? product;
   @override
   State<FoodCard> createState() => _FoodCardState();
 }
@@ -65,7 +67,7 @@ class _FoodCardState extends State<FoodCard> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Image.asset(
+                child: Image.network(
                   widget.image,
                   fit: BoxFit.cover,
                 ),
@@ -114,7 +116,9 @@ class _FoodCardState extends State<FoodCard> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const ProductDetailsScreen()));
+                                    ProductDetailsScreen(
+                                      product: widget.product,
+                                    )));
                       },
                       child: Container(
                         height: 24,
