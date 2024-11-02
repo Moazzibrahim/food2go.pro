@@ -11,8 +11,12 @@ class CategoryCard extends StatelessWidget {
       width: 150,
       height: 180,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover)),
+        borderRadius: BorderRadius.circular(24),
+        image: DecorationImage(
+          image: NetworkImage(image), // Load image from network
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Container(
         width: 150,
         height: 180,
@@ -24,7 +28,10 @@ class CategoryCard extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(
-                fontWeight: FontWeight.w500, fontSize: 32, color: Colors.white),
+              fontWeight: FontWeight.w500,
+              fontSize: 32,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

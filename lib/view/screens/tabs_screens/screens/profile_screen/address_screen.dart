@@ -6,6 +6,7 @@ import 'package:food2go_app/controllers/address/get_address_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/add_address_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
 
@@ -171,12 +172,6 @@ class _AddressScreenState extends State<AddressScreen> {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.grey),
-            onPressed: () {
-              // Handle edit action
-            },
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: maincolor),
