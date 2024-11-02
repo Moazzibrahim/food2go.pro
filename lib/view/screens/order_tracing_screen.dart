@@ -1,46 +1,102 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class OrderTrackingScreen extends StatelessWidget {
-  const OrderTrackingScreen({super.key});
+  final int? orderId;
+  const OrderTrackingScreen({super.key, this.orderId});
+
+  Future<String> fetchOrderStatus(BuildContext context) async {
+    final url = Uri.parse(
+        'https://backend.food2go.pro/customer/orders/order_status/$orderId');
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final String token = loginProvider.token!;
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      log("${orderId}");
+      return data['status'] ?? 'unknown';
+    } else {
+      throw Exception('Failed to load order status');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context, 'Order Tracking'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            _buildOrderStatusItem(
-              icon: Icons.restaurant_menu,
-              title: 'Order Placed',
-              subtitle: '25 Aug 2024, 25 Aug 2024',
-              isActive: true,
-              isLast: false, // Not the last item
-            ),
-            _buildOrderStatusItem(
-              icon: Icons.delivery_dining,
-              title: 'Preparing From restaurant',
-              isActive: true,
-              isLast: false, // Not the last item
-            ),
-            _buildOrderStatusItem(
-              icon: Icons.pedal_bike,
-              title: 'Order Is On The Way',
-              subtitle: 'Your Delivery Man Is Coming',
-              isActive: false,
-              isLast: false, // Not the last item
-            ),
-            _buildOrderStatusItem(
-              icon: Icons.check_circle_outline,
-              title: 'Order Delivered',
-              isActive: false,
-              isLast: true,
-            ),
-          ],
-        ),
+      body: FutureBuilder<String>(
+        future: fetchOrderStatus(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data == 'unknown') {
+            return const Center(child: Text('No data found'));
+          } else {
+            final status = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  _buildOrderStatusItem(
+                    icon: Icons.pending_actions,
+                    title: 'Pending',
+                    isActive: status == 'pending' ||
+                        status == 'confirmed' ||
+                        status == 'processing' ||
+                        status == 'out_for_delivery' ||
+                        status == 'scheduled' ||
+                        status == 'delivered',
+                    isLast: false,
+                  ),
+                  _buildOrderStatusItem(
+                    icon: Icons.kitchen,
+                    title: 'preparing',
+                    isActive: status == 'processing' ||
+                        status == 'out_for_delivery' ||
+                        status == 'scheduled' ||
+                        status == 'delivered',
+                    isLast: false,
+                  ),
+                  _buildOrderStatusItem(
+                    icon: Icons.schedule,
+                    title: 'Scheduled',
+                    isActive: status == 'scheduled' ||
+                        status == 'out_for_delivery' ||
+                        status == 'delivered',
+                    isLast: false,
+                  ),
+                  _buildOrderStatusItem(
+                    icon: Icons.delivery_dining,
+                    title: 'Out for Delivery',
+                    isActive:
+                        status == 'out_for_delivery' || status == 'delivered',
+                    isLast: false,
+                  ),
+                  _buildOrderStatusItem(
+                    icon: Icons.check_circle_outline,
+                    title: 'Delivered',
+                    isActive: status == 'delivered',
+                    isLast: true,
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }

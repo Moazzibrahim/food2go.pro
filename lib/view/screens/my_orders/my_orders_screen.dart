@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/orders/orders_history_provider.dart';
 import 'package:food2go_app/controllers/orders/orders_provider.dart';
+import 'package:food2go_app/models/orders/order_history_model.dart';
 import 'package:food2go_app/models/orders/orders_model.dart';
 import 'package:food2go_app/view/screens/my_orders/single_order_history_screen.dart';
+import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +14,6 @@ class MyOrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch orders when the screen is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<OrdersProvider>(context, listen: false).fetchOrders(context);
       Provider.of<OrdersHistoryProvider>(context, listen: false)
@@ -71,15 +72,20 @@ class MyOrderScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Consumer<OrdersProvider>(
-          builder: (context, ordersProvider, _) {
-            final orders = ordersProvider.orderresponse?.orders ?? [];
+        body: Consumer2<OrdersProvider, OrdersHistoryProvider>(
+          builder: (context, ordersProvider, ordersHistoryProvider, _) {
+            final ongoingOrders = ordersProvider.orderresponse?.orders ?? [];
+            final historyOrders =
+                ordersHistoryProvider.ordersHistory?.orders ?? [];
+
             return TabBarView(
               children: [
-                orders.isEmpty
+                ongoingOrders.isEmpty
                     ? _buildNoOrderHistory(context)
-                    : _buildOrderList(context, orders),
-                _buildOrderList(context, orders),
+                    : _buildOrderList(context, ongoingOrders),
+                historyOrders.isEmpty
+                    ? _buildNoOrderHistory(context)
+                    : _buildHistoryOrderList(context, historyOrders),
               ],
             );
           },
@@ -158,13 +164,24 @@ class MyOrderScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHistoryOrderList(
+      BuildContext context, List<OrderHistoryModel> orders) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: orders.length,
+      itemBuilder: (context, index) {
+        return _buildOrderHistoryCard(context, orders[index]);
+      },
+    );
+  }
+
   Widget _buildOrderCard(BuildContext context, Order order) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const SingleOrderHistoryScreen()));
+                builder: (context) => OrderTrackingScreen(orderId: order.id)));
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -175,7 +192,6 @@ class MyOrderScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              // Image Placeholder
               Container(
                 width: 80,
                 height: 80,
@@ -186,13 +202,12 @@ class MyOrderScreen extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    'assets/images/medium.png', // Replace with actual image URL
+                    'assets/images/medium.png',
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(width: 16),
-              // Order Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +248,93 @@ class MyOrderScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // Order Status
+              Text(
+                order.orderStatus ?? '',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderHistoryCard(BuildContext context, OrderHistoryModel order) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const SingleOrderHistoryScreen()));
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: maincolor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/images/medium.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      order.date ?? '',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Order #${order.id}',
+                      style: const TextStyle(
+                        color: maincolor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${order.amount ?? 0} £',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      order.paidBy ?? '',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Text(
                 order.orderStatus ?? '',
                 style: const TextStyle(
