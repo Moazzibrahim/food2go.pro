@@ -43,7 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child:
+    Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
@@ -64,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             _buildDiscountList(),
             const SizedBox(height: 100),
-          ],
+           ],
+          ),
         ),
       ),
     );
