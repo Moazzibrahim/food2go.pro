@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
@@ -41,28 +43,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 16),
-            _buildSearchAndFilter(),
-            // const SizedBox(height: 16),
-            _buildCategoryList(),
-            const SizedBox(height: 16),
-            _buildDealsSection(),
-            const SizedBox(height: 16),
-            _buildPopularFoodHeader(),
-            const SizedBox(height: 16),
-            _buildFoodItemsList(),
-            const SizedBox(height: 16),
-            _buildDiscountHeader(),
-            const SizedBox(height: 16),
-            _buildDiscountList(),
-            const SizedBox(height: 100),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 16),
+              _buildSearchAndFilter(),
+              // const SizedBox(height: 16),
+              _buildCategoryList(),
+              const SizedBox(height: 16),
+              _buildDealsSection(),
+              const SizedBox(height: 16),
+              _buildPopularFoodHeader(),
+              const SizedBox(height: 16),
+              _buildFoodItemsList(),
+              const SizedBox(height: 16),
+              _buildDiscountHeader(),
+              const SizedBox(height: 16),
+              _buildDiscountList(),
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
       ),
     );

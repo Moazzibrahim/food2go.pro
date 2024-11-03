@@ -1,6 +1,9 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/address/get_address_provider.dart';
+import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:geolocator/geolocator.dart';
@@ -154,9 +157,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Add Address'),
-      ),
+      appBar: buildAppBar(context, 'Add address'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
