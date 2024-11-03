@@ -6,6 +6,8 @@ import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.
 import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/profile_screen.dart';
 
+import 'tabs_screens/screens/points_items_screen.dart';
+
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
 
@@ -35,6 +37,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 HomeScreen(),
                 FavouritesScreen(),
                 CartDetailssScreen(),
+                PointsItemsScreen(),
                 ProfileScreen(),
               ],
             ),
@@ -70,9 +73,14 @@ class _TabsScreenState extends State<TabsScreen> {
                         index: 2,
                       ),
                       _bottomNavBarIcon(
+                        iconOn: 'assets/images/Vector.svg',
+                        iconOff: 'assets/images/Frame.svg',
+                        index: 3,
+                      ),
+                      _bottomNavBarIcon(
                         iconOn: 'assets/images/person_on.svg',
                         iconOff: 'assets/images/person_off.svg',
-                        index: 3,
+                        index: 4,
                       ),
                     ],
                   ),

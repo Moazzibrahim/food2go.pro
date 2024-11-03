@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = 'All';
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -49,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildHeader(),
             const SizedBox(height: 16),
             _buildSearchAndFilter(),
-            // const SizedBox(height: 16),
-            _buildCategoryList(),
             const SizedBox(height: 16),
+            _buildImageCarousel(),
+            _buildCategoryList(),
             _buildDealsSection(),
             const SizedBox(height: 16),
             _buildPopularFoodHeader(),
@@ -158,6 +160,75 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImageCarousel() {
+    return Column(
+      children: [
+        CarouselSlider(
+          items: [
+            _buildCarouselImage(
+                'assets/images/Chicken Barbecue on a Stick.jpeg'),
+            _buildCarouselImage(
+                'assets/images/Penne alla Vodka _ Recipe _ Kitchen Stories.jpeg'),
+            _buildCarouselImage('assets/images/The Perfect Basic Burger.jpeg'),
+          ],
+          options: CarouselOptions(
+            height: 160.0,
+            enlargeCenterPage: true,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 2),
+            viewportFraction: 1,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (index) => _buildIndicator(index)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCarouselImage(String assetPath) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 8.0,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: Image.asset(
+          assetPath,
+          fit: BoxFit.cover,
+          width: double.infinity,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIndicator(int index) {
+    return Container(
+      width: 8.0,
+      height: 8.0,
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 3.0),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _currentIndex == index ? maincolor : Colors.grey,
+      ),
     );
   }
 
