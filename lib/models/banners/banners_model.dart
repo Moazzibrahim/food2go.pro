@@ -26,21 +26,23 @@ class BannerCategory {
     required this.imageLink,
     required this.bannerLink,
   });
-
   factory BannerCategory.fromJson(Map<String, dynamic> json) {
     return BannerCategory(
-      id: json['id'],
-      name: json['name'],
-      image: json['image'],
-      bannerImage: json['banner_image'],
-      categoryId: json['category_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      status: json['status'],
-      priority: json['priority'],
-      active: json['active'],
-      imageLink: json['image_link'],
-      bannerLink: json['banner_link'],
+      id: json['id'] ?? 0, // Use a default value if null
+      name: json['name'] ?? '', // Default to empty string if name is null
+      image: json['image'] ?? '', // Default to empty string if image is null
+      bannerImage:
+          json['banner_image'] ?? '', // Default to empty string if null
+      categoryId: json['category_id'], // This can be nullable
+      createdAt: DateTime.tryParse(json['created_at'] ?? '') ??
+          DateTime.now(), // Default to now if parse fails
+      updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ??
+          DateTime.now(), // Default to now if parse fails
+      status: json['status'] ?? '', // Default to empty string if status is null
+      priority: json['priority'] ?? 0, // Default to 0 if null
+      active: json['active'] ?? false, // Default to false if null
+      imageLink: json['image_link'] ?? '', // Default to empty string if null
+      bannerLink: json['banner_link'] ?? '', // Default to empty string if null
     );
   }
 
@@ -91,22 +93,24 @@ class AppBanner {
 
   factory AppBanner.fromJson(Map<String, dynamic> json) {
     return AppBanner(
-      id: json['id'],
-      image: json['image'],
-      order: json['order'],
-      categoryId: json['category_id'],
-      productId: json['product_id'],
-      dealId: json['deal_id'],
-      translationId: json['translation_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      imageLink: json['image_link'],
-      category: json['category'] != null
-          ? BannerCategory.fromJson(json['category'])
+      id: json['id'] ?? 0, // Default to 0 if id is null
+      image: json['image'] ?? '', // Default to empty string if image is null
+      order: json['order'] ?? 0, // Default to 0 if order is null
+      categoryId: json['category_id'], // This can remain nullable
+      productId: json['product_id'], // This can remain nullable
+      dealId: json['deal_id'], // This can remain nullable
+      translationId: json['translation_id'] ?? 0, // Default to 0 if null
+      createdAt: DateTime.tryParse(json['created_at'] ?? '') ??
+          DateTime.now(), // Default to now if parse fails
+      updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ??
+          DateTime.now(), // Default to now if parse fails
+      imageLink: json['image_link'] ??
+          '', // Default to empty string if image_link is null
+      category: json['category_banner'] != null
+          ? BannerCategory.fromJson(json['category_banner'])
           : null,
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,

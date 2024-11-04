@@ -27,17 +27,20 @@ class BannerProvider with ChangeNotifier {
         },
       );
 
+      // Log the response body
+      log('Response data: ${response.body}');
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> bannerData =
-            data['banners'] ?? []; // Access 'banners' key
+        final List<dynamic> bannerData = data['banners'] ?? [];
         _banners = bannerData.map((json) => AppBanner.fromJson(json)).toList();
         notifyListeners();
       } else {
-        log(response.body);
+        log('Failed to load banners: ${response.body}');
         throw Exception('Failed to load banners');
       }
     } catch (error) {
+      log('Error fetching banners: $error');
       throw Exception('Error fetching banners: $error');
     }
   }
