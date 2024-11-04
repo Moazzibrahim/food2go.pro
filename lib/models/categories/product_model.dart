@@ -13,7 +13,7 @@ class Product {
   final int reccomended;
   final bool inStock;
   bool isFav;
-  final double price;
+  double price;
   final String discountId;
   final String taxId;
   final List addOns;
@@ -118,7 +118,7 @@ class Discount {
 
 class AddOns {
   final String name;
-  final double price;
+  double price;
   final int quantityAdd;
   final int id;
 
@@ -154,7 +154,7 @@ class Extra {
   final String name;
   final int id;
   final int productId;
-  final double price;
+  double price;
 
   Extra({required this.name, required this.id,required this.productId,required this.price});
 
@@ -208,7 +208,7 @@ class Variation {
 class Option {
   final int id;
   final String name;
-  final double price;
+  double price;
   final int productId;
   final int variationId;
   final List<Extra> extra;

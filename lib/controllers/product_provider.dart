@@ -69,6 +69,18 @@ class ProductProvider with ChangeNotifier {
       return matchesCategory && matchesPrice;
     }).toList();
   }
+ List<Extra> getExtras(Product product,int selectedVariation){
+    if(product.extra.isEmpty){
+      List<Extra> extras = [];
+      final options = product.variations[selectedVariation].options;
+      for (var e in options) {
+        extras.addAll(e.extra);
+      }
+      return extras;
+    }else{
+      return product.extra;
+    }
+  }
 
   Future<void> makeFavourites(BuildContext context, int fav, int id) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);

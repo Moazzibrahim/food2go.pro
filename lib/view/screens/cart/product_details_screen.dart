@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
+import 'package:food2go_app/view/screens/cart/widgets/extras_bottom_sheet.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key,this.product});
+  const ProductDetailsScreen({super.key, this.product});
   final Product? product;
 
   @override
@@ -15,12 +16,23 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int quantity = 1;
-  String? selectedOption; // Track the selected size
+  String? selectedOption;
   bool isFavorited = false;
+  Set<int> selectedAddOns = {};
+  int? selectedVariation;
+  Set<String> selectedOptions = {};
+  double defaultPrice = 0;
+
+  @override
+  void initState() {
+    defaultPrice = widget.product!.price;
+    super.initState();
+  }
 
   void increaseQuantity() {
     setState(() {
       quantity++;
+      widget.product!.price += defaultPrice;
     });
   }
 
@@ -28,6 +40,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     if (quantity > 1) {
       setState(() {
         quantity--;
+        widget.product!.price -= defaultPrice;
       });
     }
   }
@@ -38,7 +51,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header section with curved background and image
             Stack(
               children: [
                 ClipPath(
@@ -93,7 +105,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       radius: 120,
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/images/pastaa.png', // Replace with your image path
+                          'assets/images/pastaa.png',
                           height: 200,
                           width: 200,
                           fit: BoxFit.cover,
@@ -104,25 +116,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Pasta",
-                        style: TextStyle(
+                        widget.product!.name,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        "150 Egp",
-                        style: TextStyle(
+                        widget.product!.price.toString(),
+                        style: const TextStyle(
                           fontSize: 22,
                           color: maincolor,
                           fontWeight: FontWeight.bold,
@@ -130,39 +141,117 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16,),
-                  ...List.generate(widget.product!.variations.length, (index) {
-                    final variation = widget.product!.variations[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(variation.name,style: const TextStyle(fontSize: 17,fontWeight: FontWeight.w700),),
-                        const SizedBox(height: 8,),
-                        Row(
-                          children: List.generate(widget.product!.variations[index].options.length,
-                          (j) {
-                            final option = widget.product!.variations[index].options[j];
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedOption = option.name;
-                                });
-                              },
-                              child: SizeOption(
-                                text: option.name,
-                                isSelected: selectedOption == option.name,
-                                ),
-                            );
-                          },
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  ...List.generate(
+                    widget.product!.variations.length,
+                    (index) {
+                      final variation = widget.product!.variations[index];
+                      final isMultipleSelection = variation.type == 'multiple';
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            variation.name,
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w700),
                           ),
-                        )
-                      ],
-                    );
-                  },),
+                          const SizedBox(height: 8),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(
+                                variation.options.length,
+                                (j) {
+                                  final option = variation.options[j];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isMultipleSelection) {
+                                          if (selectedOptions.contains(option.name)) {
+                                            selectedOptions.remove(option.name);
+                                            widget.product!.price -= option.price;
+                                            defaultPrice -= option.price;
+                                          } else {
+                                            selectedOptions.add(option.name);
+                                            widget.product!.price +=option.price;
+                                            defaultPrice += option.price;
+                                          }
+                                        } else {
+                                          if (selectedOption == option.name) {
+                                            selectedOption = null;
+                                            widget.product!.price -=option.price;
+                                            defaultPrice -= option.price;
+                                          } else {
+                                            if (selectedOption != null) {
+                                              final previousOption = variation.options.firstWhere((opt) =>opt.name == selectedOption);
+                                              widget.product!.price -= previousOption.price;
+                                              defaultPrice -= previousOption.price;
+                                            }
+                                            selectedOption = option.name;
+                                            widget.product!.price +=option.price;
+                                            defaultPrice += option.price;
+                                          }
+                                        }
+                                      });
+                                    },
+                                    child: SizeOption(
+                                      text: option.name,
+                                      isSelected: isMultipleSelection
+                                          ? selectedOptions
+                                              .contains(option.name)
+                                          : selectedOption == option.name,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
-                  const Text(
-                    "Ingredients:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Ingredients:",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            showDragHandle: true,
+                            backgroundColor: Colors.white,
+                            builder: (context) {
+                              return ExtrasBottomSheet(
+                                product: widget.product,
+                                selectedVariation: selectedVariation ?? -1,
+                              );
+                            },
+                          );
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.add,
+                              color: maincolor,
+                            ),
+                            Text(
+                              'extra',
+                              style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700,
+                                  color: maincolor),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   const Text("Pasta, Basil, Cheese"),
@@ -172,17 +261,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   ...List.generate(
-                  widget.product!.addons.length, 
-                  (index) {
-                    final addon = widget.product!.addons[index];
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(addon.name),
-                        Checkbox(value: false, onChanged: (value){})
-                      ],
-                    );
-                  },
+                    widget.product!.addons.length,
+                    (index) {
+                      final addon = widget.product!.addons[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(addon.name),
+                          Checkbox(
+                              value: selectedAddOns.contains(index),
+                              activeColor: maincolor,
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value == true) {
+                                    selectedAddOns.add(index);
+                                    widget.product!.price += addon.price;
+                                    defaultPrice += addon.price;
+                                  } else {
+                                    selectedAddOns.remove(index);
+                                    widget.product!.price -= addon.price;
+                                    defaultPrice -= addon.price;
+                                  }
+                                });
+                              })
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                   Row(
