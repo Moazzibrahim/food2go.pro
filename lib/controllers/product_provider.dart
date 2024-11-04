@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/constants/strings.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/models/categories/cart_model.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,10 @@ class ProductProvider with ChangeNotifier {
 
   List<Product> _discounts = [];
   List<Product> get discounts => _discounts;
+
+  List<CartItem> _cart = [];
+  List<CartItem> get cart => _cart;
+
 
   Future<void> fetchProducts(BuildContext context) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
@@ -105,5 +110,13 @@ class ProductProvider with ChangeNotifier {
     } catch (e) {
       log('Error in making fav: $e');
     }
+  }
+
+  Future<void> postCart(List<Product> products, List<Extra> extras) async{
+
+  }
+
+  void addtoCart(Product product, List<Extra> extra,List<Variation> variations){
+    _cart.add(CartItem(product: product, extra: extra,variations: variations));
   }
 }
