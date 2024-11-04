@@ -16,6 +16,7 @@ import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 
+import '../../../../controllers/banners/banners_provider.dart';
 import '../../../../models/categories/categories_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
     Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
+    Provider.of<BannerProvider>(context, listen: false).fetchBanners(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
@@ -43,33 +45,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  WillPopScope(
+    return WillPopScope(
       onWillPop: () async {
         return false;
       },
-      child:
-    Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 16),
-            _buildSearchAndFilter(),
-            const SizedBox(height: 16),
-            _buildImageCarousel(),
-            _buildCategoryList(),
-            _buildDealsSection(),
-            const SizedBox(height: 16),
-            _buildPopularFoodHeader(),
-            const SizedBox(height: 16),
-            _buildFoodItemsList(),
-            const SizedBox(height: 16),
-            _buildDiscountHeader(),
-            const SizedBox(height: 16),
-            _buildDiscountList(),
-            const SizedBox(height: 100),
-           ],
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 16),
+              _buildSearchAndFilter(),
+              const SizedBox(height: 16),
+              _buildImageCarousel(),
+              _buildCategoryList(),
+              _buildDealsSection(),
+              const SizedBox(height: 16),
+              _buildPopularFoodHeader(),
+              const SizedBox(height: 16),
+              _buildFoodItemsList(),
+              const SizedBox(height: 16),
+              _buildDiscountHeader(),
+              const SizedBox(height: 16),
+              _buildDiscountList(),
+              const SizedBox(height: 100),
+            ],
           ),
         ),
       ),
@@ -170,39 +171,46 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildImageCarousel() {
-    return Column(
-      children: [
-        CarouselSlider(
-          items: [
-            _buildCarouselImage(
-                'assets/images/Chicken Barbecue on a Stick.jpeg'),
-            _buildCarouselImage(
-                'assets/images/Penne alla Vodka _ Recipe _ Kitchen Stories.jpeg'),
-            _buildCarouselImage('assets/images/The Perfect Basic Burger.jpeg'),
+    return Consumer<BannerProvider>(
+      builder: (context, bannerProvider, child) {
+        if (bannerProvider.banners.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          children: [
+            CarouselSlider(
+              items: bannerProvider.banners.map((banner) {
+                return _buildCarouselImage(banner.imageLink);
+              }).toList(),
+              options: CarouselOptions(
+                height: 160.0,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 2),
+                viewportFraction: 1,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                bannerProvider.banners.length,
+                (index) => _buildIndicator(index),
+              ),
+            ),
           ],
-          options: CarouselOptions(
-            height: 160.0,
-            enlargeCenterPage: true,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 2),
-            viewportFraction: 1,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) => _buildIndicator(index)),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildCarouselImage(String assetPath) {
+  Widget _buildCarouselImage(String imageUrl) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5.0),
       decoration: BoxDecoration(
@@ -217,10 +225,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.0),
-        child: Image.asset(
-          assetPath,
+        child: Image.network(
+          imageUrl,
           fit: BoxFit.cover,
           width: double.infinity,
+          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
         ),
       ),
     );
