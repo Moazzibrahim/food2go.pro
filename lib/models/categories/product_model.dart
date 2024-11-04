@@ -22,6 +22,7 @@ class Product {
   final List<Variation> variations;
   final Discount discount;
   final List<AddOns> addons;
+  final Tax tax;
 
   Product(
       {required this.name,
@@ -46,44 +47,50 @@ class Product {
       required this.extra,
       required this.variations,
       required this.discount,
-      required this.addons});
+      required this.addons,
+      required this.tax,
+      });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
-      name: json['name'] ?? '',
-      id: json['id'].toInt(),
-      description: json['description'] ?? '',
-      image: json['image'] ?? '',
-      categoryId: json['category_id'].toInt(),
-      subCategoryId: json['sub_category_id']?.toString(),
-      productTimeStatus: json['product_time_status'].toString(),
-      from: json['from'] ?? '',
-      to: json['to'] ?? '',
-      numOfStock: json['number']?.toInt() ?? 0,
-      status: json['status'].toInt(),
-      reccomended: json['recommended'].toInt(),
-      inStock: json['in_stock'] ?? false,
-      isFav: json['favourite'] ?? false,
-      price: json['price'] != null ? json['price'].toDouble() : 0.0,  // Ensure `double`
-      discountId: json['discount_id']?.toString() ?? '',
-      taxId: json['tax_id']?.toString() ?? '',
-      addOns: json['addons'] ?? [],
-      excludes: (json['excludes'] as List<dynamic>)
-          .map((e) => Excludes.fromJson(e))
-          .toList(),
-      extra: (json['extra'] as List<dynamic>)
-          .map((e) => Extra.fromJson(e))
-          .toList(),
-      variations: (json['variations'] as List)
-          .map((variation) => Variation.fromJson(variation))
-          .toList(),
-      discount: json['discount'] != null
-          ? Discount.fromJson(json['discount'])
-          : Discount(name: '', amount: 0.0, type: '', id: 0),
-      addons: (json['addons'] as List<dynamic>)
-          .map((item) => AddOns.fromJson(item))
-          .toList(),
-    );
-
+        name: json['name'] ?? '',
+        id: json['id'].toInt(),
+        description: json['description'] ?? '',
+        image: json['image'] ?? '',
+        categoryId: json['category_id'].toInt(),
+        subCategoryId: json['sub_category_id']?.toString(),
+        productTimeStatus: json['product_time_status'].toString(),
+        from: json['from'] ?? '',
+        to: json['to'] ?? '',
+        numOfStock: json['number']?.toInt() ?? 0,
+        status: json['status'].toInt(),
+        reccomended: json['recommended'].toInt(),
+        inStock: json['in_stock'] ?? false,
+        isFav: json['favourite'] ?? false,
+        price: json['price'] != null
+            ? json['price'].toDouble()
+            : 0.0, // Ensure `double`
+        discountId: json['discount_id']?.toString() ?? '',
+        taxId: json['tax_id']?.toString() ?? '',
+        addOns: json['addons'] ?? [],
+        excludes: (json['excludes'] as List<dynamic>)
+            .map((e) => Excludes.fromJson(e))
+            .toList(),
+        extra: (json['extra'] as List<dynamic>)
+            .map((e) => Extra.fromJson(e))
+            .toList(),
+        variations: (json['variations'] as List)
+            .map((variation) => Variation.fromJson(variation))
+            .toList(),
+        discount: json['discount'] != null
+            ? Discount.fromJson(json['discount'])
+            : Discount(name: '', amount: 0.0, type: '', id: 0),
+        addons: (json['addons'] as List<dynamic>)
+            .map((item) => AddOns.fromJson(item))
+            .toList(),
+        tax: json['tax'] != null
+            ? Tax.fromJson(json['tax'])
+            : Tax(name: '', amount: 0.0, type: '', id: 0),
+      );
 }
 
 class Products {
@@ -109,11 +116,11 @@ class Discount {
   });
 
   factory Discount.fromJson(Map<String, dynamic> json) => Discount(
-      name: json['name'],
-      amount: json['amount'] != null ? json['amount'].toDouble() : 0.0,
-      type: json['type'],
-      id: json['id'],
-    );
+        name: json['name'],
+        amount: json['amount'] != null ? json['amount'].toDouble() : 0.0,
+        type: json['type'],
+        id: json['id'],
+      );
 }
 
 class AddOns {
@@ -141,7 +148,7 @@ class Excludes {
   final int id;
   final int productId;
 
-  Excludes({required this.name, required this.id,required this.productId});
+  Excludes({required this.name, required this.id, required this.productId});
 
   factory Excludes.fromJson(Map<String, dynamic> json) => Excludes(
         name: json['name'],
@@ -156,7 +163,11 @@ class Extra {
   final int productId;
   double price;
 
-  Extra({required this.name, required this.id,required this.productId,required this.price});
+  Extra(
+      {required this.name,
+      required this.id,
+      required this.productId,
+      required this.price});
 
   factory Extra.fromJson(Map<String, dynamic> json) => Extra(
         name: json['name'],
@@ -165,7 +176,6 @@ class Extra {
         price: json['price'].toDouble(),
       );
 }
-
 
 class Variation {
   final int id;
@@ -231,5 +241,25 @@ class Option {
         extra: (json['extra'] as List)
             .map((extraItem) => Extra.fromJson(extraItem))
             .toList(),
+      );
+}
+
+class Tax {
+  final int id;
+  final String name;
+  final String type;
+  final double amount;
+
+  Tax(
+      {required this.id,
+      required this.name,
+      required this.type,
+      required this.amount});
+
+  factory Tax.fromJson(Map<String, dynamic> json) => Tax(
+        id: json['id'],
+        name: json['name'],
+        type: json['type'],
+        amount: json['amount'].toDouble(),
       );
 }

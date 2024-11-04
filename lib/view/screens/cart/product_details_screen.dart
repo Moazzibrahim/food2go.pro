@@ -1,10 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/cart/widgets/extras_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen({super.key, this.product});
@@ -22,6 +26,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int? selectedVariation;
   Set<String> selectedOptions = {};
   double defaultPrice = 0;
+  List<Extra> selectedExtrasList = [];
+  List<Option> selectedOptionsObject = [];
 
   @override
   void initState() {
@@ -171,26 +177,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         if (isMultipleSelection) {
                                           if (selectedOptions.contains(option.name)) {
                                             selectedOptions.remove(option.name);
-                                            widget.product!.price -= option.price;
+                                            widget.product!.price -= option.price*quantity;
                                             defaultPrice -= option.price;
                                           } else {
                                             selectedOptions.add(option.name);
-                                            widget.product!.price +=option.price;
+                                            selectedOptionsObject.add(option);
+                                            widget.product!.price +=option.price*quantity;
                                             defaultPrice += option.price;
                                           }
                                         } else {
                                           if (selectedOption == option.name) {
                                             selectedOption = null;
-                                            widget.product!.price -=option.price;
+                                            widget.product!.price -=option.price*quantity;
                                             defaultPrice -= option.price;
                                           } else {
                                             if (selectedOption != null) {
                                               final previousOption = variation.options.firstWhere((opt) =>opt.name == selectedOption);
-                                              widget.product!.price -= previousOption.price;
+                                              widget.product!.price -= previousOption.price*quantity;
                                               defaultPrice -= previousOption.price;
+                                              selectedOptionsObject.add(option);
                                             }
+                                            selectedOptionsObject.add(option);
                                             selectedOption = option.name;
-                                            widget.product!.price +=option.price;
+                                            widget.product!.price +=option.price*quantity;
                                             defaultPrice += option.price;
                                           }
                                         }
@@ -231,6 +240,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               return ExtrasBottomSheet(
                                 product: widget.product,
                                 selectedVariation: selectedVariation ?? -1,
+                                onSelectedExtras: (selectedExtras) {
+                                selectedExtrasList = selectedExtras;
+                                },
                               );
                             },
                           );
@@ -242,7 +254,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               color: maincolor,
                             ),
                             Text(
-                              'extra',
+                              'extra & excludes',
                               style: TextStyle(
                                   fontSize: 19,
                                   fontWeight: FontWeight.w700,
@@ -275,11 +287,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 setState(() {
                                   if (value == true) {
                                     selectedAddOns.add(index);
-                                    widget.product!.price += addon.price;
+                                    widget.product!.price += addon.price*quantity;
                                     defaultPrice += addon.price;
                                   } else {
                                     selectedAddOns.remove(index);
-                                    widget.product!.price -= addon.price;
+                                    widget.product!.price -= addon.price*quantity;
                                     defaultPrice -= addon.price;
                                   }
                                 });
@@ -311,23 +323,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ],
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CartDetailssScreen()));
+                      Consumer<ProductProvider>(
+                        builder:(context, productProvider, _) {
+                          return ElevatedButton(
+                          onPressed: () {
+                            productProvider.addtoCart(widget.product!,selectedExtrasList,selectedOptionsObject);
+                            log('added to cart');
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             const CartDetailssScreen()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 32),
+                            backgroundColor: maincolor,
+                          ),
+                          child: const Text(
+                            "Add to Cart",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        );
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 32),
-                          backgroundColor: maincolor,
-                        ),
-                        child: const Text(
-                          "Add to Cart",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
                       ),
                     ],
                   ),

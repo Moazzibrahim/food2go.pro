@@ -126,7 +126,7 @@ class ProductProvider with ChangeNotifier {
 
   }
 
-  void addtoCart(Product product, List<Extra> extra,List<Variation> variations){
-    _cart.add(CartItem(product: product, extra: extra,variations: variations));
+  void addtoCart(Product product, List<Extra> extra,List<Option> options){
+    _cart.add(CartItem(product: product, extra: extra,options: options));
   }
 }
