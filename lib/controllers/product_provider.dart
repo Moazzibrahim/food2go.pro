@@ -28,7 +28,6 @@ class ProductProvider with ChangeNotifier {
   List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
-
   Future<void> fetchProducts(BuildContext context) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
@@ -74,15 +73,16 @@ class ProductProvider with ChangeNotifier {
       return matchesCategory && matchesPrice;
     }).toList();
   }
- List<Extra> getExtras(Product product,int selectedVariation){
-    if(product.extra.isEmpty){
+
+  List<Extra> getExtras(Product product, int selectedVariation) {
+    if (product.extra.isEmpty) {
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;
       for (var e in options) {
         extras.addAll(e.extra);
       }
       return extras;
-    }else{
+    } else {
       return product.extra;
     }
   }
@@ -122,11 +122,9 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<void> postCart(List<Product> products, List<Extra> extras) async{
+  Future<void> postCart(List<Product> products, List<Extra> extras) async {}
 
-  }
-
-  void addtoCart(Product product, List<Extra> extra,List<Option> options){
-    _cart.add(CartItem(product: product, extra: extra,options: options));
+  void addtoCart(Product product, List<Extra> extra, List<Option> options) {
+    _cart.add(CartItem(product: product, extra: extra, options: options));
   }
 }
