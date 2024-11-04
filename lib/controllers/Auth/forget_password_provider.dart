@@ -28,15 +28,15 @@ class OtpProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         // Handle success response
-        print("OTP sent successfully");
+        log("OTP sent successfully");
       } else {
         // Handle error response
         _errorMessage = 'Failed to send OTP: ${response.statusCode}';
-        print(_errorMessage);
+        log(_errorMessage.toString());
       }
     } catch (error) {
       _errorMessage = 'An error occurred: $error';
-      print(_errorMessage);
+        log(_errorMessage.toString());
     } finally {
       _isLoading = false;
       notifyListeners();

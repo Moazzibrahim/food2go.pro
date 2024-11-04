@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_xxxxxxxxxxe: use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:developer';
@@ -64,7 +64,17 @@ class ProductProvider with ChangeNotifier {
         .toList();
   }
 
-  List<Extra> getExtras(Product product,int selectedVariation){
+  List<Product> getFilteredProducts(
+      int? categoryId, double priceStart, double priceEnd) {
+    return _products.where((product) {
+      final matchesCategory =
+          categoryId == null || product.categoryId == categoryId;
+      final matchesPrice =
+          product.price >= priceStart && product.price <= priceEnd;
+      return matchesCategory && matchesPrice;
+    }).toList();
+  }
+ List<Extra> getExtras(Product product,int selectedVariation){
     if(product.extra.isEmpty){
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;

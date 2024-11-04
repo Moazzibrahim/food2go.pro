@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/models/address/user_address_model.dart';
@@ -87,14 +88,14 @@ class AddressProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
+        log(response.body);
         await fetchAddresses(token); // Pass token directly to fetchAddresses
       } else {
-        print(response.body);
+        log(response.body);
         _errorMessage = 'Failed to add address. Please try again.';
       }
     } catch (error) {
-      print(error);
+      log(error.toString());
       _errorMessage = 'An error occurred: $error';
     } finally {
       _isLoading = false;

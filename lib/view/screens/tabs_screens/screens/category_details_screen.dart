@@ -5,10 +5,16 @@ import 'package:food2go_app/models/categories/categories_model.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:provider/provider.dart';
 
-class CategoryDetailsScreen extends StatefulWidget {
-  final Category category;
+import '../../../../models/banners/banners_model.dart';
 
-  const CategoryDetailsScreen({super.key, required this.category});
+class CategoryDetailsScreen extends StatefulWidget {
+  final Category? category;
+  final BannerCategory? bannerCategory;
+  const CategoryDetailsScreen({
+    super.key,
+    this.category,
+    this.bannerCategory,
+  });
 
   @override
   _CategoryDetailsScreenState createState() => _CategoryDetailsScreenState();
@@ -30,7 +36,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   bottomRight: Radius.circular(100.0),
                 ),
                 child: Image.network(
-                  widget.category.imageLink,
+                  widget.category?.imageLink ??
+                      widget.bannerCategory?.imageLink ??
+                      '',
                   width: double.infinity,
                   height: 250,
                   fit: BoxFit.cover,
@@ -66,7 +74,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   children: [
                     const SizedBox(height: 44),
                     Text(
-                      widget.category.name,
+                      widget.category?.name ??
+                          widget.bannerCategory?.name ??
+                          'Unknown',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -79,29 +89,34 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: widget.category.subCategories.map((subCategory) {
-                return SelectableFilterChip(
-                  label: subCategory.name,
-                  isSelected:
-                      selectedSubCategoryId == subCategory.id.toString(),
-                  onSelected: (isSelected) {
-                    setState(() {
-                      selectedSubCategoryId =
-                          isSelected ? subCategory.id.toString() : null;
-                    });
-                  },
-                );
-              }).toList(),
+          if (widget.category != null) ...[
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.category!.subCategories.map((subCategory) {
+                  return SelectableFilterChip(
+                    label: subCategory.name,
+                    isSelected:
+                        selectedSubCategoryId == subCategory.id.toString(),
+                    onSelected: (isSelected) {
+                      setState(() {
+                        selectedSubCategoryId =
+                            isSelected ? subCategory.id.toString() : null;
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
             ),
-          ),
+          ],
           Expanded(
             child: Consumer<ProductProvider>(
               builder: (context, productProvider, _) {
-                final products =
-                    productProvider.getProductsByCategory(widget.category.id);
+                // Use category ID from banner if category is null
+                final categoryId =
+                    widget.category?.id ?? widget.bannerCategory?.id;
+                final products = productProvider.getProductsByCategory(
+                    categoryId ?? 0); // Use 0 or handle null appropriately
                 final filteredProducts = selectedSubCategoryId == null
                     ? products
                     : products
@@ -143,11 +158,11 @@ class SelectableFilterChip extends StatelessWidget {
   final ValueChanged<bool> onSelected;
 
   const SelectableFilterChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

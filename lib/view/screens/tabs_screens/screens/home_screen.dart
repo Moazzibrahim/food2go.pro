@@ -1,5 +1,6 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:developer';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
@@ -17,6 +18,8 @@ import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
 
+import '../../../../controllers/banners/banners_provider.dart';
+import '../../../../models/banners/banners_model.dart';
 import '../../../../models/categories/categories_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = 'All';
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -35,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
     Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
+    Provider.of<BannerProvider>(context, listen: false).fetchBanners(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
@@ -55,9 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildHeader(),
               const SizedBox(height: 16),
               _buildSearchAndFilter(),
-              // const SizedBox(height: 16),
-              _buildCategoryList(),
               const SizedBox(height: 16),
+              _buildImageCarousel(),
+              _buildCategoryList(),
               _buildDealsSection(),
               const SizedBox(height: 16),
               _buildPopularFoodHeader(),
@@ -165,6 +170,105 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImageCarousel() {
+    return Consumer<BannerProvider>(builder: (context, bannerProvider, child) {
+      if (bannerProvider.banners.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      return Column(
+        children: [
+          CarouselSlider(
+            items: bannerProvider.banners.map((banner) {
+              return _buildCarouselImage(banner);
+            }).toList(),
+            options: CarouselOptions(
+              height: 160.0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 2),
+              viewportFraction: 1,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              bannerProvider.banners.length,
+              (index) => _buildIndicator(index),
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildCarouselImage(AppBanner banner) {
+    return GestureDetector(
+      onTap: () {
+        log('bannerCategory: ${banner.category?.id}');
+
+        if (banner.dealId != null) {
+          // Check if dealId is not null
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DealsScreen(),
+            ),
+          );
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryDetailsScreen(
+                  bannerCategory: banner.category,
+                ),
+              ));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 8.0,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.0),
+          child: Image.network(
+            banner.imageLink,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.error),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIndicator(int index) {
+    return Container(
+      width: 8.0,
+      height: 8.0,
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 3.0),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _currentIndex == index ? maincolor : Colors.grey,
+      ),
     );
   }
 
