@@ -4,8 +4,9 @@ class CartItem {
   final Product product;
   final List<Extra> extra;
   final List<Option> options;
+  final List<AddOns> addons;
 
 
-  CartItem({required this.product, required this.extra, required this.options});
+  CartItem({required this.product, required this.extra, required this.options,required this.addons});
 
 }

@@ -1,5 +1,7 @@
 // ignore_for_xxxxxxxxxxe: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -27,7 +29,6 @@ class ProductProvider with ChangeNotifier {
 
   List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
-
 
   Future<void> fetchProducts(BuildContext context) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
@@ -74,15 +75,16 @@ class ProductProvider with ChangeNotifier {
       return matchesCategory && matchesPrice;
     }).toList();
   }
- List<Extra> getExtras(Product product,int selectedVariation){
-    if(product.extra.isEmpty){
+
+  List<Extra> getExtras(Product product, int selectedVariation) {
+    if (product.extra.isEmpty) {
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;
       for (var e in options) {
         extras.addAll(e.extra);
       }
       return extras;
-    }else{
+    } else {
       return product.extra;
     }
   }
@@ -122,11 +124,57 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<void> postCart(List<Product> products, List<Extra> extras) async{
-
+  Future<void> postCart(BuildContext context, {required List<Product> products}) async {
+  final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+  final String token = loginProvider.token!;
+  
+  try {
+    final response = await http.post(
+      Uri.parse(postOrder),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'date': '2024-11-05 14:28:06',
+        'branch_id': null,
+        'amount': 120,
+        'payment_status': 'paid',
+        'total_tax': 14,
+        'total_discount': 50,
+        'address': 2,
+        'order_type': 'delivery',
+        'paid_by': 'cash',
+        'products': products.map((product) => {
+          'product_id': product.id,
+          'count' : 2,
+          'variation': product.variations.map((variation) => {
+            'variation_id': variation.id,
+            'option_id': variation.options.map((e) => e.id,).toList(),
+          }).toList(),
+          'extra_id': product.extra.map((e) => e.id,).toList(),
+          'exclude_id': [],
+        }).toList(),
+      }),
+    );
+    
+    if (response.statusCode == 200) {
+      // Handle success
+      log('Order posted successfully');
+    } else {
+      log(response.body);
+      // Handle error response
+      log('Failed to post order: ${response.statusCode}');
+    }
+  } catch (e) {
+    log('Error in post order: $e');
   }
+}
 
-  void addtoCart(Product product, List<Extra> extra,List<Option> options){
-    _cart.add(CartItem(product: product, extra: extra,options: options));
+  void addtoCart(Product product, List<Extra> extra, List<Option> options,
+      List<AddOns> addons) {
+    _cart.add(CartItem(
+        product: product, extra: extra, options: options, addons: addons));
   }
 }

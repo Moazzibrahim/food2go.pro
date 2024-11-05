@@ -1,13 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/colors.dart'; // Replace this with your actual constants import
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  const CheckoutScreen({super.key, required this.cartProducts});
+  final List<Product> cartProducts;
 
   @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
@@ -288,21 +294,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildPlaceOrderButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Show a success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Order is successful!'),
-            backgroundColor: maincolor,
-          ),
+      onPressed: () async{
+        await Provider.of<ProductProvider>(context,listen: false).postCart(context, 
+        products: widget.cartProducts, 
         );
-
-        // Navigate to StatusScreen
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  const OrderTrackingScreen()), // Replace with your actual screen
+                  const OrderTrackingScreen()),
         );
       },
       style: ElevatedButton.styleFrom(

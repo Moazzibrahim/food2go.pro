@@ -28,6 +28,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   double defaultPrice = 0;
   List<Extra> selectedExtrasList = [];
   List<Option> selectedOptionsObject = [];
+  List<Variation> selectedVariations = [];
+  List<AddOns> addons = [];
 
   @override
   void initState() {
@@ -182,6 +184,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           } else {
                                             selectedOptions.add(option.name);
                                             selectedOptionsObject.add(option);
+                                            selectedVariations.add(variation);
                                             widget.product!.price +=option.price*quantity;
                                             defaultPrice += option.price;
                                           }
@@ -196,8 +199,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               widget.product!.price -= previousOption.price*quantity;
                                               defaultPrice -= previousOption.price;
                                               selectedOptionsObject.add(option);
+                                              selectedVariations.add(variation);
                                             }
                                             selectedOptionsObject.add(option);
+                                            selectedVariations.add(variation);
                                             selectedOption = option.name;
                                             widget.product!.price +=option.price*quantity;
                                             defaultPrice += option.price;
@@ -287,6 +292,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 setState(() {
                                   if (value == true) {
                                     selectedAddOns.add(index);
+                                    addons.add(addon);
                                     widget.product!.price += addon.price*quantity;
                                     defaultPrice += addon.price;
                                   } else {
@@ -327,7 +333,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         builder:(context, productProvider, _) {
                           return ElevatedButton(
                           onPressed: () {
-                            productProvider.addtoCart(widget.product!,selectedExtrasList,selectedOptionsObject);
+                            Product selectedProduct = widget.product!;
+                            selectedProduct.addons = addons;
+                            selectedProduct.extra = selectedExtrasList;
+                            for (var e in selectedVariations) {
+                              e.options = selectedOptionsObject.where((option) => option.variationId == e.id,).toList();
+                            }
+                            selectedProduct.variations = selectedVariations;
+                            productProvider.addtoCart(selectedProduct,selectedExtrasList,selectedOptionsObject,addons);
                             log('added to cart');
                             // Navigator.push(
                             //     context,

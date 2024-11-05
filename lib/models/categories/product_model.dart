@@ -16,12 +16,11 @@ class Product {
   double price;
   final String discountId;
   final String taxId;
-  final List addOns;
-  final List<Excludes> excludes;
-  final List<Extra> extra;
-  final List<Variation> variations;
+  List<Excludes> excludes;
+  List<Extra> extra;
+  List<Variation> variations;
   final Discount discount;
-  final List<AddOns> addons;
+  List<AddOns> addons;
   final Tax tax;
 
   Product(
@@ -42,7 +41,6 @@ class Product {
       required this.price,
       required this.discountId,
       required this.taxId,
-      required this.addOns,
       required this.excludes,
       required this.extra,
       required this.variations,
@@ -71,7 +69,6 @@ class Product {
             : 0.0, // Ensure `double`
         discountId: json['discount_id']?.toString() ?? '',
         taxId: json['tax_id']?.toString() ?? '',
-        addOns: json['addons'] ?? [],
         excludes: (json['excludes'] as List<dynamic>)
             .map((e) => Excludes.fromJson(e))
             .toList(),
@@ -186,7 +183,7 @@ class Variation {
   final int required;
   final int productId;
   final int points;
-  final List<Option> options;
+  List<Option> options;
 
   Variation({
     required this.id,
