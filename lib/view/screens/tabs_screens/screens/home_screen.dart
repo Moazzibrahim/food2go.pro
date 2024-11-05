@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
               enlargeCenterPage: true,
               autoPlay: true,
               autoPlayInterval: const Duration(seconds: 2),
-              viewportFraction: 1,
+              viewportFraction: 0.8,
               onPageChanged: (index, reason) {
                 setState(() {
                   _currentIndex = index;
