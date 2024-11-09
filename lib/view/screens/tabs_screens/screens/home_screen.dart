@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +7,7 @@ import 'package:food2go_app/view/screens/discount/discount_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/category_details_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/deals_screen.dart';
+import 'package:food2go_app/view/screens/deals/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,6 @@ import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
-
 import '../../../../controllers/banners/banners_provider.dart';
 import '../../../../models/banners/banners_model.dart';
 import '../../../../models/categories/categories_model.dart';
@@ -190,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
               enlargeCenterPage: true,
               autoPlay: true,
               autoPlayInterval: const Duration(seconds: 2),
-              viewportFraction: 0.8,
+              viewportFraction: bannerProvider.banners.length == 1 ? 1.0 : 0.8,
               onPageChanged: (index, reason) {
                 setState(() {
                   _currentIndex = index;
@@ -217,7 +215,6 @@ class _HomeScreenState extends State<HomeScreen> {
         log('bannerCategory: ${banner.category?.id}');
 
         if (banner.dealId != null) {
-          // Check if dealId is not null
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -317,7 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (ctx) => const CategoriesScreen()),
           );
         } else {
-          // Find the selected category from the provider or your list
           final selectedCategory =
               Provider.of<CategoriesProvider>(context, listen: false)
                   .categories

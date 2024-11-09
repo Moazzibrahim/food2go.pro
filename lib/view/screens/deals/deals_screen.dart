@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:food2go_app/controllers/deal/deal_provider.dart';
 import 'package:food2go_app/view/screens/tabs_screens/widgets/deals_card.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
-import 'package:provider/provider.dart';
+
+import 'deals_details_screen.dart';
 
 class DealsScreen extends StatefulWidget {
   const DealsScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DealsScreenState createState() => _DealsScreenState();
 }
 
@@ -38,11 +39,21 @@ class _DealsScreenState extends State<DealsScreen> {
           return SingleChildScrollView(
             child: Column(
               children: dealProvider.deals.map((deal) {
-                return DealsCard(
-                  title: deal.title,
-                  description: deal.description ?? 'No description available',
-                  price: deal.price,
-                  image: deal.image ?? 'assets/images/dealsandwich.png',
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DealsDetailsScreen(deal: deal),
+                      ),
+                    );
+                  },
+                  child: DealsCard(
+                    title: deal.title,
+                    description: deal.description ?? 'No description available',
+                    price: deal.price,
+                    image: deal.image ?? 'assets/images/dealsandwich.png',
+                  ),
                 );
               }).toList(),
             ),
