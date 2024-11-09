@@ -22,6 +22,7 @@ class Product {
   final Discount discount;
   List<AddOns> addons;
   final Tax tax;
+  int quantity;
 
   Product(
       {required this.name,
@@ -47,6 +48,7 @@ class Product {
       required this.discount,
       required this.addons,
       required this.tax,
+      this.quantity =1,
       });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -159,12 +161,15 @@ class Extra {
   final int id;
   final int productId;
   double price;
+  int extraQuantity;
 
   Extra(
       {required this.name,
       required this.id,
       required this.productId,
-      required this.price});
+      required this.price,
+      this.extraQuantity = 1
+      });
 
   factory Extra.fromJson(Map<String, dynamic> json) => Extra(
         name: json['name'],

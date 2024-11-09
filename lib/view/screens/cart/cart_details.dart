@@ -15,21 +15,6 @@ class CartDetailssScreen extends StatefulWidget {
 }
 
 class _CartDetailssScreenState extends State<CartDetailssScreen> {
-  int quantity = 1;
-
-  void increaseQuantity() {
-    setState(() {
-      quantity++;
-    });
-  }
-
-  void decreaseQuantity() {
-    if (quantity > 1) {
-      setState(() {
-        quantity--;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,13 +105,13 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                     Row(
                                       children: [
                                         IconButton(
-                                          onPressed: decreaseQuantity,
+                                          onPressed: () => cartProvider.decreaseProductQuantity(index),
                                           icon: const Icon(Icons.remove),
                                         ),
-                                        Text(quantity.toString(),
+                                        Text(cartItem.product.quantity.toString(),
                                             style: const TextStyle(fontSize: 16)),
                                         IconButton(
-                                          onPressed: increaseQuantity,
+                                          onPressed: () => cartProvider.increaseProductQuantity(index),
                                           icon: const Icon(Icons.add),
                                         ),
                                       ],
@@ -189,13 +174,13 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                       Row(
                         children: [
                           IconButton(
-                            onPressed: decreaseQuantity,
+                            onPressed: ()=> cartProvider.decreaseExtraQuantity (index, extraIndex),
                             icon: const Icon(Icons.remove),
                           ),
-                          Text(quantity.toString(),
+                          Text(cartItem.extra[extraIndex].extraQuantity.toString(),
                               style: const TextStyle(fontSize: 16)),
                           IconButton(
-                            onPressed: increaseQuantity,
+                            onPressed: ()=> cartProvider.increaseExtraQuantity(index, extraIndex),
                             icon: const Icon(Icons.add),
                           ),
                         ],
@@ -241,22 +226,14 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                           const SizedBox(height: 10),
-                          const Row(
+                            Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total Food'),
-                              Text('150 EGP'),
+                              const Text('Total Food'),
+                              Text('${cartProvider.totalPrice} EGP'),
                             ],
                           ),
-                          const SizedBox(height: 5),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Delivery'),
-                              Text('0 EGP'),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 15),
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -265,14 +242,14 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                             ],
                           ),
                           const Divider(thickness: 1),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total',
+                            const Text('Total',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 16)),
-                              Text('150 EGP',
-                                  style: TextStyle(
+                              Text('${cartProvider.totalPrice} EGP',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 16)),
                             ],
                           ),

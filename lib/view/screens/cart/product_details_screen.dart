@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
-import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/cart/widgets/extras_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +26,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Set<String> selectedOptions = {};
   double defaultPrice = 0;
   List<Extra> selectedExtrasList = [];
+  List<Excludes> selectedExcludesList =[];
   List<Option> selectedOptionsObject = [];
   List<Variation> selectedVariations = [];
   List<AddOns> addons = [];
@@ -40,6 +40,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void increaseQuantity() {
     setState(() {
       quantity++;
+      widget.product!.quantity++;
       widget.product!.price += defaultPrice;
     });
   }
@@ -48,6 +49,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     if (quantity > 1) {
       setState(() {
         quantity--;
+        widget.product!.quantity--;
         widget.product!.price -= defaultPrice;
       });
     }
@@ -179,6 +181,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         if (isMultipleSelection) {
                                           if (selectedOptions.contains(option.name)) {
                                             selectedOptions.remove(option.name);
+                                            selectedOptionsObject.remove(option);
                                             widget.product!.price -= option.price*quantity;
                                             defaultPrice -= option.price;
                                           } else {
@@ -191,6 +194,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         } else {
                                           if (selectedOption == option.name) {
                                             selectedOption = null;
+                                            selectedOptionsObject.remove(option);
                                             widget.product!.price -=option.price*quantity;
                                             defaultPrice -= option.price;
                                           } else {
@@ -198,8 +202,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               final previousOption = variation.options.firstWhere((opt) =>opt.name == selectedOption);
                                               widget.product!.price -= previousOption.price*quantity;
                                               defaultPrice -= previousOption.price;
-                                              selectedOptionsObject.add(option);
-                                              selectedVariations.add(variation);
+                                              selectedOptionsObject.remove(previousOption);
+                                              selectedVariations.remove(variation);
                                             }
                                             selectedOptionsObject.add(option);
                                             selectedVariations.add(variation);
@@ -247,6 +251,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 selectedVariation: selectedVariation ?? -1,
                                 onSelectedExtras: (selectedExtras) {
                                 selectedExtrasList = selectedExtras;
+                                },
+                                onSelectedExcludes: (selectedExcludes) {
+                                  selectedExcludesList = selectedExcludes;
                                 },
                               );
                             },
@@ -306,7 +313,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -365,6 +372,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 20,)
           ],
         ),
       ),
@@ -372,7 +380,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 }
 
-// Custom clipper for the curved header
 class HeaderClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

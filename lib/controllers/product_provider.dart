@@ -30,6 +30,48 @@ class ProductProvider with ChangeNotifier {
   List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
+  double get totalPrice {
+  double total = 0.0;
+  double defaultPrice;
+  for (var item in cart) {
+    defaultPrice = item.product.price / item.product.quantity;
+    total += defaultPrice * item.product.quantity;
+    for (var extra in item.extra) {
+      total += extra.price * extra.extraQuantity;
+    }
+  }
+  return total;
+}
+
+
+  void increaseProductQuantity(int index) {
+  double defaultPrice = cart[index].product.price / cart[index].product.quantity;
+  cart[index].product.quantity++;
+  cart[index].product.price  = defaultPrice * cart[index].product.quantity;
+  notifyListeners();
+}
+
+void decreaseProductQuantity(int index) {
+  double defaultPrice = cart[index].product.price / cart[index].product.quantity;
+  if (cart[index].product.quantity > 1) {
+    cart[index].product.quantity--;
+    cart[index].product.price  = defaultPrice * cart[index].product.quantity;
+    notifyListeners();
+  }
+}
+
+  void increaseExtraQuantity(int index, int extraIndex) {
+    cart[index].extra[extraIndex].extraQuantity++;
+    notifyListeners();
+  }
+
+  void decreaseExtraQuantity(int index, int extraIndex) {
+    if (cart[index].extra[extraIndex].extraQuantity > 1) {
+      cart[index].extra[extraIndex].extraQuantity--;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchProducts(BuildContext context) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
