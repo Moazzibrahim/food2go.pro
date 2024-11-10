@@ -3,8 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart'; // Ensure provider is imported
-
+import 'package:provider/provider.dart';
 import '../../models/banners/banners_model.dart';
 
 class BannerProvider with ChangeNotifier {
@@ -26,9 +25,6 @@ class BannerProvider with ChangeNotifier {
           'Authorization': 'Bearer $token',
         },
       );
-
-      // Log the response body
-      log('Response data: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
