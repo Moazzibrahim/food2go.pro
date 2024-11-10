@@ -20,7 +20,7 @@ class SignUpProvider with ChangeNotifier {
     required String confPassword,
     BuildContext? context,
   }) async {
-    const String url = 'https://backend.food2go.pro/api/user/auth/signup';
+    const String url = 'https://Bcknd.food2go.online/api/user/auth/signup';
     errorMessage = null; // Reset the error message at the start
 
     // Prepare the request body

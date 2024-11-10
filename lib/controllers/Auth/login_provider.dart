@@ -16,7 +16,7 @@ class LoginProvider with ChangeNotifier {
 
   Future<void> login(
       String email, String password, BuildContext context) async {
-    final url = Uri.parse('https://backend.food2go.pro/api/user/auth/login');
+    final url = Uri.parse('https://Bcknd.food2go.online/api/user/auth/login');
     try {
       isLoading = true;
       notifyListeners();

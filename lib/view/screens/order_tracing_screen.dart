@@ -13,7 +13,7 @@ class OrderTrackingScreen extends StatelessWidget {
 
   Future<String> fetchOrderStatus(BuildContext context) async {
     final url = Uri.parse(
-        'https://backend.food2go.pro/customer/orders/order_status/$orderId');
+        'https://Bcknd.food2go.online/customer/orders/order_status/$orderId');
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 

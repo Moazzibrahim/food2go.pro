@@ -20,7 +20,7 @@ class DealProvider with ChangeNotifier {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 
-    const url = 'https://backend.food2go.pro/customer/deal';
+    const url = 'https://Bcknd.food2go.online/customer/deal';
 
     try {
       final response = await http.get(

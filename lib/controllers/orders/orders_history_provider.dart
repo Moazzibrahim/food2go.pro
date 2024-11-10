@@ -14,7 +14,7 @@ class OrdersHistoryProvider with ChangeNotifier {
   OrdersHistory? get ordersHistory => _ordersHistory;
 
   Future<void> fetchOrdershistory(BuildContext context) async {
-    const url = 'https://backend.food2go.pro/customer/orders/history';
+    const url = 'https://Bcknd.food2go.online/customer/orders/history';
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 

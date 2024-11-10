@@ -23,7 +23,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _logout(BuildContext context) async {
-    final url = Uri.parse('https://backend.food2go.pro/api/logout');
+    final url = Uri.parse('https://Bcknd.food2go.online/api/logout');
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
     try {

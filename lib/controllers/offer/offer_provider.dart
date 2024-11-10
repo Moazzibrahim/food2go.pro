@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../models/offer/offer_model.dart';
 
 Future<List<Offer>> fetchOffers(context) async {
-  const String url = 'https://backend.food2go.pro/customer/offers';
+  const String url = 'https://Bcknd.food2go.online/customer/offers';
   
   final loginProvider = Provider.of<LoginProvider>(context, listen: false);
   final String token = loginProvider.token!;

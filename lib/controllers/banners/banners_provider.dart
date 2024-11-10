@@ -12,7 +12,7 @@ class BannerProvider with ChangeNotifier {
 
   List<AppBanner> get banners => _banners;
   Future<void> fetchBanners(BuildContext context) async {
-    final url = Uri.parse('https://backend.food2go.pro/customer/home/slider');
+    final url = Uri.parse('https://Bcknd.food2go.online/customer/home/slider');
 
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;

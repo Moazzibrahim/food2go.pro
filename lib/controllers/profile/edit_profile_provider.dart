@@ -18,7 +18,7 @@ class EditProfileProvider with ChangeNotifier {
     String? password,
     String? imagePath,
   }) async {
-    const String url = 'https://backend.food2go.pro/customer/profile/update';
+    const String url = 'https://Bcknd.food2go.online/customer/profile/update';
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 

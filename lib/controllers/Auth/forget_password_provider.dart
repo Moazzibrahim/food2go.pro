@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/strings.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,7 +18,7 @@ class OtpProvider extends ChangeNotifier {
     notifyListeners();
 
     final url =
-        Uri.parse('https://backend.food2go.pro/customer/otp/create_code');
+        Uri.parse('https://$domain/customer/otp/create_code');
 
     try {
       final response = await http.post(
@@ -49,7 +50,7 @@ class OtpProvider extends ChangeNotifier {
     notifyListeners();
 
     final url =
-        Uri.parse('https://backend.food2go.pro/customer/otp/check_code');
+        Uri.parse('https://Bcknd.food2go.online/customer/otp/check_code');
 
     try {
       final response = await http.post(
@@ -77,7 +78,7 @@ class OtpProvider extends ChangeNotifier {
   Future<void> changePassword(
       String email, String otpCode, String newPassword) async {
     final url =
-        Uri.parse('https://backend.food2go.pro/customer/otp/change_password');
+        Uri.parse('https://Bcknd.food2go.online/customer/otp/change_password');
 
     try {
       final response = await http.post(

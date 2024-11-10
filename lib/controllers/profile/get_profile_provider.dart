@@ -18,7 +18,7 @@ class GetProfileProvider with ChangeNotifier {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
     final url =
-        Uri.parse('https://backend.food2go.pro/customer/profile/profile_data');
+        Uri.parse('https://Bcknd.food2go.online/customer/profile/profile_data');
 
     try {
       _isLoading = true;

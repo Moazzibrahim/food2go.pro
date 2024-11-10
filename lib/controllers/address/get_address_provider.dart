@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/strings.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/models/address/user_address_model.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,7 @@ class AddressProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://backend.food2go.pro/customer/address'),
+        Uri.parse('https://$domain/customer/address'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ class AddressProvider with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('https://backend.food2go.pro/customer/address/add'),
+        Uri.parse('https://Bcknd.food2go.online/customer/address/add'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -113,7 +114,7 @@ class AddressProvider with ChangeNotifier {
     try {
       final response = await http.delete(
         Uri.parse(
-            'https://backend.food2go.pro/customer/address/delete/$addressId'),
+            'https://Bcknd.food2go.online/customer/address/delete/$addressId'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

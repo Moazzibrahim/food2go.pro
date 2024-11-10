@@ -34,22 +34,10 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
     // Get extras for the selected variation
     final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
     for (int i = 0; i < extras.length; i++) {
-      extraQuantities[i] = 1; // Initialize all quantities to 1
+      extraQuantities[i] = 1;
     }
-  }
 
-  void increaseQuantity(int index) {
-    setState(() {
-      extraQuantities[index] = (extraQuantities[index] ?? 1) + 1;
-    });
-  }
-
-  void decreaseQuantity(int index) {
-    setState(() {
-      if (extraQuantities[index]! > 1) {
-        extraQuantities[index] = extraQuantities[index]! - 1;
-      }
-    });
+    selectedExcludes = widget.product!.excludes.map((e) => e.id,).toSet();
   }
 
   double getTotalPrice(List<Extra> extras) {
@@ -119,25 +107,6 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
                       ),
                       Row(
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              decreaseQuantity(index);
-                            },
-                            icon: const Icon(Icons.remove_circle_outline),
-                          ),
-                          Text(
-                            '${extraQuantities[index]}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              increaseQuantity(index);
-                            },
-                            icon: const Icon(Icons.add_circle_outline),
-                          ),
                           Checkbox(
                             value: selectedExtras.contains(index),
                             activeColor: maincolor,

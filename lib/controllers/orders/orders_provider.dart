@@ -19,7 +19,7 @@ class OrdersProvider with ChangeNotifier {
 
   // Method to fetch orders from the API
   Future<void> fetchOrders(BuildContext context) async {
-    const url = 'https://backend.food2go.pro/customer/orders';
+    const url = 'https://Bcknd.food2go.online/customer/orders';
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 
@@ -50,7 +50,7 @@ class OrdersProvider with ChangeNotifier {
 
   Future<void> cancelOrder(BuildContext context, int orderId) async {
     final url = Uri.parse(
-        'https://backend.food2go.pro/customer/orders/cancel/$orderId');
+        'https://Bcknd.food2go.online/customer/orders/cancel/$orderId');
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 
@@ -77,7 +77,7 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<void> fetchOrdersCancelTime(BuildContext context) async {
-    const url = 'https://backend.food2go.pro/customer/orders/cancel_time';
+    const url = 'https://Bcknd.food2go.online/customer/orders/cancel_time';
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 
