@@ -66,10 +66,10 @@ class _FoodCardState extends State<FoodCard> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   widget.image,
-                  fit: BoxFit.cover,
+                  width: 71,
                 ),
               ),
             ],

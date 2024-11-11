@@ -39,6 +39,9 @@ class ProductProvider with ChangeNotifier {
   for (var item in cart) {
     defaultPrice = item.product.price / item.product.quantity;
     defaultPrice += (defaultPrice * (item.product.tax.amount / 100));
+    if(item.product.discountId.isNotEmpty){
+      defaultPrice -=  (defaultPrice * (item.product.discount.amount / 100));
+    }
     _totalPrice += defaultPrice * item.product.quantity;
     for (var extra in item.extra) {
       _totalPrice += extra.price * extra.extraQuantity;
@@ -81,6 +84,14 @@ void decreaseProductQuantity(int index) {
       _totalTax += e.tax.amount;
     }
     return _totalTax;
+  }
+
+  double getTotalTaxAmount(List<Product> cartProducts) {
+    double taxAmount = 0;
+    for (var e in cartProducts) {
+        taxAmount = (e.price * (e.tax.amount / 100));
+    }
+    return taxAmount;
   }
 
   Future<void> fetchProducts(BuildContext context) async {

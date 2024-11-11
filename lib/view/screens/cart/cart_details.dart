@@ -15,6 +15,8 @@ class CartDetailssScreen extends StatefulWidget {
 }
 
 class _CartDetailssScreenState extends State<CartDetailssScreen> {
+  double totalDiscount = 0;
+  double originalTotalPrice = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,16 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
               child: Text('No Items in Cart yet'),
             );
           } else {
+            for (var e in cartProvider.cart) {
+              originalTotalPrice += e.product.price;
+            }
+            originalTotalPrice += cartProvider.getTotalTaxAmount(cartProvider.cart.map((e) => e.product,).toList());
+            for(var e in cartProvider.cart){
+              if(e.product.discountId.isNotEmpty){
+                double discountAmount = (originalTotalPrice * (e.product.discount.amount / 100));
+                totalDiscount += discountAmount;
+              }
+            }
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -56,11 +68,11 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                             ),
                             child: Row(
                               children: [
-                                Text(
-                                  cartItem.product.image,
-                                  // height: 70,
-                                  // width: 70,
-                                ),
+                                // Text(
+                                //   cartItem.product.image,
+                                //   // height: 70,
+                                //   // width: 70,
+                                // ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
@@ -91,12 +103,34 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                             const TextStyle(color: Colors.grey),
                                       ),
                                       const SizedBox(height: 8),
-                                      Text(
-                                        cartItem.product.price.toString(),
-                                        style: const TextStyle(
-                                            color: maincolor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // Display the original price with an overline if there's a discount
+    if (cartItem.product.discountId.isNotEmpty)
+      Text(
+        '\$${cartItem.product.price.toString()}',
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 14,
+          decoration: TextDecoration.lineThrough, // Adds the overline to original price
+        ),
+      ),
+      
+    // Display the final price
+    Text(
+      cartItem.product.discountId.isEmpty 
+          ? '\$${cartItem.product.price.toString()}' 
+          : '\$${(cartItem.product.price - (cartItem.product.price * (cartItem.product.discount.amount / 100))).toStringAsFixed(2)}',
+      style: const TextStyle(
+        color: maincolor,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+    ),
+  ],
+)
+
                                     ],
                                   ),
                                 ),
@@ -226,19 +260,27 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                           const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Tax'),
+                              Text('${cartProvider.getTotalTaxAmount(cartProvider.cart.map((e) => e.product,).toList())} EGP'),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
                             Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Total Food'),
-                              Text('${cartProvider.totalPrice} EGP'),
+                              Text('$originalTotalPrice EGP'),
                             ],
                           ),
-                          const SizedBox(height: 15),
-                          const Row(
+                          const SizedBox(height: 12),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Discount'),
-                              Text('0 EGP'),
+                              const Text('Discount'),
+                              Text('${totalDiscount.toStringAsFixed(2)} EGP'),
                             ],
                           ),
                           const Divider(thickness: 1),
