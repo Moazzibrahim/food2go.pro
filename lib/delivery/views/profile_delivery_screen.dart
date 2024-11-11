@@ -83,23 +83,33 @@ class _ProfileDeliveryScreenState extends State<ProfileDeliveryScreen> {
     );
   }
 
-  Widget _buildTextField(String text) {
+  Widget _buildTextField(String hintText) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
         ),
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
+        child: TextField(
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey.shade600),
+            border: InputBorder.none, // Remove default border
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: 15), // Padding inside text field
           ),
+          style: const TextStyle(fontSize: 20, color: Colors.black),
         ),
       ),
     );

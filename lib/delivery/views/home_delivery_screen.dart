@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../constants/colors.dart';
 import '../../controllers/delivery/order_provider.dart';
+import '../../controllers/delivery/profile_delivery_provider.dart';
 import '../../models/delivery/orders_delivery_model.dart';
 import 'details_order_delivery_screen.dart';
 
@@ -20,8 +20,13 @@ class _HomeDeliveryScreenState extends State<HomeDeliveryScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Fetching orders
       Provider.of<OrderdeliveryProvider>(context, listen: false)
           .fetchOrders(context);
+
+      // Fetching user data
+      Provider.of<DeliveryUserProvider>(context, listen: false)
+          .fetchUserData(context);
     });
   }
 
@@ -31,7 +36,22 @@ class _HomeDeliveryScreenState extends State<HomeDeliveryScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Hello Muhammad"),
+        title: Consumer<DeliveryUserProvider>(
+          builder: (context, userProvider, child) {
+            if (userProvider.isLoading) {
+              return const CircularProgressIndicator();
+            }
+
+            return Text(
+              "Hello, ${userProvider.user?.firstName ?? 'delivery'}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            );
+          },
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -283,6 +303,7 @@ class _OrderCardState extends State<OrderCard> {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
+            border: Border.all(color: maincolor),
             color: isActive ? maincolor : Colors.white,
             borderRadius: BorderRadius.only(
               bottomLeft:
