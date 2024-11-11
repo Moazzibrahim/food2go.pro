@@ -205,7 +205,8 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
           CircleAvatar(
             backgroundImage: order.user?.image != null
                 ? NetworkImage(order.user!.imageLink ?? order.user!.image!)
-                : const AssetImage('assets/images/delivery.png') as ImageProvider,
+                : const AssetImage('assets/images/delivery.png')
+                    as ImageProvider,
             radius: 24,
           ),
           const SizedBox(width: 16),
@@ -232,9 +233,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
                 final url = Uri.parse('tel:$phone');
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url);
-                } else {
-                  print('Could not launch $url');
-                }
+                } else {}
               }
             },
             child: const Icon(Icons.phone, color: maincolor),
@@ -297,7 +296,8 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
 
   Widget buildPriceDetails() {
     double totalAmount = (order.amount ?? 0.0) -
-        (order.totalDiscount ?? 0.0) +
+        (order.totalDiscount ?? 0.0) -
+        (order.coupondiscount ?? 0.0) +
         (order.totalTax ?? 0.0) +
         ((order.address?.zone?.price) ?? 0.0);
     return Container(
@@ -323,7 +323,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
           buildPriceRow(
               'Vat/Tax', '+ ${order.totalTax!.toStringAsFixed(2)} E£'),
           buildPriceRow('Coupon Discount',
-              '+ ${order.coupondiscount!.toStringAsFixed(2)} E£'),
+              '- ${order.coupondiscount!.toStringAsFixed(2)} E£'),
           buildPriceRow('Delivery Fee',
               '+ ${order.address?.zone?.price?.toStringAsFixed(2)} E£'),
           const Divider(),

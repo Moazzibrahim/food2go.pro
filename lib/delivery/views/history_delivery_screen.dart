@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:provider/provider.dart';
 
-class HistoryDeliveryScreen extends StatelessWidget {
-  HistoryDeliveryScreen({super.key});
+import '../../controllers/delivery/history_delivery_provider.dart';
 
-  final List<Map<String, dynamic>> orderHistory = [
-    {
-      'orderId': '#5258',
-      'status': 'Delivered',
-      'amount': '152 LE',
-      'orderDate': '05 Nov 2024',
-    },
-    {
-      'orderId': '#5259',
-      'status': 'Pending',
-      'amount': '200 LE',
-      'orderDate': '04 Nov 2024',
-    },
-    {
-      'orderId': '#5260',
-      'status': 'Cancelled',
-      'amount': '120 LE',
-      'orderDate': '03 Nov 2024',
-    },
-  ];
+class HistoryDeliveryScreen extends StatefulWidget {
+  const HistoryDeliveryScreen({super.key});
+
+  @override
+  _HistoryDeliveryScreenState createState() => _HistoryDeliveryScreenState();
+}
+
+class _HistoryDeliveryScreenState extends State<HistoryDeliveryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchOrderHistory();
+    });
+  }
+
+  void _fetchOrderHistory() {
+    final orderHistoryProvider =
+        Provider.of<OrderHistoryProvider>(context, listen: false);
+    orderHistoryProvider.fetchOrderHistory(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,87 +42,108 @@ class HistoryDeliveryScreen extends StatelessWidget {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: orderHistory.length,
-        itemBuilder: (context, index) {
-          final order = orderHistory[index];
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+      body: Consumer<OrderHistoryProvider>(
+        builder: (context, orderHistoryProvider, child) {
+          if (orderHistoryProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (orderHistoryProvider.errorMessage.isNotEmpty) {
+            return Center(
+              child: Text(
+                orderHistoryProvider.errorMessage,
+                style: const TextStyle(fontSize: 18, color: Colors.red),
               ),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Order Id: ${order['orderId']}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
+            );
+          }
+
+          final orderHistory = orderHistoryProvider.orderHistory?.orders ?? [];
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: orderHistory.length,
+            itemBuilder: (context, index) {
+              final order = orderHistory[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
                       ),
-                      const Text(
-                        'Amount',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Order Id: #${order.id}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Text(
+                            'Amount',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Status: ${order.orderStatus}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: (order.orderStatus == 'confirmed' ||
+                                      order.orderStatus == 'delivered')
+                                  ? Colors.green
+                                  : maincolor,
+                              fontWeight: (order.orderStatus == 'confirmed' ||
+                                      order.orderStatus == 'delivered')
+                                  ? FontWeight.bold
+                                  : FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${order.amount} LE',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: maincolor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Order At ${order.date}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Status: ${order['status']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: order['status'] == 'Delivered'
-                              ? maincolor
-                              : Colors.black,
-                          fontWeight: order['status'] == 'Delivered'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        order['amount'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: maincolor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Order At ${order['orderDate']}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

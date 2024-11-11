@@ -4,7 +4,7 @@ class Order {
   final int? userId;
   final int? branchId;
   final double? amount;
-  final String? orderStatus;
+  String? orderStatus; // Removed `final` to make it mutable
   final String? orderType;
   final String? paymentStatus;
   final double? totalTax;
@@ -19,7 +19,7 @@ class Order {
   final List<Item>? items;
   final Address? address;
   final List<OrderDetail>? details;
-  final User? user; // Added User model
+  final User? user;
 
   Order({
     this.id,
@@ -41,7 +41,7 @@ class Order {
     this.items,
     this.address,
     this.details,
-    this.user, // Added User model
+    this.user,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -70,10 +70,13 @@ class Order {
       details: (json['details'] as List<dynamic>?)
           ?.map((detail) => OrderDetail.fromJson(detail))
           .toList(),
-      user: json['user'] != null
-          ? User.fromJson(json['user'])
-          : null, // Parse user
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
     );
+  }
+
+  // Optional: Add a setter for orderStatus to provide additional control
+  void setOrderStatus(String newStatus) {
+    orderStatus = newStatus;
   }
 }
 

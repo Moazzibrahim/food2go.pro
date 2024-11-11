@@ -18,7 +18,7 @@ class CodeVerificationScreen extends StatefulWidget {
 
 class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
   final TextEditingController codeController = TextEditingController();
-  int _seconds = 180; // 3 minutes in seconds
+  int _seconds = 180; 
   Timer? _timer;
 
   @override
@@ -117,7 +117,7 @@ class _CodeVerificationScreenState extends State<CodeVerificationScreen> {
                       ),
                       const SizedBox(height: 30),
                       Pinput(
-                        length: 4,
+                        length: 5,
                         controller: codeController,
                         defaultPinTheme: PinTheme(
                           width: 56,

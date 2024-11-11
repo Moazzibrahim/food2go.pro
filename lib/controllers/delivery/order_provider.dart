@@ -8,7 +8,10 @@ import '../../models/delivery/orders_delivery_model.dart';
 import '../Auth/login_provider.dart';
 
 class OrderdeliveryProvider with ChangeNotifier {
-  final String _baseUrl = 'https://backend.food2go.pro/delivery/orders';
+  final String _baseUrl = 'https://Bcknd.food2go.online/delivery/orders';
+  final String _updateOrderUrl =
+      'https://bcknd.food2go.online/delivery/orders/status';
+
   List<Order> _orders = [];
   bool _isLoading = false;
 
@@ -52,6 +55,43 @@ class OrderdeliveryProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> updateOrderStatus(
+      BuildContext context, int orderId, String orderStatus) async {
+    try {
+      final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+      final String? token = loginProvider.token;
+
+      if (token == null || token.isEmpty) {
+        throw Exception('User is not logged in or token is missing');
+      }
+
+      // Construct the URL with parameters
+      final url = Uri.parse(
+          '$_updateOrderUrl?order_id=$orderId&order_status=$orderStatus');
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        log('Order status updated successfully: ${response.body}');
+      } else {
+        log(response.statusCode.toString());
+        log('Failed to update order status: ${response.body}');
+        throw Exception('Failed to update order status');
+      }
+    } catch (error) {
+      log(error.toString());
+      log('Error updating order status: $error');
+      throw error;
     }
   }
 }

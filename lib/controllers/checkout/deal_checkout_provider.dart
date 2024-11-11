@@ -14,7 +14,7 @@ class OrderProvider with ChangeNotifier {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
 
-    final url = Uri.parse('https://backend.food2go.pro/customer/deal/order');
+    final url = Uri.parse('https://Bcknd.food2go.online/customer/deal/order');
     try {
       final response = await http.post(
         url,

@@ -17,8 +17,10 @@ class _HomeDeliveryScreenState extends State<HomeDeliveryScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<OrderdeliveryProvider>(context, listen: false)
-        .fetchOrders(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<OrderdeliveryProvider>(context, listen: false)
+          .fetchOrders(context);
+    });
   }
 
   @override
@@ -72,10 +74,19 @@ class _HomeDeliveryScreenState extends State<HomeDeliveryScreen> {
   }
 }
 
-class OrderCard extends StatelessWidget {
+class OrderCard extends StatefulWidget {
   final Order order;
 
   const OrderCard({required this.order, super.key});
+
+  @override
+  _OrderCardState createState() => _OrderCardState();
+}
+
+class _OrderCardState extends State<OrderCard> {
+  bool _isDelivered = true;
+  bool _showNotDeliveredOptions = false;
+  String? _selectedNotDeliveredOption;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +105,7 @@ class OrderCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "Order Id: #${order.id ?? 'N/A'}",
+                      "Order Id: #${widget.order.id ?? 'N/A'}",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
@@ -105,7 +116,8 @@ class OrderCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.location_on, color: maincolor, size: 16),
                     const SizedBox(width: 4),
-                    Text(order.address?.zone?.zone ?? 'Address not available'),
+                    Text(widget.order.address?.zone?.zone ??
+                        'Address not available'),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -118,7 +130,7 @@ class OrderCard extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                DetailsOrderDeliveryScreen(order: order),
+                                DetailsOrderDeliveryScreen(order: widget.order),
                           ),
                         );
                       },
@@ -149,46 +161,141 @@ class OrderCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 12,
-          right: 5,
-          child: Container(
-            height: 30,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 249, 105, 94),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-              ),
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: _buildActionButtons(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    if (widget.order.orderStatus == 'processing') {
+      return GestureDetector(
+        onTap: () {
+          Provider.of<OrderdeliveryProvider>(context, listen: false)
+              .updateOrderStatus(context, widget.order.id!, 'out_for_delivery');
+          setState(() {
+            widget.order.orderStatus = 'out_for_delivery';
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: const BoxDecoration(
+            color: maincolor,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
             ),
-            child: const Text(
-              'Confirmed',
+          ),
+          child: const Center(
+            child: Text(
+              "Order Received",
               style: TextStyle(color: Colors.white),
             ),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: const BoxDecoration(
-              color: maincolor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
+      );
+    } else if (widget.order.orderStatus == 'out_for_delivery') {
+      return _showNotDeliveredOptions
+          ? Row(
+              children: [
+                _buildStatusButton("Failed to Deliver",
+                    _selectedNotDeliveredOption == "Failed to Deliver"),
+                _buildStatusButton(
+                    "Returned", _selectedNotDeliveredOption == "Returned"),
+              ],
+            )
+          : Row(
+              children: [
+                _buildMainStatusButton("Delivered", _isDelivered, true),
+                _buildMainStatusButton("Not Delivered", !_isDelivered, false),
+              ],
+            );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildMainStatusButton(String label, bool isActive, bool isDelivered) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () async {
+          setState(() {
+            _isDelivered = isDelivered;
+            _showNotDeliveredOptions = label == "Not Delivered";
+            _selectedNotDeliveredOption = null;
+          });
+
+          if (label == "Delivered") {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              await Provider.of<OrderdeliveryProvider>(context, listen: false)
+                  .updateOrderStatus(context, widget.order.id!, 'delivered');
+
+              Provider.of<OrderdeliveryProvider>(context, listen: false)
+                  .fetchOrders(context);
+            });
+          }
+        },
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isActive ? maincolor : Colors.white,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(isDelivered ? 12 : 0),
+              bottomRight: Radius.circular(isDelivered ? 0 : 12),
             ),
-            child: const Center(
-              child: Text(
-                "Order Received",
-                style: TextStyle(color: Colors.white),
-              ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isActive ? Colors.white : maincolor,
             ),
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildStatusButton(String label, bool isActive) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedNotDeliveredOption = label;
+          });
+
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final orderStatus =
+                label == "Failed to Deliver" ? 'faild_to_deliver' : 'returned';
+
+            await Provider.of<OrderdeliveryProvider>(context, listen: false)
+                .updateOrderStatus(context, widget.order.id!, orderStatus);
+
+            Provider.of<OrderdeliveryProvider>(context, listen: false)
+                .fetchOrders(context);
+          });
+        },
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isActive ? maincolor : Colors.white,
+            borderRadius: BorderRadius.only(
+              bottomLeft:
+                  Radius.circular(label == "Failed to Deliver" ? 12 : 0),
+              bottomRight: Radius.circular(label == "Returned" ? 12 : 0),
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isActive ? Colors.white : maincolor,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

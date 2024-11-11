@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
@@ -9,11 +7,15 @@ import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+import '../../view/screens/Auth/login_screen.dart'; // Don't forget to import Provider
 
 class LoginProvider with ChangeNotifier {
   LoginModel? userModel;
   String? token;
   bool isLoading = false;
+
   Future<void> login(
       String email, String password, BuildContext context) async {
     final url = Uri.parse('https://Bcknd.food2go.online/api/user/auth/login');
@@ -68,5 +70,43 @@ class LoginProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+Future<void> logout(BuildContext context) async {
+    final url = Uri.parse('https://Bcknd.food2go.online/api/logout');
+    final String token = this.token!;
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 &&
+          responseData['success'] == 'You logout success') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false,
+        );
+        log("You logged out successfully");
+      } else {
+        _showErrorSnackbar(context, 'Failed to log out. Please try again.');
+      }
+    } catch (error) {
+      _showErrorSnackbar(
+          context, 'An error occurred. Please check your network.');
+    }
+  }
+
+  // Show error snackbar when logout fails
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }
