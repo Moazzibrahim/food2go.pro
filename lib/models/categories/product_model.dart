@@ -55,7 +55,7 @@ class Product {
         name: json['name'] ?? '',
         id: json['id'].toInt(),
         description: json['description'] ?? '',
-        image: json['image'] ?? '',
+        image: json['image_link'] ?? '',
         categoryId: json['category_id'].toInt(),
         subCategoryId: json['sub_category_id']?.toString(),
         productTimeStatus: json['product_time_status'].toString(),
