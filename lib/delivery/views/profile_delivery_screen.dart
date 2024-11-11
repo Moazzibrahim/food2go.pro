@@ -1,12 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:food2go_app/controllers/delivery/profile_delivery_provider.dart';
 import '../../controllers/Auth/login_provider.dart';
 
 class ProfileDeliveryScreen extends StatefulWidget {
-  const ProfileDeliveryScreen({Key? key}) : super(key: key);
+  const ProfileDeliveryScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileDeliveryScreenState createState() => _ProfileDeliveryScreenState();
 }
 
@@ -50,6 +53,7 @@ class _ProfileDeliveryScreenState extends State<ProfileDeliveryScreen> {
                         children: [
                           CircleAvatar(
                             radius: 70,
+                            // ignore: unnecessary_null_comparison
                             backgroundImage: user.imageLink != null
                                 ? NetworkImage(user.imageLink)
                                 : const AssetImage('assets/profile_picture.jpg')

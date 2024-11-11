@@ -16,6 +16,7 @@ class CodeCheckoutScreen extends StatefulWidget {
       required this.image});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CodeCheckoutScreenState createState() => _CodeCheckoutScreenState();
 }
 
@@ -230,6 +231,7 @@ class _CodeCheckoutScreenState extends State<CodeCheckoutScreen> {
                     'assets/images/Status Bar.svg',
                     height: 30,
                     width: 30,
+                    // ignore: deprecated_member_use
                     color: maincolor,
                   ),
                 ],

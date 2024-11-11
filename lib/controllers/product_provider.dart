@@ -27,7 +27,7 @@ class ProductProvider with ChangeNotifier {
   List<Product> _discounts = [];
   List<Product> get discounts => _discounts;
 
-  List<CartItem> _cart = [];
+  final List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
   double _totalPrice = 0.0;

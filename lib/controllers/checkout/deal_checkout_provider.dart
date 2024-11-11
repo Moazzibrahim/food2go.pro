@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -57,14 +59,14 @@ class OrderProvider with ChangeNotifier {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Deal Expired'),
-          content: Text('The selected deal is no longer available.'),
+          title: const Text('Deal Expired'),
+          content: const Text('The selected deal is no longer available.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

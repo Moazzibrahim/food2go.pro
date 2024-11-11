@@ -38,8 +38,6 @@ class DeliveryUserProvider with ChangeNotifier {
       } else {
         throw Exception('Failed to load user data');
       }
-    } catch (error) {
-      print('Error fetching user data: $error');
     } finally {
       _isLoading = false;
       notifyListeners();

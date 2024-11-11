@@ -51,7 +51,7 @@ class OrderdeliveryProvider with ChangeNotifier {
       }
     } catch (error) {
       log('Error fetching orders: $error');
-      throw error;
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -91,7 +91,7 @@ class OrderdeliveryProvider with ChangeNotifier {
     } catch (error) {
       log(error.toString());
       log('Error updating order status: $error');
-      throw error;
+      rethrow;
     }
   }
 }

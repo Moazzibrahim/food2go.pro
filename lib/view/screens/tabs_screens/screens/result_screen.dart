@@ -5,22 +5,24 @@ import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
+
 class ResultScreen extends StatelessWidget {
   final int? categoryId;
   final double priceStart;
   final double priceEnd;
 
   const ResultScreen({
-    Key? key,
+    super.key,
     this.categoryId,
     required this.priceStart,
     required this.priceEnd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final filteredProducts = productProvider.getFilteredProducts(categoryId, priceStart, priceEnd);
+    final filteredProducts =
+        productProvider.getFilteredProducts(categoryId, priceStart, priceEnd);
 
     return Scaffold(
       appBar: buildAppBar(context, 'Result'),
@@ -33,7 +35,8 @@ class ResultScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (categoryId != null) _buildCategoryTag('Category $categoryId'),
+                if (categoryId != null)
+                  _buildCategoryTag('Category $categoryId'),
                 _buildPriceRangeTag(priceStart, priceEnd),
               ],
             ),
@@ -138,13 +141,10 @@ class ResultScreen extends StatelessWidget {
           backgroundColor: maincolor,
           child: IconButton(
             icon: SvgPicture.asset('assets/images/filter.svg'),
-            onPressed: () {
-            
-            },
+            onPressed: () {},
           ),
         ),
       ],
     );
   }
 }
-

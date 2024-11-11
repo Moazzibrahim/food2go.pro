@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
@@ -9,6 +11,7 @@ class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FilterScreenState createState() => _FilterScreenState();
 }
 

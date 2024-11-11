@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
@@ -7,7 +9,6 @@ import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../../view/screens/Auth/login_screen.dart'; // Don't forget to import Provider
 

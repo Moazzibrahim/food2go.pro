@@ -30,10 +30,10 @@ class _TabsDeliveryScreenState extends State<TabsDeliveryScreen> {
                   _currentIndex = index;
                 });
               },
-              children: [
-                const HomeDeliveryScreen(),
+              children: const [
+                HomeDeliveryScreen(),
                 HistoryDeliveryScreen(),
-                const ProfileDeliveryScreen(),
+                ProfileDeliveryScreen(),
               ],
             ),
           ),
