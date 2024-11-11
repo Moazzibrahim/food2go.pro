@@ -30,17 +30,21 @@ class ProductProvider with ChangeNotifier {
   List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
+  double _totalPrice = 0.0;
+  double _totalTax = 0.0;
+
   double get totalPrice {
-  double total = 0.0;
+  _totalPrice = 0.0;
   double defaultPrice;
   for (var item in cart) {
     defaultPrice = item.product.price / item.product.quantity;
-    total += defaultPrice * item.product.quantity;
+    defaultPrice += (defaultPrice * (item.product.tax.amount / 100));
+    _totalPrice += defaultPrice * item.product.quantity;
     for (var extra in item.extra) {
-      total += extra.price * extra.extraQuantity;
+      _totalPrice += extra.price * extra.extraQuantity;
     }
   }
-  return total;
+  return _totalPrice;
 }
 
 
@@ -70,6 +74,13 @@ void decreaseProductQuantity(int index) {
       cart[index].extra[extraIndex].extraQuantity--;
       notifyListeners();
     }
+  }
+
+  double getTotalTax(List<Product> cartProducts){
+    for (var e in cartProducts) {
+      _totalTax += e.tax.amount;
+    }
+    return _totalTax;
   }
 
   Future<void> fetchProducts(BuildContext context) async {
@@ -166,7 +177,16 @@ void decreaseProductQuantity(int index) {
     }
   }
 
-  Future<void> postCart(BuildContext context, {required List<Product> products}) async {
+  Future<void> postCart(BuildContext context, {
+  required List<Product> products,
+  required String date,
+  required int? branchId,
+  required String paymentStatus,
+  required double totalTax,
+  required int addressId,
+  required String orderType,
+  required String paidBy,
+  }) async {
   final loginProvider = Provider.of<LoginProvider>(context, listen: false);
   final String token = loginProvider.token!;
   
@@ -179,9 +199,9 @@ void decreaseProductQuantity(int index) {
         'Authorization': 'Bearer $token',
       },
       body: jsonEncode({
-        'date': '2024-11-05 14:28:06',
-        'branch_id': null,
-        'amount': 120,
+        'date': date,
+        'branch_id': branchId,
+        'amount': totalPrice,
         'payment_status': 'paid',
         'total_tax': 14,
         'total_discount': 50,
@@ -190,23 +210,25 @@ void decreaseProductQuantity(int index) {
         'paid_by': 'cash',
         'products': products.map((product) => {
           'product_id': product.id,
-          'count' : 2,
+          'count' : product.quantity,
+          'addons': product.addons.map((addon) => {
+            'addon_id' : addon.id,
+            'count' : 1
+          },),
           'variation': product.variations.map((variation) => {
             'variation_id': variation.id,
             'option_id': variation.options.map((e) => e.id,).toList(),
           }).toList(),
           'extra_id': product.extra.map((e) => e.id,).toList(),
-          'exclude_id': [],
+          'exclude_id': product.excludes.map((e) => e.id,).toList(),
         }).toList(),
       }),
     );
     
     if (response.statusCode == 200) {
-      // Handle success
       log('Order posted successfully');
     } else {
       log(response.body);
-      // Handle error response
       log('Failed to post order: ${response.statusCode}');
     }
   } catch (e) {
@@ -215,8 +237,8 @@ void decreaseProductQuantity(int index) {
 }
 
   void addtoCart(Product product, List<Extra> extra, List<Option> options,
-      List<AddOns> addons) {
+      List<AddOns> addons, List<Excludes> excludes) {
     _cart.add(CartItem(
-        product: product, extra: extra, options: options, addons: addons));
+        product: product, extra: extra, options: options, addons: addons,excludes: excludes));
   }
 }

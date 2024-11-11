@@ -23,21 +23,22 @@ class ExtrasBottomSheet extends StatefulWidget {
 
 class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   Map<int, int> extraQuantities = {};
-  Set<int> selectedExtras = {}; 
-  Set<int> selectedExcludes = {}; 
+  Set<int> selectedExtras = {};
+  Set<int> selectedExcludes = {};
 
   @override
   void initState() {
     super.initState();
     final productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    // Get extras for the selected variation
     final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
     for (int i = 0; i < extras.length; i++) {
       extraQuantities[i] = 1;
     }
 
-    selectedExcludes = widget.product!.excludes.map((e) => e.id,).toSet();
+    for (int i = 0; i < widget.product!.excludes.length; i++) {
+      selectedExcludes.add(i);
+    }
   }
 
   double getTotalPrice(List<Extra> extras) {
@@ -60,15 +61,13 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
     }).toList();
   }
 
-  List<Excludes> getSelectedExcludes(List<Excludes> excludes) {
-    return selectedExcludes.map((index) {
-      final exclude = excludes[index];
-      return Excludes(
-        id: exclude.id,
-        productId: exclude.productId,
-        name: exclude.name,
-      );
-    }).toList();
+  List<Excludes> getDeselectedExcludes(List<Excludes> excludes) {
+    return widget.product!.excludes
+        .asMap()
+        .entries
+        .where((entry) => !selectedExcludes.contains(entry.key))
+        .map((entry) => entry.value)
+        .toList();
   }
 
   @override
@@ -78,119 +77,165 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
         final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
         final excludes = widget.product!.excludes;
 
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Extras:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              const Text(
+                'Extras',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const Divider(),
               const SizedBox(height: 10),
               ...List.generate(
                 extras.length,
                 (index) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            extras[index].name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: selectedExtras.contains(index),
+                                activeColor: maincolor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      selectedExtras.add(index);
+                                    } else {
+                                      selectedExtras.remove(index);
+                                    }
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                extras[index].name,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '+(${extras[index].price})',
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: selectedExtras.contains(index),
-                            activeColor: maincolor,
-                            onChanged: (value) {
-                              setState(() {
-                                if (value == true) {
-                                  selectedExtras.add(index);
-                                } else {
-                                  selectedExtras.remove(index);
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline),
+                              onPressed: selectedExtras.contains(index) &&
+                                      extraQuantities[index]! > 1
+                                  ? () {
+                                      setState(() {
+                                        extraQuantities[index] =
+                                            (extraQuantities[index] ?? 1) - 1;
+                                      });
+                                    }
+                                  : null,
+                            ),
+                            Text(
+                              '${extraQuantities[index]}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add_circle_outline),
+                              onPressed: selectedExtras.contains(index)
+                                  ? () {
+                                      setState(() {
+                                        extraQuantities[index] =
+                                            (extraQuantities[index] ?? 1) + 1;
+                                      });
+                                    }
+                                  : null,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '+${extras[index].price.toStringAsFixed(2)}',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Total: \$${getTotalPrice(extras).toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 20),
-              const Text('Excludes:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              Center(
+                child: Text(
+                  'Total: \$${getTotalPrice(extras).toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: maincolor,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Excludes',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const Divider(),
               const SizedBox(height: 10),
               ...List.generate(
                 excludes.length,
                 (index) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        excludes[index].name,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                      Checkbox(
-                        value: selectedExcludes.contains(index),
-                        activeColor: maincolor,
-                        onChanged: (value) {
-                          setState(() {
-                            if (value == true) {
-                              selectedExcludes.add(index);
-                            } else {
-                              selectedExcludes.remove(index);
-                            }
-                          });
-                        },
-                      ),
-                    ],
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          excludes[index].name,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
+                        Checkbox(
+                          value: selectedExcludes.contains(index),
+                          activeColor: maincolor,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value == true) {
+                                selectedExcludes.add(index);
+                              } else {
+                                selectedExcludes.remove(index);
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      final selectedExtrasList = getSelectedExtras(extras);
-                      final selectedExcludesList = getSelectedExcludes(excludes);
-                      widget.onSelectedExtras(selectedExtrasList);
-                      widget.onSelectedExcludes(selectedExcludesList);
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: maincolor,
-                      foregroundColor: Colors.white,
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final selectedExtrasList = getSelectedExtras(extras);
+                    final deselectedExcludesList = getDeselectedExcludes(excludes);
+                    widget.onSelectedExtras(selectedExtrasList);
+                    widget.onSelectedExcludes(deselectedExcludesList);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: maincolor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: const Text('Done'),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 24.0),
                   ),
-                ],
-              )
+                  child: const Text(
+                    'Add to Order',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         );

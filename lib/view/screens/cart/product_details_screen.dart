@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
+import 'package:food2go_app/view/screens/cart/widgets/addon_selection_widget.dart';
 import 'package:food2go_app/view/screens/cart/widgets/extras_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int quantity = 1;
   String? selectedOption;
   bool isFavorited = false;
-  Set<int> selectedAddOns = {};
   int? selectedVariation;
   Set<String> selectedOptions = {};
   double defaultPrice = 0;
@@ -53,6 +53,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         widget.product!.price -= defaultPrice;
       });
     }
+  }
+
+  void updatePrice(List<AddOns> selectedAddons, double updatedPrice) {
+    setState(() {
+      widget.product!.price = updatedPrice;
+    });
   }
 
   @override
@@ -245,19 +251,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             context: context,
                             showDragHandle: true,
                             backgroundColor: Colors.white,
+                            isScrollControlled: true,
                             builder: (context) {
-                              return ExtrasBottomSheet(
-                                product: widget.product,
-                                selectedVariation: selectedVariation ?? -1,
-                                onSelectedExtras: (selectedExtras) {
-                                selectedExtrasList = selectedExtras;
-                                },
-                                onSelectedExcludes: (selectedExcludes) {
-                                  selectedExcludesList = selectedExcludes;
-                                },
-                              );
+                            return SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: ExtrasBottomSheet(
+                            product: widget.product,
+                            selectedVariation: selectedVariation ?? -1,
+                            onSelectedExtras: (selectedExtras) {
+                            selectedExtrasList = selectedExtras;
                             },
-                          );
+                            onSelectedExcludes: (selectedExcludes) {
+                            selectedExcludesList = selectedExcludes;
+                              },
+      ),
+    );
+  },
+);
                         },
                         child: const Row(
                           children: [
@@ -280,38 +290,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   const SizedBox(height: 8),
                   const Text("Pasta, Basil, Cheese"),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Add on order:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  ...List.generate(
-                    widget.product!.addons.length,
-                    (index) {
-                      final addon = widget.product!.addons[index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(addon.name),
-                          Checkbox(
-                              value: selectedAddOns.contains(index),
-                              activeColor: maincolor,
-                              onChanged: (value) {
-                                setState(() {
-                                  if (value == true) {
-                                    selectedAddOns.add(index);
-                                    addons.add(addon);
-                                    widget.product!.price += addon.price*quantity;
-                                    defaultPrice += addon.price;
-                                  } else {
-                                    selectedAddOns.remove(index);
-                                    widget.product!.price -= addon.price*quantity;
-                                    defaultPrice -= addon.price;
-                                  }
-                                });
-                              })
-                        ],
-                      );
-                    },
+                  AddonSelectionWidget(product: widget.product!, mainColor: maincolor,
+                  onAddonsChanged: (selectedAddons, updatedPrice) {
+                updatePrice(selectedAddons, updatedPrice);
+              },
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -347,7 +329,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               e.options = selectedOptionsObject.where((option) => option.variationId == e.id,).toList();
                             }
                             selectedProduct.variations = selectedVariations;
-                            productProvider.addtoCart(selectedProduct,selectedExtrasList,selectedOptionsObject,addons);
+                            selectedProduct.excludes = selectedExcludesList;
+                            productProvider.addtoCart(selectedProduct,selectedExtrasList,selectedOptionsObject,addons,selectedExcludesList);
                             log('added to cart');
                             // Navigator.push(
                             //     context,

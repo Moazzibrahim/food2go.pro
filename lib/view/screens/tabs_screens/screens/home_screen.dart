@@ -463,7 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
             final product = productProvider.popularProducts[index];
             return FoodCard(
               name: product.name,
-              image: 'assets/images/medium.png',
+              image: product.image,
               description: product.description,
               price: product.price,
               productId: product.id,

@@ -22,6 +22,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String? selectedBranch;
   String? selectedDeliveryLocation;
   bool deliveryNow = false;
+  double totalTax = 0.0;
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
 
@@ -47,6 +48,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   ];
 
   @override
+  void initState() {
+    totalTax = Provider.of<ProductProvider>(context,listen: false).getTotalTax(widget.cartProducts);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context, 'Checkout'),
@@ -62,10 +69,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildDeliveryOptionRadio('pickup', 'Pickup'),
+                    child: _buildDeliveryOptionRadio('take_away', 'Pickup'),
                   ),
                   Expanded(
                     child: _buildDeliveryOptionRadio('delivery', 'Delivery'),
+                  ),
+                  Expanded(
+                    child: _buildDeliveryOptionRadio('dine_in', 'Dine in'),
                   ),
                 ],
               ),
@@ -123,21 +133,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildDeliveryOptionRadio(String value, String text) {
-    return RadioListTile<String>(
-      value: value,
-      groupValue: selectedDeliveryOption,
-      onChanged: (String? value) {
-        setState(() {
-          selectedDeliveryOption = value;
-        });
-      },
-      title: Text(text),
-      activeColor: maincolor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio(
+          value: value,
+          activeColor: maincolor,
+          groupValue: selectedDeliveryOption,
+          onChanged:  (String? value) {
+            setState(() {
+              selectedDeliveryOption = value;
+            });
+          },
+        ),
+        Text(text),
+      ],
     );
-  }
+}
+
 
   Widget _buildPaymentMethodTile(Map<String, dynamic> method) {
     return RadioListTile<String>(
@@ -297,6 +310,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       onPressed: () async{
         await Provider.of<ProductProvider>(context,listen: false).postCart(context, 
         products: widget.cartProducts, 
+        date: DateTime.now().toString(), 
+        branchId: 1, 
+        paymentStatus: 'paymentStatus', 
+        totalTax: totalTax, 
+        addressId: 1, 
+        orderType: selectedDeliveryOption!, 
+        paidBy: 'visa',
         );
         Navigator.push(
           context,
