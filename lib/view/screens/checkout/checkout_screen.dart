@@ -3,10 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
+import 'package:food2go_app/models/checkout/place_order_model.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
-import '../../../constants/colors.dart'; // Replace this with your actual constants import
+import '../../../constants/colors.dart';
+import '../../../controllers/address/get_address_provider.dart';
+import '../../../controllers/checkout/place_order_provider.dart';
+import '../../../models/address/user_address_model.dart'; // Replace this with your actual constants import
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key, required this.cartProducts});
@@ -26,100 +30,91 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
 
-  final List<Map<String, dynamic>> paymentMethods = [
-    {'name': 'Cash', 'icon': Icons.money, 'value': 'cash'},
-    {'name': 'Visa', 'icon': Icons.credit_card, 'value': 'visa'},
-  ];
-
-  final List<Map<String, String>> branches = [
-    {'name': 'Miami', 'address': '2464 Royal Ln. Mesa, New Jersey 45463'},
-    {
-      'name': 'Sumuhih',
-      'address': '3891 Ranchview Dr. Richardson, California 62639'
-    },
-  ];
-
-  final List<Map<String, String>> deliveryLocations = [
-    {'name': 'Home', 'address': '2464 Royal Ln. Mesa, New Jersey 45463'},
-    {
-      'name': 'Work',
-      'address': '3891 Ranchview Dr. Richardson, California 62639'
-    },
-  ];
-
   @override
   void initState() {
-    totalTax = Provider.of<ProductProvider>(context,listen: false).getTotalTax(widget.cartProducts);
     super.initState();
+    totalTax = Provider.of<ProductProvider>(context, listen: false)
+        .getTotalTax(widget.cartProducts);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<OrderTypesAndPaymentsProvider>(context, listen: false)
+          .fetchOrderTypesAndPayments(context);
+      Provider.of<AddressProvider>(context, listen: false)
+          .fetchAddresses(context); // Fetch addresses
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<OrderTypesAndPaymentsProvider>(context);
+    final addressProvider = Provider.of<AddressProvider>(context);
+    final orderTypes = provider.data?.orderTypes ?? [];
+    final paymentMethods = provider.data?.paymentMethods ?? [];
+    final branches = provider.data?.branches ?? [];
     return Scaffold(
       appBar: buildAppBar(context, 'Checkout'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Delivery Option Section
-              _buildSectionTitle('Choose Pickup or Delivery'),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDeliveryOptionRadio('take_away', 'Pickup'),
-                  ),
-                  Expanded(
-                    child: _buildDeliveryOptionRadio('delivery', 'Delivery'),
-                  ),
-                  Expanded(
-                    child: _buildDeliveryOptionRadio('dine_in', 'Dine in'),
-                  ),
-                ],
+      body: provider.isLoading || addressProvider.isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionTitle('Choose Pickup or Delivery'),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: orderTypes.map((type) {
+                        return Expanded(
+                          child: _buildDeliveryOptionRadio(
+                              type.type, _capitalize(type.type)),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    if (selectedDeliveryOption == 'take_away')
+                      _buildNearestBranchCard(branches),
+                    if (selectedDeliveryOption == 'delivery')
+                      _buildDeliveryLocationCard(addressProvider.addresses),
+
+                    const SizedBox(height: 30),
+                    _buildSectionTitle('Payment Method'),
+                    const SizedBox(height: 10),
+                    Column(
+                      children: paymentMethods.map((method) {
+                        return _buildPaymentMethodTile(method);
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // Note Section
+                    _buildSectionTitle('Note'),
+                    const SizedBox(height: 10),
+                    _buildNoteInputField(),
+
+                    // Delivery Time Section
+                    if (!deliveryNow) ...[
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Delivery Time'),
+                      const SizedBox(height: 10),
+                      _buildDeliveryTimePicker(),
+                    ],
+
+                    const SizedBox(height: 10),
+                    _buildDeliveryNowCheckbox(),
+                    const SizedBox(height: 30),
+
+                    // Place Order Button
+                    _buildPlaceOrderButton(context),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              if (selectedDeliveryOption == 'pickup') _buildNearestBranchCard(),
-              if (selectedDeliveryOption == 'delivery')
-                _buildDeliveryLocationCard(),
-
-              const SizedBox(height: 30),
-              // Payment Method Section
-              _buildSectionTitle('Payment Method'),
-              const SizedBox(height: 10),
-              Column(
-                children: paymentMethods.map((method) {
-                  return _buildPaymentMethodTile(method);
-                }).toList(),
-              ),
-              const SizedBox(height: 30),
-
-              // Note Section
-              _buildSectionTitle('Note'),
-              const SizedBox(height: 10),
-              _buildNoteInputField(),
-
-              // Delivery Time Section
-              if (!deliveryNow) ...[
-                const SizedBox(height: 20),
-                _buildSectionTitle('Delivery Time'),
-                const SizedBox(height: 10),
-                _buildDeliveryTimePicker(),
-              ],
-
-              const SizedBox(height: 10),
-              _buildDeliveryNowCheckbox(),
-              const SizedBox(height: 30),
-
-              // Place Order Button
-              _buildPlaceOrderButton(context),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
+
+  String _capitalize(String input) =>
+      input[0].toUpperCase() + input.substring(1);
 
   Widget _buildSectionTitle(String title) {
     return Text(
@@ -140,7 +135,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           value: value,
           activeColor: maincolor,
           groupValue: selectedDeliveryOption,
-          onChanged:  (String? value) {
+          onChanged: (String? value) {
             setState(() {
               selectedDeliveryOption = value;
             });
@@ -149,12 +144,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         Text(text),
       ],
     );
-}
+  }
 
-
-  Widget _buildPaymentMethodTile(Map<String, dynamic> method) {
+  Widget _buildPaymentMethodTile(PaymentMethod method) {
     return RadioListTile<String>(
-      value: method['value'],
+      value: method.name,
       groupValue: selectedPaymentMethod,
       onChanged: (String? value) {
         setState(() {
@@ -163,10 +157,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       },
       title: Row(
         children: [
-          Icon(method['icon'], color: maincolor),
+          Icon(Icons.payment, color: maincolor), // Placeholder for icon
           const SizedBox(width: 10),
           Text(
-            method['name'],
+            method.name,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],
@@ -175,25 +169,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildNearestBranchCard() {
+  Widget _buildNearestBranchCard(List<Branch> branches) {
     return Column(
       children: branches.map((branch) {
         return _buildSelectionTile(
-            branch['name'], branch['address'], selectedBranch, (value) {
-          setState(() {
-            selectedBranch = value;
-          });
-        });
+          branch.name,
+          branch.address,
+          selectedBranch,
+          (value) {
+            setState(() {
+              selectedBranch = value;
+            });
+          },
+        );
       }).toList(),
     );
   }
 
-  Widget _buildDeliveryLocationCard() {
+  Widget _buildDeliveryLocationCard(List<Address> addresses) {
     return Column(
-      children: deliveryLocations.map((location) {
+      children: addresses.map((address) {
         return _buildSelectionTile(
-            location['name'], location['address'], selectedDeliveryLocation,
-            (value) {
+            address.address, address.type, selectedDeliveryLocation, (value) {
           setState(() {
             selectedDeliveryLocation = value;
           });
@@ -307,22 +304,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildPlaceOrderButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async{
-        await Provider.of<ProductProvider>(context,listen: false).postCart(context, 
-        products: widget.cartProducts, 
-        date: DateTime.now().toString(), 
-        branchId: 1, 
-        paymentStatus: 'paymentStatus', 
-        totalTax: totalTax, 
-        addressId: 1, 
-        orderType: selectedDeliveryOption!, 
-        paidBy: 'visa',
+      onPressed: () async {
+        await Provider.of<ProductProvider>(context, listen: false).postCart(
+          context,
+          products: widget.cartProducts,
+          date: DateTime.now().toString(),
+          branchId: 1,
+          paymentStatus: 'paymentStatus',
+          totalTax: totalTax,
+          addressId: 1,
+          orderType: selectedDeliveryOption!,
+          paidBy: 'visa',
         );
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const OrderTrackingScreen()),
+          MaterialPageRoute(builder: (context) => const OrderTrackingScreen()),
         );
       },
       style: ElevatedButton.styleFrom(

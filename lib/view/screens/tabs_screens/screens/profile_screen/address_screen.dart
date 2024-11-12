@@ -25,7 +25,7 @@ class _AddressScreenState extends State<AddressScreen> {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
       Provider.of<AddressProvider>(context, listen: false)
-          .fetchAddresses(token);
+          .fetchAddresses(context);
     });
   }
 

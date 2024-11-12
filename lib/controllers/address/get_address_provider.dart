@@ -18,9 +18,12 @@ class AddressProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchAddresses(String token) async {
+  Future<void> fetchAddresses(BuildContext context) async {
     _isLoading = true;
     notifyListeners();
+
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final String token = loginProvider.token!;
 
     try {
       final response = await http.get(
@@ -90,7 +93,7 @@ class AddressProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         log(response.body);
-        await fetchAddresses(token); // Pass token directly to fetchAddresses
+        await fetchAddresses(context); // Pass context to fetchAddresses
       } else {
         log(response.body);
         _errorMessage = 'Failed to add address. Please try again.';

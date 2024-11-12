@@ -18,6 +18,7 @@ import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 import 'package:provider/provider.dart';
 
+import 'controllers/checkout/place_order_provider.dart';
 import 'controllers/delivery/history_delivery_provider.dart';
 import 'controllers/delivery/profile_delivery_provider.dart';
 
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrderdeliveryProvider()),
         ChangeNotifierProvider(create: (_) => DeliveryUserProvider()),
         ChangeNotifierProvider(create: (_) => OrderHistoryProvider()),
+        ChangeNotifierProvider(create: (_) => OrderTypesAndPaymentsProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
