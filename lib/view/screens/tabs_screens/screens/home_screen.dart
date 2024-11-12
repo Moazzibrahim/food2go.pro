@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/controllers/notification_controller.dart';
 import 'package:food2go_app/view/screens/categories/screens/categories_screen.dart';
 import 'package:food2go_app/view/screens/discount/discount_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/screens/popular_food_screen.dart';
@@ -43,6 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
+    final userId = Provider.of<LoginProvider>(context,listen: false).userModel!.user!.id;
+    Provider.of<NotificationController>(context,listen: false).initFCMToken(userId!);
     });
   }
 
