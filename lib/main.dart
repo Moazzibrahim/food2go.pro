@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
@@ -10,21 +11,28 @@ import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/checkout/deal_checkout_provider.dart';
 import 'package:food2go_app/controllers/deal/deal_provider.dart';
 import 'package:food2go_app/controllers/delivery/order_provider.dart';
+import 'package:food2go_app/controllers/notification_controller.dart';
 import 'package:food2go_app/controllers/orders/orders_history_provider.dart';
 import 'package:food2go_app/controllers/orders/orders_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/edit_profile_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
+import 'package:food2go_app/firebase_options.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 import 'package:provider/provider.dart';
-
 import 'controllers/checkout/place_order_provider.dart';
 import 'controllers/delivery/history_delivery_provider.dart';
 import 'controllers/delivery/profile_delivery_provider.dart';
 
-void main() {
+void main() async{
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -51,6 +59,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DeliveryUserProvider()),
         ChangeNotifierProvider(create: (_) => OrderHistoryProvider()),
         ChangeNotifierProvider(create: (_) => OrderTypesAndPaymentsProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationController()),
       ],
       child: MaterialApp(
         theme: ThemeData(
