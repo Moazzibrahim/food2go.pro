@@ -66,10 +66,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final profilesProvider = Provider.of<GetProfileProvider>(context);
 
+    // Show loading indicator until userProfile is available
+    if (profilesProvider.userProfile == null) {
+      return Scaffold(
+        appBar: buildAppBar(context, 'Edit profile'),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return WillPopScope(
       onWillPop: () async {
-        // Fetch the user profile data when popping the screen
-        await _fetchUserProfile();
+        await _fetchUserProfile(); // Fetch the user profile data when popping the screen
         return true; // Allow the pop action
       },
       child: Scaffold(
@@ -90,8 +97,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               radius: 40,
                               backgroundImage: _selectedImage != null
                                   ? FileImage(_selectedImage!) as ImageProvider
-                                  : NetworkImage(profilesProvider.userProfile!
-                                      .imageLink!), // Replace with actual image URL
+                                  : (profilesProvider.userProfile?.imageLink != null
+                                      ? NetworkImage(profilesProvider.userProfile!.imageLink!)
+                                      : const AssetImage('assets/default_avatar.png')), // Fallback image if no image is found
                             ),
                             Positioned(
                               right: 0,
@@ -108,8 +116,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             ListTile(
-                                              leading:
-                                                  const Icon(Icons.camera_alt),
+                                              leading: const Icon(Icons.camera_alt),
                                               title: const Text('Take a photo'),
                                               onTap: () {
                                                 Navigator.of(context).pop();
@@ -118,8 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                             ListTile(
                                               leading: const Icon(Icons.photo),
-                                              title: const Text(
-                                                  'Choose from gallery'),
+                                              title: const Text('Choose from gallery'),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 _pickImageFromGallery();
@@ -130,8 +136,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       },
                                     );
                                   },
-                                  child: const Icon(Icons.edit,
-                                      color: Colors.white, size: 16),
+                                  child: const Icon(Icons.edit, color: Colors.white, size: 16),
                                 ),
                               ),
                             ),
@@ -142,12 +147,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profilesProvider.userProfile!.name!,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              profilesProvider.userProfile?.name ?? 'Name not available',
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              profilesProvider.userProfile!.bio!,
+                              profilesProvider.userProfile?.bio ?? 'Bio not available',
                               style: const TextStyle(color: Colors.grey),
                             ),
                           ],
@@ -156,47 +160,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  TextField(
-                    controller: fnameController,
-                    decoration: InputDecoration(
-                      labelText: 'First Name',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('First Name', fnameController),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: lnameController,
-                    decoration: InputDecoration(
-                      labelText: 'Last Name',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('Last Name', lnameController),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('Email', emailController),
                   const SizedBox(height: 16),
                   TextField(
                     controller: passController,
@@ -213,53 +181,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('Phone', phoneController),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: bioController,
-                    decoration: InputDecoration(
-                      labelText: 'Bio',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('Bio', bioController),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: addressController,
-                    decoration: InputDecoration(
-                      labelText: 'Address',
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
+                  _buildTextField('Address', addressController),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
                       // Call provider method to save profile
-                      await Provider.of<EditProfileProvider>(context,
-                              listen: false)
+                      await Provider.of<EditProfileProvider>(context, listen: false)
                           .postProfileUpdate(
                         context,
                         firstName: fnameController.text,
@@ -273,14 +204,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       );
                       // Refresh user profile data after update
                       await _fetchUserProfile();
-                      // Optionally, you can also clear the text fields after updating
-                      fnameController.clear();
-                      lnameController.clear();
-                      emailController.clear();
-                      passController.clear();
-                      phoneController.clear();
-                      bioController.clear();
-                      addressController.clear();
+                      _clearTextFields();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: maincolor,
@@ -301,5 +225,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
     );
+  }
+
+  // Helper method to build text fields
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black45),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+    );
+  }
+
+  // Helper method to clear text fields after save
+  void _clearTextFields() {
+    fnameController.clear();
+    lnameController.clear();
+    emailController.clear();
+    passController.clear();
+    phoneController.clear();
+    bioController.clear();
+    addressController.clear();
   }
 }
