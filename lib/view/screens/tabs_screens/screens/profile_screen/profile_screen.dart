@@ -1,7 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
@@ -10,7 +9,6 @@ import 'package:food2go_app/view/screens/my_orders/my_orders_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'address_screen.dart';
 import 'personal_info.dart';
 
@@ -60,73 +58,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<GetProfileProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text('Profile')),
-        automaticallyImplyLeading: false,
-      ),
-      body: profileProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : profileProvider.userProfile == null
-              ? const Center(child: Text("Failed to load profile data"))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Welcome, ${profileProvider.userProfile!.name}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Center(child: Text('Profile')),
+          automaticallyImplyLeading: false,
+        ),
+        body: profileProvider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : profileProvider.userProfile == null
+                ? const Center(child: Text("Failed to load profile data"))
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Welcome, ${profileProvider.userProfile!.name}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      _buildProfileOption(
-                        icon: Icons.person_outline,
-                        label: 'Personal Info',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const PersonalInfo(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildProfileOption(
-                        icon: Icons.location_on_outlined,
-                        label: 'Addresses',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AddressScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildProfileOption(
-                        icon: Icons.shopping_bag_outlined,
-                        label: 'My Orders ',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MyOrderScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildProfileOption(
-                        icon: Icons.logout,
-                        label: 'Log Out',
-                        onTap: () {
-                          _logout(context);
-                        },
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        _buildProfileOption(
+                          icon: Icons.person_outline,
+                          label: 'Personal Info',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PersonalInfo(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildProfileOption(
+                          icon: Icons.location_on_outlined,
+                          label: 'Addresses',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddressScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildProfileOption(
+                          icon: Icons.shopping_bag_outlined,
+                          label: 'My Orders ',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MyOrderScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildProfileOption(
+                          icon: Icons.logout,
+                          label: 'Log Out',
+                          onTap: () {
+                            _logout(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+      ),
     );
   }
 

@@ -26,20 +26,26 @@ class PointsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // This ensures the column only takes as much space as needed
+            mainAxisSize: MainAxisSize.min, // Ensures column only takes needed space
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(image),
-                ],
+              Flexible( // Allows Row to adjust within available space
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible( // Ensures image adjusts to available space
+                      child: Image.asset(image),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 5),
               Text(
                 title,
                 style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                maxLines: 1, // Limits title to one line
+                overflow: TextOverflow.ellipsis, // Adds ellipsis if title overflows
               ),
               const SizedBox(height: 5),
               Container(
@@ -54,13 +60,12 @@ class PointsCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      status == 0
-                          ? const Icon(
-                              Icons.lock,
-                              size: 15,
-                              color: maincolor,
-                            )
-                          : const SizedBox(),
+                      if (status == 0)
+                        const Icon(
+                          Icons.lock,
+                          size: 15,
+                          color: maincolor,
+                        ),
                       Text(
                         '${points.toString()} pts',
                         style: TextStyle(
@@ -76,11 +81,13 @@ class PointsCard extends StatelessWidget {
           ),
         ),
         if (status == 0)
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(24),
+          Positioned.fill( // Ensures overlay covers the entire card
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(24),
+              ),
             ),
           ),
       ],
