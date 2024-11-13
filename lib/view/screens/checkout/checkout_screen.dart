@@ -9,8 +9,10 @@ import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import '../../../controllers/address/get_address_provider.dart';
+import '../../../controllers/checkout/image_provider.dart';
 import '../../../controllers/checkout/place_order_provider.dart';
-import '../../../models/address/user_address_model.dart'; // Replace this with your actual constants import
+import '../../../models/address/user_address_model.dart';
+import '../tabs_screens/screens/profile_screen/add_address_screen.dart'; // Replace this with your actual constants import
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key, required this.cartProducts});
@@ -21,6 +23,8 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+  int? selectedBranchId;
+  int? selectedAdressId;
   String? selectedPaymentMethod;
   String? selectedDeliveryOption;
   String? selectedBranch;
@@ -48,13 +52,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<OrderTypesAndPaymentsProvider>(context);
     final addressProvider = Provider.of<AddressProvider>(context);
-    final orderTypes = provider.data?.orderTypes ?? [];
+
+    final orderTypes =
+        provider.data?.orderTypes.where((type) => type.status == 1).toList() ??
+            [];
+
     final paymentMethods = provider.data?.paymentMethods ?? [];
     final branches = provider.data?.branches ?? [];
+
     return Scaffold(
       appBar: buildAppBar(context, 'Checkout'),
       body: provider.isLoading || addressProvider.isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -65,9 +74,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     const SizedBox(height: 10),
                     Row(
                       children: orderTypes.map((type) {
+                        String text;
+                        if (type.type == 'take_away') {
+                          text = 'Pickup';
+                        } else if (type.type == 'dine_in') {
+                          text = 'Dine In';
+                        } else if (type.type == 'delivery') {
+                          text = 'Delivery';
+                        } else {
+                          text = _capitalize(type.type);
+                        }
+
                         return Expanded(
                           child: _buildDeliveryOptionRadio(
-                              type.type, _capitalize(type.type)),
+                            type.type,
+                            text,
+                          ),
                         );
                       }).toList(),
                     ),
@@ -76,7 +98,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       _buildNearestBranchCard(branches),
                     if (selectedDeliveryOption == 'delivery')
                       _buildDeliveryLocationCard(addressProvider.addresses),
-
                     const SizedBox(height: 30),
                     _buildSectionTitle('Payment Method'),
                     const SizedBox(height: 10),
@@ -86,25 +107,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 30),
-
-                    // Note Section
                     _buildSectionTitle('Note'),
                     const SizedBox(height: 10),
                     _buildNoteInputField(),
-
-                    // Delivery Time Section
                     if (!deliveryNow) ...[
                       const SizedBox(height: 20),
                       _buildSectionTitle('Delivery Time'),
                       const SizedBox(height: 10),
                       _buildDeliveryTimePicker(),
                     ],
-
                     const SizedBox(height: 10),
                     _buildDeliveryNowCheckbox(),
                     const SizedBox(height: 30),
-
-                    // Place Order Button
                     _buildPlaceOrderButton(context),
                   ],
                 ),
@@ -124,78 +138,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         fontWeight: FontWeight.bold,
         color: maincolor,
       ),
-    );
-  }
-
-  Widget _buildDeliveryOptionRadio(String value, String text) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Radio(
-          value: value,
-          activeColor: maincolor,
-          groupValue: selectedDeliveryOption,
-          onChanged: (String? value) {
-            setState(() {
-              selectedDeliveryOption = value;
-            });
-          },
-        ),
-        Text(text),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethodTile(PaymentMethod method) {
-    return RadioListTile<String>(
-      value: method.name,
-      groupValue: selectedPaymentMethod,
-      onChanged: (String? value) {
-        setState(() {
-          selectedPaymentMethod = value;
-        });
-      },
-      title: Row(
-        children: [
-          Icon(Icons.payment, color: maincolor), // Placeholder for icon
-          const SizedBox(width: 10),
-          Text(
-            method.name,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-      activeColor: maincolor,
-    );
-  }
-
-  Widget _buildNearestBranchCard(List<Branch> branches) {
-    return Column(
-      children: branches.map((branch) {
-        return _buildSelectionTile(
-          branch.name,
-          branch.address,
-          selectedBranch,
-          (value) {
-            setState(() {
-              selectedBranch = value;
-            });
-          },
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildDeliveryLocationCard(List<Address> addresses) {
-    return Column(
-      children: addresses.map((address) {
-        return _buildSelectionTile(
-            address.address, address.type, selectedDeliveryLocation, (value) {
-          setState(() {
-            selectedDeliveryLocation = value;
-          });
-        });
-      }).toList(),
     );
   }
 
@@ -235,6 +177,152 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  Widget _buildDeliveryOptionRadio(String value, String text) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio(
+          value: value,
+          activeColor: maincolor,
+          groupValue: selectedDeliveryOption,
+          onChanged: (String? value) {
+            setState(() {
+              selectedDeliveryOption = value;
+            });
+          },
+        ),
+        Text(text),
+      ],
+    );
+  }
+
+  Widget _buildNearestBranchCard(List<Branch> branches) {
+    return Column(
+      children: branches.map((branch) {
+        return _buildSelectionTile(
+          branch.name,
+          branch.address,
+          selectedBranch,
+          (value) {
+            setState(() {
+              selectedBranch = value;
+              selectedBranchId = branch.id;
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildDeliveryLocationCard(List<Address> addresses) {
+    return Column(
+      children: [
+        ...addresses.map((address) {
+          return _buildSelectionTile(
+            address.type,
+            address.address,
+            selectedDeliveryLocation,
+            (value) {
+              setState(() {
+                selectedDeliveryLocation = value;
+                selectedAdressId = address.id;
+              });
+            },
+          );
+        }),
+        const SizedBox(
+          height: 15,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.all(16.0),
+              backgroundColor: maincolor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddAddressScreen(),
+                ),
+              );
+            },
+            child: const Text(
+              'Add New Address',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentMethodTile(PaymentMethod method) {
+    final imageServices = Provider.of<ImageServices>(context);
+
+    return Column(
+      children: [
+        RadioListTile<String>(
+          value: method.name,
+          groupValue: selectedPaymentMethod,
+          onChanged: (String? value) {
+            setState(() {
+              selectedPaymentMethod = value;
+            });
+          },
+          title: Row(
+            children: [
+              const Icon(Icons.payment, color: maincolor),
+              const SizedBox(width: 10),
+              Text(
+                method.name,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          activeColor: maincolor,
+        ),
+        if (selectedPaymentMethod != null &&
+            selectedPaymentMethod != 'Cash' &&
+            selectedPaymentMethod == method.name)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Upload Receipt',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await imageServices.pickImage();
+                  },
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Upload Receipt'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: maincolor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                if (imageServices.image != null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text('Receipt uploaded successfully.'),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildNoteInputField() {
     return TextField(
       controller: noteController,
@@ -248,7 +336,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // Delivery Time Picker
   Widget _buildDeliveryTimePicker() {
     return GestureDetector(
       onTap: () async {
@@ -258,7 +345,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
         if (pickedTime != null) {
           setState(() {
-            deliveryTimeController.text = pickedTime.format(context);
+            int hour = pickedTime.hour;
+            int minute = pickedTime.minute;
+
+            String formattedTime =
+                '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+            deliveryTimeController.text = formattedTime;
           });
         }
       },
@@ -303,23 +396,83 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPlaceOrderButton(BuildContext context) {
+    final imageServices = Provider.of<ImageServices>(context, listen: false);
+
     return ElevatedButton(
       onPressed: () async {
-        await Provider.of<ProductProvider>(context, listen: false).postCart(
-          context,
-          products: widget.cartProducts,
-          date: DateTime.now().toString(),
-          branchId: 1,
-          paymentStatus: 'paymentStatus',
-          totalTax: totalTax,
-          addressId: 1,
-          orderType: selectedDeliveryOption!,
-          paidBy: 'visa',
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const OrderTrackingScreen()),
-        );
+        if (selectedPaymentMethod == null || selectedDeliveryOption == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('Please select a payment method and delivery option'),
+            ),
+          );
+          return;
+        }
+
+        if (!deliveryNow && deliveryTimeController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please select a delivery time'),
+            ),
+          );
+          return;
+        }
+
+        try {
+          final selectedPayment =
+              Provider.of<OrderTypesAndPaymentsProvider>(context, listen: false)
+                  .data
+                  ?.paymentMethods
+                  .firstWhere((method) => method.name == selectedPaymentMethod);
+
+          if (selectedPayment == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Invalid payment method selected')),
+            );
+            return;
+          }
+
+          final receiptBase64 = imageServices.image != null
+              ? imageServices.convertImageToBase64(imageServices.image!)
+              : '';
+
+          String deliveryTime = deliveryNow
+              ? TimeOfDay.now().toString()
+              : deliveryTimeController.text;
+
+          final orderId =
+              await Provider.of<ProductProvider>(context, listen: false)
+                  .postCart(
+            context,
+            products: widget.cartProducts,
+            date: deliveryTime,
+            branchId: selectedBranchId,
+            totalTax: totalTax,
+            addressId: selectedAdressId,
+            orderType: selectedDeliveryOption!,
+            paymentMethodId: selectedPayment.id,
+            receipt: receiptBase64 ?? '',
+            notes: noteController.text,
+          );
+
+          if (orderId != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderTrackingScreen(orderId: orderId),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to place order')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${e.toString()}')),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: maincolor,

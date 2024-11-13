@@ -25,6 +25,8 @@ import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/firebase_options.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 
+import 'controllers/checkout/image_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
@@ -61,6 +63,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => OrderHistoryProvider()),
         ChangeNotifierProvider(create: (_) => OrderTypesAndPaymentsProvider()),
         ChangeNotifierProvider(create: (_) => NotificationController()),
+        ChangeNotifierProvider(create: (_) => ImageServices()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),

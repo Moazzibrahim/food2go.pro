@@ -19,9 +19,6 @@ class _AddressScreenState extends State<AddressScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-      final token = loginProvider.token!;
-
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
       Provider.of<AddressProvider>(context, listen: false)
