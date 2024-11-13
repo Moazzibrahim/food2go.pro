@@ -72,14 +72,6 @@ class OrderTrackingScreen extends StatelessWidget {
                     isLast: false,
                   ),
                   _buildOrderStatusItem(
-                    icon: Icons.schedule,
-                    title: 'Scheduled',
-                    isActive: status == 'scheduled' ||
-                        status == 'out_for_delivery' ||
-                        status == 'delivered',
-                    isLast: false,
-                  ),
-                  _buildOrderStatusItem(
                     icon: Icons.delivery_dining,
                     title: 'Out for Delivery',
                     isActive:

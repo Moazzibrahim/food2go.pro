@@ -5,7 +5,6 @@ import 'package:food2go_app/controllers/orders/orders_history_provider.dart';
 import 'package:food2go_app/controllers/orders/orders_provider.dart';
 import 'package:food2go_app/models/orders/order_history_model.dart';
 import 'package:food2go_app/models/orders/orders_model.dart';
-import 'package:food2go_app/view/screens/my_orders/single_order_history_screen.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:intl/intl.dart';
@@ -226,7 +225,7 @@ class MyOrderScreen extends StatelessWidget {
                 else
                   const TextButton(
                     onPressed: null, // Disable the button
-                    child:  Text(
+                    child: Text(
                       'Cancellation Time Expired',
                       style: TextStyle(
                           color: Colors
@@ -318,87 +317,79 @@ class MyOrderScreen extends StatelessWidget {
   }
 
   Widget _buildOrderHistoryCard(BuildContext context, OrderHistoryModel order) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const SingleOrderHistoryScreen()));
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: maincolor,
-                  borderRadius: BorderRadius.circular(12),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: maincolor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/medium.png',
+                  fit: BoxFit.cover,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/images/medium.png',
-                    fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    order.date ?? '',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Order #${order.id}',
+                    style: const TextStyle(
+                      color: maincolor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${order.amount ?? 0} £',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    order.paidBy ?? '',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      order.date ?? '',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Order #${order.id}',
-                      style: const TextStyle(
-                        color: maincolor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${order.amount ?? 0} £',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      order.paidBy ?? '',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            Text(
+              order.orderStatus ?? '',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
               ),
-              Text(
-                order.orderStatus ?? '',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
