@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/constants/strings.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/models/address/user_address_model.dart';
+import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -94,6 +98,8 @@ class AddressProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         log(response.body);
         await fetchAddresses(context); // Pass context to fetchAddresses
+        showTopSnackBar(context, 'your address saved successfully', Icons.check,
+            maincolor, const Duration(seconds: 2));
       } else {
         log(response.body);
         _errorMessage = 'Failed to add address. Please try again.';

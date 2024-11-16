@@ -1,15 +1,19 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/chat_user_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class OrderTrackingScreen extends StatelessWidget {
   final int? orderId;
-  const OrderTrackingScreen({super.key, this.orderId});
+  int? deliveryManId;
+  OrderTrackingScreen({super.key, this.orderId, this.deliveryManId});
 
   Future<String> fetchOrderStatus(BuildContext context) async {
     final url = Uri.parse(
@@ -25,7 +29,9 @@ class OrderTrackingScreen extends StatelessWidget {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      log("$orderId");
+      deliveryManId = data['delivery_id'];
+      log("order id:$orderId");
+      log('delivery id: $deliveryManId');
       return data['status'] ?? 'unknown';
     } else {
       throw Exception('Failed to load order status');
@@ -64,7 +70,7 @@ class OrderTrackingScreen extends StatelessWidget {
                   ),
                   _buildOrderStatusItem(
                     icon: Icons.kitchen,
-                    title: 'preparing',
+                    title: 'Preparing',
                     isActive: status == 'processing' ||
                         status == 'out_for_delivery' ||
                         status == 'scheduled' ||
@@ -88,6 +94,32 @@ class OrderTrackingScreen extends StatelessWidget {
               ),
             );
           }
+        },
+      ),
+      floatingActionButton: FutureBuilder<String>(
+        future: fetchOrderStatus(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != 'outfordelivery') {
+            return FloatingActionButton(
+              onPressed: () {
+                // Navigate to the chat screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatUserScreen(
+                          orderidd: orderId, deliveryyid: deliveryManId)),
+                );
+              },
+              backgroundColor: maincolor,
+              child: const Icon(
+                Icons.chat,
+                color: Colors.white,
+              ),
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
     );

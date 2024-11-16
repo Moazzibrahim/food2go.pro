@@ -6,6 +6,7 @@ import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/models/checkout/place_order_model.dart';
 import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import '../../../controllers/address/get_address_provider.dart';
@@ -455,6 +456,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             receipt: receiptBase64 ?? '',
             notes: noteController.text,
           );
+
+          showTopSnackBar(context, 'your order placed successfully',
+              Icons.check, maincolor, const Duration(seconds: 2));
 
           if (orderId != null) {
             Navigator.push(
