@@ -1,9 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:food2go_app/constants/colors.dart';
 import 'package:provider/provider.dart';
-
-import '../../controllers/chat/chat_delivery_provider.dart';
+import '../../controllers/chat/chat_delivery_provider.dart'; // Ensure correct import
 
 class ChatScreen extends StatefulWidget {
   final String userName;
@@ -24,11 +23,10 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController _messageController = TextEditingController();
+
   @override
   void initState() {
-    log(widget.userid.toString());
-    log(widget.orderid.toString());
-
     super.initState();
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     chatProvider.fetchChat(context, widget.orderid, widget.userid);
@@ -92,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemBuilder: (context, index) {
                       final message = chatProvider.messages[index];
                       bool isMe =
-                          message.userSender == 1; // If userSender is an int
+                          message.userSender == 0; // If userSender is an int
                       return Align(
                         alignment:
                             isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -100,7 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           margin: const EdgeInsets.symmetric(vertical: 5),
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color: isMe ? Colors.blue[400] : Colors.grey[300],
+                            color: isMe ? maincolor : Colors.grey[400],
                             borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(15),
                               topRight: const Radius.circular(15),
@@ -157,6 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: _messageController,
                           decoration: InputDecoration(
                             hintText: 'Type a message...',
                             hintStyle: const TextStyle(color: Colors.grey),
@@ -174,11 +173,24 @@ class _ChatScreenState extends State<ChatScreen> {
                       const SizedBox(width: 8),
                       CircleAvatar(
                         radius: 25,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: maincolor,
                         child: IconButton(
                           icon: const Icon(Icons.send, color: Colors.white),
                           onPressed: () {
-                            // Add functionality for sending messages here
+                            final message = _messageController.text.trim();
+                            if (message.isNotEmpty) {
+                              final chatProvider = Provider.of<ChatProvider>(
+                                  context,
+                                  listen: false);
+                              chatProvider.sendMessage(
+                                context,
+                                widget.orderid,
+                                widget.userid,
+                                message,
+                              );
+                              _messageController
+                                  .clear(); // Clear input after sending
+                            }
                           },
                         ),
                       ),
