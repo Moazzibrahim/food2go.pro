@@ -256,6 +256,8 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
+                        orderid: order.id!,
+                        userid: order.user!.id!,
                         userName: order.user?.name ?? 'Customer',
                         userImage: order.user?.image,
                       ),

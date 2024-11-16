@@ -25,6 +25,7 @@ import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/firebase_options.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
 
+import 'controllers/chat/chat_delivery_provider.dart';
 import 'controllers/checkout/image_provider.dart';
 import 'controllers/offer/offer_provider.dart';
 
@@ -66,6 +67,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationController()),
         ChangeNotifierProvider(create: (_) => ImageServices()),
         ChangeNotifierProvider(create: (_) => OfferProvider()),
+                ChangeNotifierProvider(create: (_) => ChatProvider()),
+
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
