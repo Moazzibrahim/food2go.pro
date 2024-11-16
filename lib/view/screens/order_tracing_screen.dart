@@ -101,7 +101,7 @@ class OrderTrackingScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData &&
-              snapshot.data != 'outfordelivery') {
+              snapshot.data == 'out_for_delivery') {
             return FloatingActionButton(
               onPressed: () {
                 // Navigate to the chat screen
