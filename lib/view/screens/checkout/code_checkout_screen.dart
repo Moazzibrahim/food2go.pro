@@ -5,15 +5,11 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 
 class CodeCheckoutScreen extends StatefulWidget {
-  final String refNumber;
-  final String title;
-  final String image;
+  final String? refNumber;
+  final String? title;
+  final String? image;
 
-  const CodeCheckoutScreen(
-      {super.key,
-      required this.refNumber,
-      required this.title,
-      required this.image});
+  const CodeCheckoutScreen({super.key, this.refNumber, this.title, this.image});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -139,7 +135,7 @@ class _CodeCheckoutScreenState extends State<CodeCheckoutScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  widget.refNumber,
+                  widget.refNumber!,
                   style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
@@ -191,12 +187,12 @@ class _CodeCheckoutScreenState extends State<CodeCheckoutScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.title,
+                  widget.title!,
                   style: const TextStyle(
                       fontSize: 20, color: Color.fromRGBO(32, 32, 32, 1)),
                 ),
-                Image.asset(
-                  widget.image,
+                Image.network(
+                  widget.image!,
                   height: 80,
                 ),
               ],

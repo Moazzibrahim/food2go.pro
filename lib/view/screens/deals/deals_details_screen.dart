@@ -201,7 +201,7 @@ void showRedeemBottomSheet(BuildContext context, Deal deal) {
               children: [
                 TextButton.icon(
                   onPressed: () {
-                    Navigator.of(context).pop(); 
+                    Navigator.of(context).pop();
                   },
                   icon: const Icon(
                     Icons.cancel,

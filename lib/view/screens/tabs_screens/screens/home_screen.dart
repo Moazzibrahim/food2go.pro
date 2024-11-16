@@ -19,7 +19,7 @@ import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/points_items_screen.dart';
+import 'package:food2go_app/view/screens/points/points_items_screen.dart';
 import '../../../../controllers/banners/banners_provider.dart';
 import '../../../../models/banners/banners_model.dart';
 import '../../../../models/categories/categories_model.dart';

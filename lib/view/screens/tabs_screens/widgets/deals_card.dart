@@ -31,7 +31,7 @@ class DealsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset(image),
+              Image.network(image),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
