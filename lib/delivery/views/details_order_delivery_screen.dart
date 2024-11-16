@@ -4,6 +4,7 @@ import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/delivery/orders_delivery_model.dart';
+import 'chat_screen.dart';
 
 class DetailsOrderDeliveryScreen extends StatelessWidget {
   final Order order;
@@ -50,7 +51,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
               const SizedBox(height: 20),
               buildSectionTitle('Delivery Man'),
               const SizedBox(height: 8),
-              buildDeliveryManInfo(),
+              buildDeliveryManInfo(context),
               const SizedBox(height: 20),
               buildSectionTitle('Payment Info'),
               const SizedBox(height: 8),
@@ -185,7 +186,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
     );
   }
 
-  Widget buildDeliveryManInfo() {
+  Widget buildDeliveryManInfo(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -210,33 +211,60 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
             radius: 24,
           ),
           const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  order.user?.name ?? 'Customer',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Row(
+                  children: [
+                    Text(
+                      '4.0',
+                      style: TextStyle(color: Colors.orange, fontSize: 14),
+                    ),
+                    Icon(Icons.star, color: Colors.orange, size: 16),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Row(
             children: [
-              Text(
-                order.user?.name ?? 'customer',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              InkWell(
+                onTap: () async {
+                  final phone = order.user?.phone;
+                  if (phone != null) {
+                    final url = Uri.parse('tel:$phone');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  }
+                },
+                child: const Icon(Icons.phone, color: maincolor),
               ),
-              const Row(
-                children: [
-                  Text('4.0', style: TextStyle(color: Colors.orange)),
-                  Icon(Icons.star, color: Colors.orange, size: 16),
-                ],
+              const SizedBox(width: 12),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        userName: order.user?.name ?? 'Customer',
+                        userImage: order.user?.image,
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.chat_bubble_outline, color: maincolor),
               ),
             ],
-          ),
-          const Spacer(),
-          InkWell(
-            onTap: () async {
-              final phone = order.user?.phone;
-              if (phone != null) {
-                final url = Uri.parse('tel:$phone');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {}
-              }
-            },
-            child: const Icon(Icons.phone, color: maincolor),
           ),
         ],
       ),
