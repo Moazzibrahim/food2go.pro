@@ -35,15 +35,19 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
         final provider =
             Provider.of<GetMessagesProvider>(context, listen: false);
         provider.fetchMessages(context, widget.orderidd!, widget.deliveryyid!);
-        provider.startRefreshing(context, widget.orderidd!, widget.deliveryyid!);
+        provider.startRefreshing(
+            context, widget.orderidd!, widget.deliveryyid!);
       }
     });
   }
 
   @override
-  void dispose() {
-    Provider.of<GetMessagesProvider>(context, listen: false).stopRefreshing();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Ensure stopRefreshing is called in didChangeDependencies instead of dispose
+    if (widget.orderidd != null && widget.deliveryyid != null) {
+      Provider.of<GetMessagesProvider>(context, listen: false).stopRefreshing();
+    }
   }
 
   String _formatCreatedAt(String? createdAt) {
@@ -223,4 +227,3 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
     );
   }
 }
-
