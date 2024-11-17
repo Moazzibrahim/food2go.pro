@@ -6,6 +6,7 @@ import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 import 'package:food2go_app/view/screens/my_orders/my_orders_screen.dart';
+import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -115,6 +116,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const MyOrderScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildProfileOption(
+                          icon: Icons.shopping_bag_outlined,
+                          label: 'My Orders ',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationsScreens(),
                               ),
                             );
                           },
