@@ -74,7 +74,6 @@ class Order {
     );
   }
 
-  // Optional: Add a setter for orderStatus to provide additional control
   void setOrderStatus(String newStatus) {
     orderStatus = newStatus;
   }

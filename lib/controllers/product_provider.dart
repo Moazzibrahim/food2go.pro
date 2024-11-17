@@ -37,6 +37,7 @@ class ProductProvider with ChangeNotifier {
     _totalPrice = 0.0;
     double defaultPrice;
     for (var item in cart) {
+      
       defaultPrice = item.product.price / item.product.quantity;
       defaultPrice += (defaultPrice * (item.product.tax.amount / 100));
       if (item.product.discountId.isNotEmpty) {
@@ -48,6 +49,11 @@ class ProductProvider with ChangeNotifier {
       }
     }
     return _totalPrice;
+  }
+
+  void removeProductFromCart(int index) {
+    cart.removeAt(index);
+    notifyListeners();
   }
 
   void increaseProductQuantity(int index) {

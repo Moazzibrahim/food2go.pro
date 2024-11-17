@@ -1,22 +1,22 @@
 class Chat {
-  final int id;
-  final int deliveryId;
-  final int userId;
-  final String message;
-  final int userSender;
+  final int? id;
+  final int? deliveryId;
+  final int? userId;
+  final String? message;
+  final int? userSender;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int orderId;
+  final int? orderId;
 
   Chat({
-    required this.id,
-    required this.deliveryId,
-    required this.userId,
-    required this.message,
-    required this.userSender,
+     this.id,
+     this.deliveryId,
+     this.userId,
+     this.message,
+     this.userSender,
     this.createdAt,
     this.updatedAt,
-    required this.orderId,
+     this.orderId,
   });
 
   // Factory constructor to create a Chat instance from a map (e.g., from JSON)

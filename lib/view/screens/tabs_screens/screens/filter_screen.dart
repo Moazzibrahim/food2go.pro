@@ -85,6 +85,12 @@ class _FilterScreenState extends State<FilterScreen> {
                             categoryId: _selectedCategoryId, // Pass category ID
                             priceStart: _priceStart,
                             priceEnd: _priceEnd,
+                            categoryName: _selectedCategoryId != null
+                                ? categories
+                                    .firstWhere((category) =>
+                                        category.id == _selectedCategoryId)
+                                    .name
+                                : '', // Get category name from the list of categories
                           ),
                         ),
                       );

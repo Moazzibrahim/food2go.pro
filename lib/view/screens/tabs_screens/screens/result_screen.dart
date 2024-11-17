@@ -10,12 +10,13 @@ class ResultScreen extends StatelessWidget {
   final int? categoryId;
   final double priceStart;
   final double priceEnd;
-
+  final String categoryName;
   const ResultScreen({
     super.key,
     this.categoryId,
     required this.priceStart,
     required this.priceEnd,
+    required this.categoryName,
   });
 
   @override
@@ -30,13 +31,12 @@ class ResultScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            _buildSearchAndFilter(),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (categoryId != null)
-                  _buildCategoryTag('Category $categoryId'),
+                  _buildCategoryTag('Category $categoryName'),
                 _buildPriceRangeTag(priceStart, priceEnd),
               ],
             ),

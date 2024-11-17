@@ -172,10 +172,13 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                         ],
                                       ),
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          cartProvider
+                                              .removeProductFromCart(index);
+                                        },
                                         icon: const Icon(Icons.delete,
                                             color: maincolor),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ],

@@ -49,7 +49,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
               const SizedBox(height: 8),
               buildItemInfo(),
               const SizedBox(height: 20),
-              buildSectionTitle('Delivery Man'),
+              buildSectionTitle('customer'),
               const SizedBox(height: 8),
               buildDeliveryManInfo(context),
               const SizedBox(height: 20),
@@ -162,7 +162,8 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
                     leading: const Icon(Icons.fastfood, color: maincolor),
                     title: Text(item.name ?? 'Item Name',
                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('${item.price?.toStringAsFixed(2)} E£'),
+                    subtitle:
+                        Text('${item.price?.toStringAsFixed(2) ?? '0.00'} E£'),
                     trailing: Text('X ${item.count ?? 1}'),
                   ),
                   if (item.addons != null && item.addons!.isNotEmpty)
@@ -172,7 +173,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: item.addons!.map((addon) {
                           return Text(
-                            'Adds On: ${addon.name} ${addon.price?.toStringAsFixed(2)} E£ (Qty: ${addon.count ?? 1})',
+                            'Adds On: ${addon.name ?? 'N/A'} ${addon.price?.toStringAsFixed(2) ?? '0.00'} E£ (Qty: ${addon.count ?? 1})',
                             style: const TextStyle(color: Colors.grey),
                           );
                         }).toList(),
@@ -181,7 +182,7 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
                 ],
               );
             }).toList() ??
-            [Container()],
+            [const Text('No items found')],
       ),
     );
   }
@@ -318,18 +319,21 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
         ],
       ),
       child: Text(
-        order.notes!,
+        order.notes ?? 'No delivery note provided.',
         style: const TextStyle(fontSize: 16),
       ),
     );
   }
 
   Widget buildPriceDetails() {
-    double totalAmount = (order.amount ?? 0.0) -
-        (order.totalDiscount ?? 0.0) -
-        (order.coupondiscount ?? 0.0) +
-        (order.totalTax ?? 0.0) +
-        ((order.address?.zone?.price) ?? 0.0);
+    double amount = order.amount ?? 0.0;
+    double discount = order.totalDiscount ?? 0.0;
+    double couponDiscount = order.coupondiscount ?? 0.0;
+    double tax = order.totalTax ?? 0.0;
+    double deliveryFee = order.address?.zone?.price ?? 0.0;
+
+    double totalAmount = amount - discount - couponDiscount + tax + deliveryFee;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -346,16 +350,13 @@ class DetailsOrderDeliveryScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
+          buildPriceRow('Items Price', '${amount.toStringAsFixed(2)} E£'),
+          buildPriceRow('Discount', '- ${discount.toStringAsFixed(2)} E£'),
+          buildPriceRow('Vat/Tax', '+ ${tax.toStringAsFixed(2)} E£'),
           buildPriceRow(
-              'Items Price', '${order.amount!.toStringAsFixed(2)} E£'),
+              'Coupon Discount', '- ${couponDiscount.toStringAsFixed(2)} E£'),
           buildPriceRow(
-              'Discount', '- ${order.totalDiscount!.toStringAsFixed(2)} E£'),
-          buildPriceRow(
-              'Vat/Tax', '+ ${order.totalTax!.toStringAsFixed(2)} E£'),
-          buildPriceRow('Coupon Discount',
-              '- ${order.coupondiscount!.toStringAsFixed(2)} E£'),
-          buildPriceRow('Delivery Fee',
-              '+ ${order.address?.zone?.price?.toStringAsFixed(2)} E£'),
+              'Delivery Fee', '+ ${deliveryFee.toStringAsFixed(2)} E£'),
           const Divider(),
           buildPriceRow('Total Amount', '${totalAmount.toStringAsFixed(2)} E£',
               isTotal: true),

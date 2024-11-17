@@ -60,6 +60,18 @@ class _HistoryDeliveryScreenState extends State<HistoryDeliveryScreen> {
 
           final orderHistory = orderHistoryProvider.orderHistory?.orders ?? [];
 
+          if (orderHistory.isEmpty) {
+            return const Center(
+              child: Text(
+                'No history for delivery',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
+              ),
+            );
+          }
+
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: orderHistory.length,
@@ -116,10 +128,7 @@ class _HistoryDeliveryScreenState extends State<HistoryDeliveryScreen> {
                                       order.orderStatus == 'delivered')
                                   ? Colors.green
                                   : maincolor,
-                              fontWeight: (order.orderStatus == 'confirmed' ||
-                                      order.orderStatus == 'delivered')
-                                  ? FontWeight.bold
-                                  : FontWeight.bold,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(

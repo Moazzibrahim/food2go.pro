@@ -5,8 +5,9 @@ import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/profile_screen/profile_screen.dart';
-
-import 'points/points_items_screen.dart';
+import 'package:food2go_app/view/screens/points/points_items_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -71,6 +72,7 @@ class _TabsScreenState extends State<TabsScreen> {
                         iconOn: 'assets/images/cart_on.svg',
                         iconOff: 'assets/images/cart_pff.svg',
                         index: 2,
+                        showCartLength: true,
                       ),
                       _bottomNavBarIcon(
                         iconOn: 'assets/images/Vector.svg',
@@ -93,8 +95,12 @@ class _TabsScreenState extends State<TabsScreen> {
     );
   }
 
-  Widget _bottomNavBarIcon(
-      {String? iconOn, required String iconOff, required int index}) {
+  Widget _bottomNavBarIcon({
+    required String iconOff,
+    required int index,
+    String? iconOn,
+    bool showCartLength = false,
+  }) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () {
@@ -103,7 +109,36 @@ class _TabsScreenState extends State<TabsScreen> {
           _pageController.jumpToPage(index);
         });
       },
-      child: SvgPicture.asset(isSelected ? iconOn ?? iconOff : iconOff),
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          SvgPicture.asset(isSelected ? iconOn ?? iconOff : iconOff),
+          if (showCartLength)
+            Consumer<ProductProvider>(
+              builder: (context, productProvider, child) {
+                final cartLength = productProvider.cart.length;
+                return cartLength > 0
+                    ? Positioned(
+                        top: 0,
+                        right: -1,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.green,
+                          child: Text(
+                            '$cartLength',   
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              },
+            ),
+        ],
+      ),
     );
   }
 }

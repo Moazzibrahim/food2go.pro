@@ -20,11 +20,9 @@ class _HomeDeliveryScreenState extends State<HomeDeliveryScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Fetching orders
       Provider.of<OrderdeliveryProvider>(context, listen: false)
           .fetchOrders(context);
 
-      // Fetching user data
       Provider.of<DeliveryUserProvider>(context, listen: false)
           .fetchUserData(context);
     });

@@ -45,8 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
-    final userId = Provider.of<LoginProvider>(context,listen: false).userModel!.user!.id;
-    Provider.of<NotificationController>(context,listen: false).initFCMToken(userId!);
+      final userId = Provider.of<LoginProvider>(context, listen: false)
+          .userModel!
+          .user!
+          .id;
+      Provider.of<NotificationController>(context, listen: false)
+          .initFCMToken(userId!);
     });
   }
 
@@ -67,8 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               _buildImageCarousel(),
               _buildCategoryList(),
+              const SizedBox(height: 80),
               _buildDealsSection(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _buildPopularFoodHeader(),
               const SizedBox(height: 16),
               _buildFoodItemsList(),
