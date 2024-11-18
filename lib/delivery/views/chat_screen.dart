@@ -47,14 +47,14 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 2,
-        title: Text(
+        title: const Text(
           'Chat ',
           style: TextStyle(
               color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: maincolor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
