@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
+import 'package:provider/provider.dart';
 
 class DiscountCard extends StatefulWidget {
   const DiscountCard(
@@ -8,11 +11,17 @@ class DiscountCard extends StatefulWidget {
       required this.name,
       required this.image,
       required this.price,
-      required this.description});
+      required this.description,
+      this.isFav,
+      this.product,
+      this.productId});
   final String name;
   final String image;
-  final double price;
   final String description;
+  final double price;
+  final int? productId;
+  final bool? isFav;
+  final Product? product;
 
   @override
   State<DiscountCard> createState() => _DiscountCardState();
@@ -20,6 +29,12 @@ class DiscountCard extends StatefulWidget {
 
 class _DiscountCardState extends State<DiscountCard> {
   bool isFavorite = false;
+
+  @override
+  void initState() {
+    isFavorite = widget.isFav ?? false;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +61,9 @@ class _DiscountCardState extends State<DiscountCard> {
                   bottomRight: Radius.circular(10),
                 ),
               ),
-              child: const Text(
-                '20%',
-                style: TextStyle(
+              child: Text(
+                '${widget.product!.discount.amount} %',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -59,16 +74,23 @@ class _DiscountCardState extends State<DiscountCard> {
           // Favorite Button using Align
           Align(
             alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: () {
-                setState(() {
-                  isFavorite = !isFavorite;
-                });
+            child: Consumer<ProductProvider>(
+              builder: (context, favProvider, _) {
+                return GestureDetector(
+                  onTap: () {
+                    favProvider.makeFavourites(
+                        context, isFavorite ? 0 : 1, widget.productId ?? 0);
+                    setState(() {
+                      isFavorite = !isFavorite;
+                    });
+                  },
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? maincolor : Colors.grey,
+                    size: 23,
+                  ),
+                );
               },
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-              ),
-              color: isFavorite ? maincolor : Colors.grey,
             ),
           ),
           // Product Image

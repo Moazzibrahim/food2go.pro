@@ -39,7 +39,7 @@ class _PopularFoodScreenState extends State<PopularFoodScreen> {
                 final product = productProvider.popularProducts[index];
                 return FoodCard(
                   name: product.name,
-                  image: 'assets/images/medium.png',
+                  image: product.image,
                   description: product.description,
                   price: product.price,
                   productId: product.id,

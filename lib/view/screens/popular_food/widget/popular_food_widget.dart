@@ -6,7 +6,15 @@ import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class FoodCard extends StatefulWidget {
-  const FoodCard({super.key, required this.name, required this.image, required this.description, required this.price, this.productId, this.isFav, this.product});
+  const FoodCard(
+      {super.key,
+      required this.name,
+      required this.image,
+      required this.description,
+      required this.price,
+      this.productId,
+      this.isFav,
+      this.product});
   final String name;
   final String image;
   final String description;
@@ -31,9 +39,8 @@ class _FoodCardState extends State<FoodCard> {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8
-      ),
+      height: 180, // Set the height as requested
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -47,18 +54,19 @@ class _FoodCardState extends State<FoodCard> {
               child: Consumer<ProductProvider>(
                 builder: (context, favProvider, _) {
                   return GestureDetector(
-                  onTap: () {
-                    favProvider.makeFavourites(context,isFavorite ? 0 : 1,widget.productId ?? 0);
-                    setState(() {
-                      isFavorite = !isFavorite;
-                    });
-                  },
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? maincolor : Colors.grey,
-                    size: 23,
-                  ),
-                );
+                    onTap: () {
+                      favProvider.makeFavourites(
+                          context, isFavorite ? 0 : 1, widget.productId ?? 0);
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                    },
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? maincolor : Colors.grey,
+                      size: 23,
+                    ),
+                  );
                 },
               ),
             ),
@@ -115,8 +123,7 @@ class _FoodCardState extends State<FoodCard> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    ProductDetailsScreen(
+                                builder: (context) => ProductDetailsScreen(
                                       product: widget.product,
                                     )));
                       },

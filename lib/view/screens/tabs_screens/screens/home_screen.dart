@@ -499,9 +499,12 @@ class _HomeScreenState extends State<HomeScreen> {
               final product = productProvider.discounts[index];
               return DiscountCard(
                 name: product.name,
-                image: 'assets/images/stake.png',
+                image: product.image,
                 description: product.description,
                 price: product.price,
+                isFav: product.isFav,
+                product: product,
+                productId: product.id,
               );
             },
           );
