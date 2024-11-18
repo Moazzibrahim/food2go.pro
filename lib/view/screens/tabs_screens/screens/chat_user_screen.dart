@@ -1,7 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
-
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/chat/userChat/get_messages_provider.dart';
@@ -42,12 +40,10 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Ensure stopRefreshing is called in didChangeDependencies instead of dispose
-    if (widget.orderidd != null && widget.deliveryyid != null) {
-      Provider.of<GetMessagesProvider>(context, listen: false).stopRefreshing();
-    }
+  void dispose() {
+    Provider.of<GetMessagesProvider>(context, listen: false).stopRefreshing();
+    _messageController.dispose();
+    super.dispose();
   }
 
   String _formatCreatedAt(String? createdAt) {
@@ -88,7 +84,6 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
             if (aDate == null || bDate == null) return 0;
             return bDate.compareTo(aDate); // Sort in descending order
           });
-
           return Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(

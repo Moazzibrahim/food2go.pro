@@ -63,6 +63,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                             price: product.price,
                             productId: product.id,
                             isFav: product.isFav,
+                            product: product,
                           );
                         },
                       );

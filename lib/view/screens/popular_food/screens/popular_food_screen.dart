@@ -44,6 +44,7 @@ class _PopularFoodScreenState extends State<PopularFoodScreen> {
                   price: product.price,
                   productId: product.id,
                   isFav: product.isFav,
+                  product: product,
                 );
               },
             );
