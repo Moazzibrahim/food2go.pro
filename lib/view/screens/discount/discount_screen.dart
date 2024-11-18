@@ -14,27 +14,29 @@ class DiscountScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Consumer<ProductProvider>(
-          builder: (context,productProvider, _) {
+          builder: (context, productProvider, _) {
             return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.9,
-            ),
-            itemCount: productProvider.discounts.length,
-            itemBuilder: (context, index) {
-              final product = productProvider.discounts[index];
-              return DiscountCard(
-                name: product.name,
-              image: 'assets/images/stake.png',
-              description: product.description,
-              price: product.price,
-              );
-            },
-          );
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.9,
+              ),
+              itemCount: productProvider.discounts.length,
+              itemBuilder: (context, index) {
+                final product = productProvider.discounts[index];
+                return DiscountCard(
+                  name: product.name,
+                  image: product.image,
+                  description: product.description,
+                  price: product.price,
+                  isFav: product.isFav,
+                  product: product,
+                  productId: product.id,
+                );
+              },
+            );
           },
-          
         ),
       ),
     );
