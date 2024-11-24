@@ -23,7 +23,6 @@ class CategoryDetailsScreen extends StatefulWidget {
 
 class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   String? selectedSubCategoryId;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,30 +93,41 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: widget.category!.subCategories.map((subCategory) {
-                  return SelectableFilterChip(
-                    label: subCategory.name,
-                    isSelected:
-                        selectedSubCategoryId == subCategory.id.toString(),
+                children: [
+                  // Add "All" option
+                  SelectableFilterChip(
+                    label: 'All',
+                    isSelected: selectedSubCategoryId == null,
                     onSelected: (isSelected) {
                       setState(() {
-                        selectedSubCategoryId =
-                            isSelected ? subCategory.id.toString() : null;
+                        selectedSubCategoryId = null; // Show all products
                       });
                     },
-                  );
-                }).toList(),
+                  ),
+                  ...widget.category!.subCategories.map((subCategory) {
+                    return SelectableFilterChip(
+                      label: subCategory.name,
+                      isSelected:
+                          selectedSubCategoryId == subCategory.id.toString(),
+                      onSelected: (isSelected) {
+                        setState(() {
+                          selectedSubCategoryId =
+                              isSelected ? subCategory.id.toString() : null;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ],
               ),
             ),
           ],
           Expanded(
             child: Consumer<ProductProvider>(
               builder: (context, productProvider, _) {
-                // Use category ID from banner if category is null
                 final categoryId =
                     widget.category?.id ?? widget.bannerCategory?.id;
-                final products = productProvider.getProductsByCategory(
-                    categoryId ?? 0); // Use 0 or handle null appropriately
+                final products =
+                    productProvider.getProductsByCategory(categoryId ?? 0);
                 final filteredProducts = selectedSubCategoryId == null
                     ? products
                     : products

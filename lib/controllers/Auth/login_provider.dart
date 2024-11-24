@@ -104,7 +104,6 @@ Future<void> logout(BuildContext context) async {
     }
   }
 
-  // Show error snackbar when logout fails
   void _showErrorSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),

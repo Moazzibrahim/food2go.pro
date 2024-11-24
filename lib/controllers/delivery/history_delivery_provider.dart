@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:http/http.dart' as http;
@@ -41,17 +42,16 @@ class OrderHistoryProvider extends ChangeNotifier {
       final response = await http.get(url, headers: headers);
 
       if (response.statusCode == 200) {
-        // If the server returns a successful response
+        log(response.body);
         final data = json.decode(response.body);
         _orderHistory = OrderHistory.fromJson(data);
         _errorMessage = '';
       } else {
-        // Handle server error
         _errorMessage = 'Failed to load order history';
         _orderHistory = null;
       }
     } catch (error) {
-      // Handle any other errors
+      print(error);
       _errorMessage = 'An error occurred: $error';
       _orderHistory = null;
     } finally {

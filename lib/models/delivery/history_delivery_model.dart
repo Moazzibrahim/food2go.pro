@@ -58,28 +58,28 @@ class Order {
     required this.couponDiscount,
     this.address,
   });
-
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'],
-      date: json['date'],
-      userId: json['user_id'],
-      branchId: json['branch_id'],
-      amount: json['amount'].toDouble(),
-      orderStatus: json['order_status'],
-      orderType: json['order_type'],
-      paymentStatus: json['payment_status'],
-      totalTax: json['total_tax'].toDouble(),
-      totalDiscount: json['total_discount'].toDouble(),
-      paidBy: json['paid_by'],
+      id: json['id'] ?? 0,
+      date: json['date'] ?? '',
+      userId: json['user_id'] ?? 0,
+      branchId: json['branch_id'], // dynamic already handles null
+      amount: (json['amount'] ?? 0).toDouble(),
+      orderStatus: json['order_status'] ?? 'Unknown',
+      orderType: json['order_type'] ?? 'Unknown',
+      paymentStatus: json['payment_status'], // String? for nullable
+      totalTax: (json['total_tax'] ?? 0).toDouble(),
+      totalDiscount: (json['total_discount'] ?? 0).toDouble(),
+      paidBy: json['paid_by'] ?? 'Unknown',
       createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
-      pos: json['pos'],
-      deliveryId: json['delivery_id'],
-      addressId: json['address_id'],
-      notes: json['notes'],
-      couponDiscount: json['coupon_discount'].toDouble(),
-      address: json['address'] != null ? Address.fromJson(json['address']) : null,
+      updatedAt: json['updated_at'] ?? '',
+      pos: json['pos'] ?? 0,
+      deliveryId: json['delivery_id'] ?? 0,
+      addressId: json['address_id'], // int? for nullable
+      notes: json['notes'], // dynamic to handle any type
+      couponDiscount: (json['coupon_discount'] ?? 0).toDouble(),
+      address:
+          json['address'] != null ? Address.fromJson(json['address']) : null,
     );
   }
 
@@ -139,15 +139,15 @@ class Address {
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      id: json['id'],
-      zoneId: json['zone_id'],
-      address: json['address'],
-      street: json['street'],
-      buildingNum: json['building_num'],
-      floorNum: json['floor_num'],
-      apartment: json['apartment'],
-      additionalData: json['additional_data'],
-      type: json['type'],
+      id: json['id'] ?? 0,
+      zoneId: json['zone_id'] ?? 0,
+      address: json['address'] ?? '',
+      street: json['street'] ?? '',
+      buildingNum: json['building_num'] ?? '',
+      floorNum: json['floor_num'] ?? '',
+      apartment: json['apartment'], // String? for nullable
+      additionalData: json['additional_data'], // String? for nullable
+      type: json['type'] ?? 'Unknown',
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       zone: Zone.fromJson(json['zone']),
@@ -287,22 +287,22 @@ class Branch {
 
   factory Branch.fromJson(Map<String, dynamic> json) {
     return Branch(
-      id: json['id'],
-      name: json['name'],
-      address: json['address'],
-      email: json['email'],
-      phone: json['phone'],
-      image: json['image'],
-      coverImage: json['cover_image'],
-      foodPreparationTime: json['food_preparion_time'],
-      latitude: json['latitude'].toDouble(),
-      longitude: json['longitude'],
-      coverage: json['coverage'],
-      status: json['status'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      address: json['address'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      image: json['image'], // String? for nullable
+      coverImage: json['cover_image'], // String? for nullable
+      foodPreparationTime: json['food_preparion_time'] ?? 'Unknown',
+      latitude: (json['latitude'] ?? 0).toDouble(),
+      longitude: json['longitude'] ?? '',
+      coverage: json['coverage'] ?? '',
+      status: json['status'] ?? 0,
       emailVerifiedAt: json['email_verified_at'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
-      role: json['role'],
+      role: json['role'] ?? 'Unknown',
     );
   }
 

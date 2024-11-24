@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../controllers/delivery/order_provider.dart';
@@ -238,44 +239,222 @@ class _OrderCardState extends State<OrderCard> {
   }
 
   Widget _buildMainStatusButton(String label, bool isActive, bool isDelivered) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () async {
-          setState(() {
-            _isDelivered = isDelivered;
-            _showNotDeliveredOptions = label == "Not Delivered";
-            _selectedNotDeliveredOption = null;
-          });
+    if (label == "Delivered") {
+      return Expanded(
+        child: SwipeButton.expand(
+          activeThumbColor: maincolor,
+          thumb: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // Calculate the available width
+              double thumbWidth =
+                  constraints.maxWidth * 0.2; // 20% of available width
+              double thumbHeight = 40; // You can adjust this as needed
 
-          if (label == "Delivered") {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              return Container(
+                width: thumbWidth,
+                height: thumbHeight,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.double_arrow,
+                  color: Colors.white,
+                  size: 30, // Adjust the icon size as needed
+                ),
+              );
+            },
+          ),
+          activeTrackColor: maincolor,
+          height: 50,
+          onSwipe: () async {
+            bool? confirm = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  title: const Text(
+                    'Confirm Delivery',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  content: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: maincolor,
+                        size: 40,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Are you sure you want to mark this order as delivered?',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false); // User cancelled
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: maincolor,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true); // User confirmed
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: maincolor,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                      ),
+                      child: const Text('Confirm'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (confirm == true) {
+              setState(() {
+                _isDelivered = true;
+                _showNotDeliveredOptions = false;
+                _selectedNotDeliveredOption = null;
+              });
+
               await Provider.of<OrderdeliveryProvider>(context, listen: false)
                   .updateOrderStatus(context, widget.order.id!, 'delivered');
 
               Provider.of<OrderdeliveryProvider>(context, listen: false)
                   .fetchOrders(context);
-            });
-          }
-        },
-        child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isActive ? maincolor : Colors.white,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(isDelivered ? 12 : 0),
-              bottomRight: Radius.circular(isDelivered ? 0 : 12),
-            ),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.white : maincolor,
-            ),
+            }
+          },
+          child: const Text(
+            " Delivered",
+            style: TextStyle(color: Colors.white),
           ),
         ),
-      ),
-    );
+      );
+    } else if (label == "Not Delivered") {
+      return Expanded(
+        child: SwipeButton.expand(
+          activeThumbColor: maincolor,
+          thumb: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              double thumbWidth =
+                  constraints.maxWidth * 0.2; // 20% of available width
+              double thumbHeight = 40;
+
+              return Container(
+                width: thumbWidth,
+                height: thumbHeight,
+                alignment: Alignment.center,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.cancel_outlined,
+                      color: Colors.white,
+                    ),
+                    Icon(
+                      Icons.double_arrow,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          activeTrackColor: maincolor,
+          height: 50,
+          onSwipe: () async {
+            bool? confirm = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  title: const Text(
+                    'Confirm Not Delivered',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  content: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.cancel_outlined,
+                        color: maincolor,
+                        size: 40,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Are you sure you want to mark this order as not delivered?',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false); // User cancelled
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: maincolor,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true); // User confirmed
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: maincolor,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                      ),
+                      child: const Text('Confirm'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (confirm == true) {
+              setState(() {
+                _isDelivered = false;
+                _showNotDeliveredOptions = true;
+              });
+
+              await Provider.of<OrderdeliveryProvider>(context, listen: false)
+                  .updateOrderStatus(
+                      context, widget.order.id!, 'not_delivered');
+
+              Provider.of<OrderdeliveryProvider>(context, listen: false)
+                  .fetchOrders(context);
+            }
+          },
+          child: const Text(
+            "       Not",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox();
   }
 
   Widget _buildStatusButton(String label, bool isActive) {

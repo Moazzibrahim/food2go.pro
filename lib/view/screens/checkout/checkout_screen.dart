@@ -338,6 +338,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildDeliveryTimePicker() {
+    String formatTimeOfDay(TimeOfDay time) {
+      final int hour = time.hour;
+      final int minute = time.minute;
+
+      return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    }
+
     return GestureDetector(
       onTap: () async {
         TimeOfDay? pickedTime = await showTimePicker(
@@ -346,13 +353,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
         if (pickedTime != null) {
           setState(() {
-            int hour = pickedTime.hour;
-            int minute = pickedTime.minute;
-
-            String formattedTime =
-                '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-
-            deliveryTimeController.text = formattedTime;
+            deliveryTimeController.text = formatTimeOfDay(pickedTime);
           });
         }
       },
@@ -399,6 +400,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildPlaceOrderButton(BuildContext context) {
     final imageServices = Provider.of<ImageServices>(context, listen: false);
 
+    String formatTimeOfDay(TimeOfDay time) {
+      final int hour = time.hour;
+      final int minute = time.minute;
+
+      return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    }
+
     return ElevatedButton(
       onPressed: () async {
         if (selectedPaymentMethod == null || selectedDeliveryOption == null) {
@@ -438,9 +446,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ? imageServices.convertImageToBase64(imageServices.image!)
               : '';
 
+          // Format delivery time
           String deliveryTime = deliveryNow
-              ? TimeOfDay.now().toString()
-              : deliveryTimeController.text;
+              ? formatTimeOfDay(TimeOfDay.now()) // "HH:mm" format for 'now'
+              : deliveryTimeController.text; // Already in "HH:mm"
 
           final orderId =
               await Provider.of<ProductProvider>(context, listen: false)
@@ -453,11 +462,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             addressId: selectedAdressId,
             orderType: selectedDeliveryOption!,
             paymentMethodId: selectedPayment.id,
-            receipt: receiptBase64 ?? '',
+            receipt: receiptBase64,
             notes: noteController.text,
           );
 
-          showTopSnackBar(context, 'your order placed successfully',
+          showTopSnackBar(context, 'Your order was placed successfully',
               Icons.check, maincolor, const Duration(seconds: 2));
 
           if (orderId != null) {
