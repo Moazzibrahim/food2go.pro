@@ -113,7 +113,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _buildNoteInputField(),
                     if (!deliveryNow) ...[
                       const SizedBox(height: 20),
-                      _buildSectionTitle('Delivery Time'),
+                      _buildSectionTitle('recieving Time'),
                       const SizedBox(height: 10),
                       _buildDeliveryTimePicker(),
                     ],
@@ -361,7 +361,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: TextField(
           controller: deliveryTimeController,
           decoration: InputDecoration(
-            hintText: 'Select delivery time',
+            hintText: 'Select recieving time',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),

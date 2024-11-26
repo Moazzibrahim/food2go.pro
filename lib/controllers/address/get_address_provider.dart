@@ -97,9 +97,10 @@ class AddressProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         log(response.body);
-        await fetchAddresses(context); // Pass context to fetchAddresses
-        showTopSnackBar(context, 'your address saved successfully', Icons.check,
-            maincolor, const Duration(seconds: 2));
+        await fetchAddresses(context); // Refresh the addresses
+        showTopSnackBar(context, 'Your address was saved successfully.',
+            Icons.check, maincolor, const Duration(seconds: 2));
+        Navigator.pop(context);
       } else {
         log(response.body);
         _errorMessage = 'Failed to add address. Please try again.';

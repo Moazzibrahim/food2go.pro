@@ -255,6 +255,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                           _buildCategoryButton(context, 'Other'),
                         ],
                       ),
+                      const SizedBox(height: 16),
                       _buildDropdownField(context, 'Select Zone'),
                       const SizedBox(height: 16),
                       _buildTextField(context, 'Street',
