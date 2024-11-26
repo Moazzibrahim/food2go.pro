@@ -152,6 +152,12 @@ class ProductProvider with ChangeNotifier {
   }
 
   List<Extra> getExtras(Product product, int selectedVariation) {
+    // Return an empty list if the selectedVariation is invalid
+    if (selectedVariation < 0 ||
+        selectedVariation >= product.variations.length) {
+      return [];
+    }
+
     if (product.extra.isEmpty) {
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;

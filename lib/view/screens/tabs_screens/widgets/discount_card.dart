@@ -169,7 +169,9 @@ class _DiscountCardState extends State<DiscountCard> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ProductDetailsScreen()));
+                        builder: (context) => ProductDetailsScreen(
+                              product: widget.product,
+                            )));
               },
               child: Container(
                 height: 24,
