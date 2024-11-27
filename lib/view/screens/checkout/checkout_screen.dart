@@ -30,7 +30,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String? selectedDeliveryOption;
   String? selectedBranch;
   String? selectedDeliveryLocation;
-  bool deliveryNow = false;
+  bool deliveryNow = true;
   double totalTax = 0.0;
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
@@ -376,7 +376,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildDeliveryNowCheckbox() {
     return CheckboxListTile(
-      value: deliveryNow,
+      value: deliveryNow, // This determines the checked state
       onChanged: (bool? value) {
         setState(() {
           deliveryNow = value!;
