@@ -101,8 +101,9 @@ class _DiscountCardState extends State<DiscountCard> {
                 const SizedBox(
                   height: 30,
                 ),
-                Image.asset(
+                Image.network(
                   widget.image,
+                  height: 60,
                 ),
               ],
             ),
