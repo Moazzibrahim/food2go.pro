@@ -53,16 +53,18 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                       if (productProvider.favouritediscounts.isNotEmpty) {
                         contentWidgets.add(
                           GridView.builder(
-                            shrinkWrap: true, // To make the grid scrollable inside Column
+                            shrinkWrap:
+                                true, // To make the grid scrollable inside Column
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
-                              mainAxisExtent: 190,
+                              mainAxisExtent: 160,
                             ),
-                            itemCount: productProvider.favouritediscounts.length,
+                            itemCount:
+                                productProvider.favouritediscounts.length,
                             itemBuilder: (BuildContext context, int index) {
                               final discountProduct =
                                   productProvider.favouritediscounts[index];
@@ -83,29 +85,34 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                       // Add Favourite Products if available
                       if (productProvider.favorites.isNotEmpty) {
                         contentWidgets.add(
-                          GridView.builder(
-                            shrinkWrap: true, // To make the grid scrollable inside Column
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              mainAxisExtent: 190,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GridView.builder(
+                              shrinkWrap:
+                                  true, // To make the grid scrollable inside Column
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                mainAxisExtent: 210,
+                              ),
+                              itemCount: productProvider.favorites.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final product =
+                                    productProvider.favorites[index];
+                                return FoodCard(
+                                  description: product.description,
+                                  image: product.image,
+                                  name: product.name,
+                                  price: product.price,
+                                  productId: product.id,
+                                  isFav: product.isFav,
+                                  product: product,
+                                );
+                              },
                             ),
-                            itemCount: productProvider.favorites.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final product = productProvider.favorites[index];
-                              return FoodCard(
-                                description: product.description,
-                                image: product.image,
-                                name: product.name,
-                                price: product.price,
-                                productId: product.id,
-                                isFav: product.isFav,
-                                product: product,
-                              );
-                            },
                           ),
                         );
                       }

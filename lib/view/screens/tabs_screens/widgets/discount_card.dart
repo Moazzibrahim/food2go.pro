@@ -101,8 +101,9 @@ class _DiscountCardState extends State<DiscountCard> {
                 const SizedBox(
                   height: 30,
                 ),
-                Image.asset(
+                Image.network(
                   widget.image,
+                  height: 60,
                 ),
               ],
             ),
@@ -169,7 +170,9 @@ class _DiscountCardState extends State<DiscountCard> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ProductDetailsScreen()));
+                        builder: (context) => ProductDetailsScreen(
+                              product: widget.product,
+                            )));
               },
               child: Container(
                 height: 24,

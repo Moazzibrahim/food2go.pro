@@ -148,39 +148,3 @@ class _FoodCardState extends State<FoodCard> {
     );
   }
 }
-
-class FoodItem {
-  final String name;
-  final String description;
-  final String imageUrl;
-  final double price;
-
-  FoodItem({
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-  });
-}
-
-// Sample food items list
-final List<FoodItem> foodItems = [
-  FoodItem(
-    name: 'Big Burger',
-    description: 'Juicy grilled beef patty with fresh lettuce and tomatoes.',
-    imageUrl: 'assets/images/medium.png',
-    price: 50.0,
-  ),
-  FoodItem(
-    name: 'Double Burger',
-    description: 'Two beef patties with cheese, lettuce, and tomatoes.',
-    imageUrl: 'assets/images/medium.png',
-    price: 70.0,
-  ),
-  FoodItem(
-    name: 'Cheese Burger',
-    description: 'Classic cheeseburger with melted cheese and pickles.',
-    imageUrl: 'assets/images/medium.png',
-    price: 60.0,
-  ),
-];

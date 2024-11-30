@@ -152,6 +152,12 @@ class ProductProvider with ChangeNotifier {
   }
 
   List<Extra> getExtras(Product product, int selectedVariation) {
+    // Return an empty list if the selectedVariation is invalid
+    if (selectedVariation < 0 ||
+        selectedVariation >= product.variations.length) {
+      return [];
+    }
+
     if (product.extra.isEmpty) {
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;
@@ -167,44 +173,61 @@ class ProductProvider with ChangeNotifier {
   Future<void> makeFavourites(BuildContext context, int fav, int id) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
+
     try {
-      final response = await http.put(Uri.parse('$makeFav$id'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode({'favourite': fav}));
+      final response = await http.put(
+        Uri.parse('$makeFav$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'favourite': fav}),
+      );
+
       if (response.statusCode == 200) {
-        for (var e in _products) {
-          if (e.id == id) {
-            e.isFav = (fav == 1);
-          }
-        }
-        for (var e in discounts) {
-          if (e.id == id) {
-            e.isFav = (fav == 1);
-          }
-        }
+        // Update favorites status
+        _updateFavoritesStatus(id, fav);
 
-        _favorites = _products.where((e) => e.isFav).toList();
-        _favouritediscounts =
-            _discounts.where((element) => element.isFav).toList();
-        notifyListeners();
+        // Notify user
+        final message = fav == 1 ? 'Added to Favorites!' : 'Item removed';
+        final icon = fav == 1 ? Icons.favorite : Icons.heart_broken;
 
-        if (fav == 1) {
-          showTopSnackBar(context, 'Added to Favorites!', Icons.favorite,
-              maincolor, const Duration(seconds: 4));
-        } else {
-          showTopSnackBar(context, 'Item removed', Icons.heart_broken,
-              maincolor, const Duration(seconds: 4));
-        }
+        showTopSnackBar(
+            context, message, icon, maincolor, const Duration(seconds: 4));
       } else {
         log('Failed with status code: ${response.statusCode}');
+        showTopSnackBar(context, 'Failed to update favorite status.',
+            Icons.error, Colors.red, const Duration(seconds: 4));
       }
     } catch (e) {
       log('Error in making fav: $e');
+      showTopSnackBar(context, 'An error occurred. Please try again later.',
+          Icons.error, Colors.red, const Duration(seconds: 4));
     }
+  }
+
+// Helper method to update favorites and discounts
+  void _updateFavoritesStatus(int id, int fav) {
+    bool isFavorite = (fav == 1);
+
+    for (var product in _products) {
+      if (product.id == id) {
+        product.isFav = isFavorite;
+      }
+    }
+
+    for (var discountProduct in _discounts) {
+      if (discountProduct.id == id) {
+        discountProduct.isFav = isFavorite;
+      }
+    }
+    // Refresh favorites and favorite discounts
+    _favorites = _products.where((product) => product.isFav).toList();
+    _favouritediscounts =
+        _discounts.where((discount) => discount.isFav).toList();
+
+    notifyListeners();
   }
 
   Future<int?> postCart(

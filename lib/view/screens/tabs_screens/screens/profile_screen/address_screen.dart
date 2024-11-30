@@ -71,24 +71,39 @@ class _AddressScreenState extends State<AddressScreen> {
                   ? const Center(child: CircularProgressIndicator())
                   : addressProvider.errorMessage != null
                       ? Center(child: Text(addressProvider.errorMessage!))
-                      : ListView.builder(
-                          itemCount: addressProvider.addresses.length,
-                          itemBuilder: (context, index) {
-                            final address = addressProvider.addresses[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: _buildAddressCard(
-                                context,
-                                token: token,
-                                icon: Icons.home,
-                                title: address.type == 'work' ? 'Work' : 'Home',
-                                address:
-                                    '${address.zone.zone}, ${address.address}, ${address.street}, ${address.buildingNum}',
-                                addressId: address.id,
-                              ),
-                            );
-                          },
-                        ),
+                      : addressProvider.addresses.isEmpty
+                          ? const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'No addresses found!',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.grey),
+                                ),
+                              ],
+                            )
+                          : ListView.builder(
+                              itemCount: addressProvider.addresses.length,
+                              itemBuilder: (context, index) {
+                                final address =
+                                    addressProvider.addresses[index];
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: _buildAddressCard(
+                                    context,
+                                    token: token,
+                                    icon: Icons.home,
+                                    title: address.type == 'work'
+                                        ? 'Work'
+                                        : 'Home',
+                                    address:
+                                        '${address.zone.zone}, ${address.address}, ${address.street}, ${address.buildingNum}',
+                                    addressId: address.id,
+                                  ),
+                                );
+                              },
+                            ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),

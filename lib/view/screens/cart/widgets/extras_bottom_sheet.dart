@@ -29,9 +29,11 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   @override
   void initState() {
     super.initState();
-    final productProvider = Provider.of<ProductProvider>(context, listen: false);
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
 
-    final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
+    final extras =
+        productProvider.getExtras(widget.product!, widget.selectedVariation);
     for (int i = 0; i < extras.length; i++) {
       extraQuantities[i] = 1;
     }
@@ -74,8 +76,18 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   Widget build(BuildContext context) {
     return Consumer<ProductProvider>(
       builder: (context, productProvider, _) {
-        final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
+        final extras = productProvider.getExtras(
+            widget.product!, widget.selectedVariation);
         final excludes = widget.product!.excludes;
+
+        if (extras.isEmpty) {
+          return const Center(
+            child: Text(
+              'No extras available for this variation.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -215,7 +227,8 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
                 child: ElevatedButton(
                   onPressed: () {
                     final selectedExtrasList = getSelectedExtras(extras);
-                    final deselectedExcludesList = getDeselectedExcludes(excludes);
+                    final deselectedExcludesList =
+                        getDeselectedExcludes(excludes);
                     widget.onSelectedExtras(selectedExtrasList);
                     widget.onSelectedExcludes(deselectedExcludesList);
                     Navigator.pop(context);

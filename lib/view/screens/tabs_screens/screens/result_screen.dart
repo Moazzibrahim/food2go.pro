@@ -57,6 +57,9 @@ class ResultScreen extends StatelessWidget {
                     description: product.description,
                     image: product.image,
                     price: product.price,
+                    productId: product.id,
+                    isFav: product.isFav,
+                    product: product,
                   );
                 },
               ),

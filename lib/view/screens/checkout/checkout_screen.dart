@@ -30,7 +30,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String? selectedDeliveryOption;
   String? selectedBranch;
   String? selectedDeliveryLocation;
-  bool deliveryNow = false;
+  bool deliveryNow = true;
   double totalTax = 0.0;
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
@@ -113,7 +113,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _buildNoteInputField(),
                     if (!deliveryNow) ...[
                       const SizedBox(height: 20),
-                      _buildSectionTitle('Delivery Time'),
+                      _buildSectionTitle('recieving Time'),
                       const SizedBox(height: 10),
                       _buildDeliveryTimePicker(),
                     ],
@@ -361,7 +361,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: TextField(
           controller: deliveryTimeController,
           decoration: InputDecoration(
-            hintText: 'Select delivery time',
+            hintText: 'Select recieving time',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -376,7 +376,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildDeliveryNowCheckbox() {
     return CheckboxListTile(
-      value: deliveryNow,
+      value: deliveryNow, // This determines the checked state
       onChanged: (bool? value) {
         setState(() {
           deliveryNow = value!;
