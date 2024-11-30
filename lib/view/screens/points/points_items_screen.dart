@@ -14,6 +14,7 @@ class PointsItemsScreen extends StatefulWidget {
   const PointsItemsScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PointsItemsScreenState createState() => _PointsItemsScreenState();
 }
 
@@ -207,6 +208,7 @@ void showRedeemBottomSheet(BuildContext context, Offer offer) {
                     final refNumber = response['ref_number'].toString();
 
                     Navigator.push(
+                      // ignore: use_build_context_synchronously
                       context,
                       MaterialPageRoute(
                         builder: (context) => CodeCheckoutScreen(

@@ -51,7 +51,6 @@ class OrderHistoryProvider extends ChangeNotifier {
         _orderHistory = null;
       }
     } catch (error) {
-      print(error);
       _errorMessage = 'An error occurred: $error';
       _orderHistory = null;
     } finally {

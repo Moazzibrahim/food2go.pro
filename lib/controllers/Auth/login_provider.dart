@@ -10,7 +10,7 @@ import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../../view/screens/Auth/login_screen.dart'; // Don't forget to import Provider
+import '../../view/screens/Auth/login_screen.dart'; 
 
 class LoginProvider with ChangeNotifier {
   LoginModel? userModel;

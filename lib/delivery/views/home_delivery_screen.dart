@@ -246,9 +246,8 @@ class _OrderCardState extends State<OrderCard> {
           thumb: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               // Calculate the available width
-              double thumbWidth =
-                  constraints.maxWidth * 0.2; // 20% of available width
-              double thumbHeight = 40; // You can adjust this as needed
+              double thumbWidth = constraints.maxWidth * 0.2;
+              double thumbHeight = 40;
 
               return Container(
                 width: thumbWidth,
@@ -257,7 +256,7 @@ class _OrderCardState extends State<OrderCard> {
                 child: const Icon(
                   Icons.double_arrow,
                   color: Colors.white,
-                  size: 30, // Adjust the icon size as needed
+                  size: 30,
                 ),
               );
             },
@@ -276,25 +275,25 @@ class _OrderCardState extends State<OrderCard> {
                     'Confirm Delivery',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  content: const Column(
+                  content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle_outline,
                         color: maincolor,
                         size: 40,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
-                        'Are you sure you want to mark this order as delivered?',
-                        style: TextStyle(fontSize: 16),
+                        'Are you sure you have collected ${widget.order.amount}?',
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
                   actions: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(false); // User cancelled
+                        Navigator.of(context).pop(false);
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -307,7 +306,7 @@ class _OrderCardState extends State<OrderCard> {
                     const SizedBox(width: 10),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(true); // User confirmed
+                        Navigator.of(context).pop(true);
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -348,8 +347,7 @@ class _OrderCardState extends State<OrderCard> {
           activeThumbColor: maincolor,
           thumb: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              double thumbWidth =
-                  constraints.maxWidth * 0.2; // 20% of available width
+              double thumbWidth = constraints.maxWidth * 0.2;
               double thumbHeight = 40;
 
               return Container(
@@ -404,7 +402,7 @@ class _OrderCardState extends State<OrderCard> {
                   actions: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(false); // User cancelled
+                        Navigator.of(context).pop(false);
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -417,7 +415,7 @@ class _OrderCardState extends State<OrderCard> {
                     const SizedBox(width: 10),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(true); // User confirmed
+                        Navigator.of(context).pop(true);
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.white,

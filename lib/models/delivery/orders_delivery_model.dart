@@ -15,7 +15,6 @@ class Order {
   final int? addressId;
   final String? notes;
   final double? coupondiscount;
-
   final List<Item>? items;
   final Address? address;
   final List<OrderDetail>? details;
