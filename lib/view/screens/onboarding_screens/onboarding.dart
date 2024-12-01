@@ -21,6 +21,7 @@ class _OnboardingState extends State<Onboarding> {
     await prefs.setBool('isNewUser', false); // Mark user as not new
 
     Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );

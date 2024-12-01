@@ -39,6 +39,7 @@ class OrderTypesAndPaymentsProvider with ChangeNotifier {
         throw Exception('Failed to load data');
       }
     } catch (error) {
+      // ignore: avoid_print
       print('Error fetching data: $error');
     } finally {
       _isLoading = false;

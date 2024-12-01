@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
@@ -110,44 +109,6 @@ class ResultScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSearchAndFilter() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 56,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: const Center(
-              child: TextField(
-                decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
-                  hintText: 'Search',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        CircleAvatar(
-          backgroundColor: maincolor,
-          child: IconButton(
-            icon: SvgPicture.asset('assets/images/filter.svg'),
-            onPressed: () {},
-          ),
-        ),
-      ],
     );
   }
 }

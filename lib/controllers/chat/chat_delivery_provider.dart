@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -60,7 +62,6 @@ class ChatProvider with ChangeNotifier {
         log('Error: ${response.statusCode}');
       }
     } catch (e) {
-      print(e);
       _errorMessage = 'An error occurred: $e';
     } finally {
       _isLoading = false;
@@ -95,6 +96,7 @@ class ChatProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         log('Message sent successfully');
+        // ignore: use_build_context_synchronously
         fetchChat(context, orderId, userId);
       } else {
         _errorMessage = 'Failed to send message';
