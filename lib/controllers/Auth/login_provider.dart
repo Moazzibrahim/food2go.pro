@@ -9,6 +9,7 @@ import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';  // Add this import
 
 import '../../view/screens/Auth/login_screen.dart'; 
 
@@ -16,6 +17,31 @@ class LoginProvider with ChangeNotifier {
   LoginModel? userModel;
   String? token;
   bool isLoading = false;
+
+  // Method to check if a token exists in SharedPreferences
+  Future<void> checkToken(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+
+    if (token != null) {
+      final role = prefs.getString('role');
+      if (role == "customer") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TabsScreen()),
+        );
+      } else if (role == "delivery") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TabsDeliveryScreen()),
+        );
+      }
+    }else{
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx)=> const LoginScreen())
+      );
+    }
+  }
 
   Future<void> login(
       String email, String password, BuildContext context) async {
@@ -40,24 +66,31 @@ class LoginProvider with ChangeNotifier {
         token = userModel?.token;
         log('Token: $token');
 
-        if (userModel!.user?.role == "customer") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TabsScreen()),
-          );
-        } else if (userModel!.user?.role == "delivery") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TabsDeliveryScreen()),
-          );
-        } else {
-          showTopSnackBar(
-            context,
-            'Access denied: Unauthorized role.',
-            Icons.cancel,
-            maincolor,
-            const Duration(seconds: 2),
-          );
+        if (token != null) {
+          // Save the token and user role in SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token!);
+          await prefs.setString('role', userModel!.user?.role ?? '');
+
+          if (userModel!.user?.role == "customer") {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TabsScreen()),
+            );
+          } else if (userModel!.user?.role == "delivery") {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TabsDeliveryScreen()),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              'Access denied: Unauthorized role.',
+              Icons.cancel,
+              maincolor,
+              const Duration(seconds: 2),
+            );
+          }
         }
       } else {
         showTopSnackBar(context, 'Wrong email or password.', Icons.cancel,
@@ -72,7 +105,8 @@ class LoginProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-Future<void> logout(BuildContext context) async {
+
+  Future<void> logout(BuildContext context) async {
     final url = Uri.parse('https://Bcknd.food2go.online/api/logout');
     final String token = this.token!;
 
@@ -89,6 +123,11 @@ Future<void> logout(BuildContext context) async {
 
       if (response.statusCode == 200 &&
           responseData['success'] == 'You logout success') {
+        // Clear token and role from SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('token');
+        await prefs.remove('role');
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),

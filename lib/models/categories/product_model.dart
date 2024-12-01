@@ -90,6 +90,34 @@ class Product {
             ? Tax.fromJson(json['tax'])
             : Tax(name: '', amount: 0.0, type: '', id: 0),
       );
+
+      Map<String, dynamic> toJson() => {
+  'name': name,
+  'id': id,
+  'description': description,
+  'image_link': image,
+  'category_id': categoryId,
+  'sub_category_id': subCategoryId,
+  'product_time_status': productTimeStatus,
+  'from': from,
+  'to': to,
+  'number': numOfStock,
+  'status': status,
+  'recommended': reccomended,
+  'in_stock': inStock,
+  'favourite': isFav,
+  'price': price,
+  'discount_id': discountId,
+  'tax_id': taxId,
+  'excludes': excludes.map((e) => e.toJson()).toList(),
+  'extra': extra.map((e) => e.toJson()).toList(),
+  'variations': variations.map((v) => v.toJson()).toList(),
+  'discount': discount.toJson(),
+  'addons': addons.map((a) => a.toJson()).toList(),
+  'tax': tax.toJson(),
+  'quantity': quantity,
+};
+
 }
 
 class Products {
@@ -120,6 +148,14 @@ class Discount {
         type: json['type'],
         id: json['id'],
       );
+
+      Map<String, dynamic> toJson() => {
+  'name': name,
+  'amount': amount,
+  'type': type,
+  'id': id,
+};
+
 }
 
 class AddOns {
@@ -140,6 +176,14 @@ class AddOns {
         quantityAdd: json['quantity_add'],
         id: json['id'],
       );
+
+      Map<String, dynamic> toJson() => {
+  'name': name,
+  'price': price,
+  'quantity_add': quantityAdd,
+  'id': id,
+};
+
 }
 
 class Excludes {
@@ -154,6 +198,13 @@ class Excludes {
         id: json['id'],
         productId: json['product_id'],
       );
+
+      Map<String, dynamic> toJson() => {
+  'name': name,
+  'id': id,
+  'product_id': productId,
+};
+
 }
 
 class Extra {
@@ -177,6 +228,15 @@ class Extra {
         productId: json['product_id'],
         price: json['price'].toDouble(),
       );
+
+      Map<String, dynamic> toJson() => {
+  'name': name,
+  'id': id,
+  'product_id': productId,
+  'price': price,
+  'extra_quantity': extraQuantity,
+};
+
 }
 
 class Variation {
@@ -215,6 +275,19 @@ class Variation {
             .map((option) => Option.fromJson(option))
             .toList(),
       );
+
+    Map<String, dynamic> toJson() => {
+  'id': id,
+  'name': name,
+  'type': type,
+  'min': min,
+  'max': max,
+  'required': required,
+  'product_id': productId,
+  'points': points,
+  'options': options.map((o) => o.toJson()).toList(),
+};
+
 }
 
 class Option {
@@ -244,6 +317,16 @@ class Option {
             .map((extraItem) => Extra.fromJson(extraItem))
             .toList(),
       );
+
+    Map<String, dynamic> toJson() => {
+  'id': id,
+  'name': name,
+  'price': price,
+  'product_id': productId,
+  'variation_id': variationId,
+  'extra': extra.map((e) => e.toJson()).toList(),
+};
+
 }
 
 class Tax {
@@ -264,4 +347,12 @@ class Tax {
         type: json['type'],
         amount: json['amount'].toDouble(),
       );
+
+      Map<String, dynamic> toJson() => {
+  'id': id,
+  'name': name,
+  'type': type,
+  'amount': amount,
+};
+
 }

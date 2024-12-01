@@ -1,10 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/view/screens/onboarding_screens/onboarding.dart';
-import 'package:food2go_app/view/screens/Auth/login_screen.dart';
 
 class LogoOnboarding extends StatefulWidget {
   const LogoOnboarding({super.key});
@@ -37,12 +38,7 @@ class _LogoOnboardingState extends State<LogoOnboarding> {
           );
         } else {
           // Navigate to Login if user is not new
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
+          Provider.of<LoginProvider>(context,listen: false).checkToken(context);
         }
       },
     );

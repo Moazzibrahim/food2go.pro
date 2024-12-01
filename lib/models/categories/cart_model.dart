@@ -7,13 +7,43 @@ class CartItem {
   final List<AddOns> addons;
   final List<Excludes> excludes;
 
-  CartItem(
-      {required this.product,
-      required this.extra,
-      required this.options,
-      required this.addons,
-      required this.excludes,
-      });
+  CartItem({
+    required this.product,
+    required this.extra,
+    required this.options,
+    required this.addons,
+    required this.excludes,
+  });
+
+  // Convert CartItem to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'product': product.toJson(),
+      'extra': extra.map((e) => e.toJson()).toList(),
+      'options': options.map((o) => o.toJson()).toList(),
+      'addons': addons.map((a) => a.toJson()).toList(),
+      'excludes': excludes.map((ex) => ex.toJson()).toList(),
+    };
+  }
+
+  // Create CartItem from JSON
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      product: Product.fromJson(json['product']),
+      extra: (json['extra'] as List<dynamic>)
+          .map((e) => Extra.fromJson(e))
+          .toList(),
+      options: (json['options'] as List<dynamic>)
+          .map((o) => Option.fromJson(o))
+          .toList(),
+      addons: (json['addons'] as List<dynamic>)
+          .map((a) => AddOns.fromJson(a))
+          .toList(),
+      excludes: (json['excludes'] as List<dynamic>)
+          .map((ex) => Excludes.fromJson(ex))
+          .toList(),
+    );
+  }
 }
 
 class Cart {
@@ -27,14 +57,47 @@ class Cart {
   final String orderType;
   final String paidBy;
 
-  Cart(
-      {required this.cartItems,
-      required this.totalPrice,
-      required this.date,
-      required this.branchId,
-      required this.paymentStatus,
-      required this.totalTax,
-      required this.addressId,
-      required this.orderType,
-      required this.paidBy});
+  Cart({
+    required this.cartItems,
+    required this.totalPrice,
+    required this.date,
+    required this.branchId,
+    required this.paymentStatus,
+    required this.totalTax,
+    required this.addressId,
+    required this.orderType,
+    required this.paidBy,
+  });
+
+  // Convert Cart to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'cartItems': cartItems.map((item) => item.toJson()).toList(),
+      'totalPrice': totalPrice,
+      'date': date,
+      'branchId': branchId,
+      'paymentStatus': paymentStatus,
+      'totalTax': totalTax,
+      'addressId': addressId,
+      'orderType': orderType,
+      'paidBy': paidBy,
+    };
+  }
+
+  // Create Cart from JSON
+  factory Cart.fromJson(Map<String, dynamic> json) {
+    return Cart(
+      cartItems: (json['cartItems'] as List<dynamic>)
+          .map((item) => CartItem.fromJson(item))
+          .toList(),
+      totalPrice: json['totalPrice'],
+      date: json['date'],
+      branchId: json['branchId'],
+      paymentStatus: json['paymentStatus'],
+      totalTax: json['totalTax'],
+      addressId: json['addressId'],
+      orderType: json['orderType'],
+      paidBy: json['paidBy'],
+    );
+  }
 }
