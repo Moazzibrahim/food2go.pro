@@ -90,52 +90,62 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Choose\nYour Favorite Food',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Choose\nYour Favorite Food',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Consumer<GetProfileProvider>(
-          builder: (context, profileProvider, child) {
-            final points = profileProvider.userProfile?.points ?? 0;
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const PointsItemsScreen(),
-                ));
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      points.toString(),
-                      style: const TextStyle(
-                        color: maincolor,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
+          Consumer<GetProfileProvider>(
+            builder: (context, profileProvider, child) {
+              final points = profileProvider.userProfile?.points ?? 0;
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => const PointsItemsScreen(),
+                  ));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min, // Make Row fit its content
+                    children: [
+                      Flexible(
+                        child: Text(
+                          points.toString(),
+                          style: const TextStyle(
+                            color: maincolor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          overflow: TextOverflow.ellipsis, // Prevent overflow
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 5),
-                    SvgPicture.asset('assets/images/coin.svg'),
-                  ],
+                      const SizedBox(width: 5),
+                      SvgPicture.asset(
+                        'assets/images/coin.svg',
+                        width: 10, // Add a fixed width to ensure it fits
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-      ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

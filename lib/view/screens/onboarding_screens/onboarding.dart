@@ -61,7 +61,7 @@ class _OnboardingState extends State<Onboarding> {
             ],
           ),
           Positioned(
-            bottom: 200,
+            bottom: 130,
             right: MediaQuery.sizeOf(context).width / 2.4,
             child: SmoothPageIndicator(
               controller: _pageController,
@@ -75,7 +75,7 @@ class _OnboardingState extends State<Onboarding> {
             ),
           ),
           Positioned(
-            bottom: 100,
+            bottom: 80,
             right: MediaQuery.sizeOf(context).width / 2.4,
             child: TextButton(
               onPressed: () {
