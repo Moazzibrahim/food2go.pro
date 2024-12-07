@@ -149,9 +149,9 @@ class _DiscountCardState extends State<DiscountCard> {
                   ),
                 ),
                 const SizedBox(width: 5),
-                const Text(
-                  '90 Egp',
-                  style: TextStyle(
+                Text(
+                  "${widget.price}",
+                  style: const TextStyle(
                     color: maincolor,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,

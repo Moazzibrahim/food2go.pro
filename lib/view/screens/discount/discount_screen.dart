@@ -15,6 +15,18 @@ class DiscountScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Consumer<ProductProvider>(
           builder: (context, productProvider, _) {
+            if (productProvider.discounts.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No discount items available',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              );
+            }
+
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

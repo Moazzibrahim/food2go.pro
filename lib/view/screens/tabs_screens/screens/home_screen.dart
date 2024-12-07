@@ -305,23 +305,47 @@ class _HomeScreenState extends State<HomeScreen> {
 
         final categories = [allCategory, ...categoriesProvider.categories];
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            double itemWidth = (constraints.maxWidth - 35) / 4;
-            return SizedBox(
-              height: 150,
-              child: Center(
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 15,
-                  children: categories.map((category) {
-                    return _buildCategoryItem(
-                        category.name, category.imageLink, itemWidth);
-                  }).toList(),
-                ),
+        // Split categories into two groups
+        final firstRowCategories = categories.take(3).toList();
+        final secondRowCategories = categories.skip(3).toList();
+
+        return Column(
+          children: [
+            // Non-scrollable row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: firstRowCategories.map((category) {
+                  return _buildCategoryItem(
+                    category.name,
+                    category.imageLink,
+                    MediaQuery.of(context).size.width / 4.5, // Adjust width
+                  );
+                }).toList(),
               ),
-            );
-          },
+            ),
+            const SizedBox(height: 15),
+            // Scrollable row
+            SizedBox(
+              height: 130,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: secondRowCategories.length,
+                itemBuilder: (context, index) {
+                  final category = secondRowCategories[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: _buildCategoryItem(
+                      category.name,
+                      category.imageLink,
+                      MediaQuery.of(context).size.width / 4.5, // Adjust width
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );
@@ -385,6 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: const TextStyle(
                   color: Colors.black,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -445,31 +470,39 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDiscountHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Discount',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DiscountScreen()),
-            );
-          },
-          child: const Text(
-            'See All',
-            style: TextStyle(
-              color: maincolor,
+    return Consumer<ProductProvider>(
+      builder: (context, productProvider, _) {
+        final hasDiscountItems = productProvider.discounts.isNotEmpty;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Discount',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        )
-      ],
+            if (hasDiscountItems)
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DiscountScreen()),
+                  );
+                },
+                child: const Text(
+                  'See All',
+                  style: TextStyle(
+                    color: maincolor,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -502,6 +535,21 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 180,
       child: Consumer<ProductProvider>(
         builder: (context, productProvider, _) {
+          if (productProvider.discounts.isEmpty) {
+            // Display a message when there are no discount items
+            return const Center(
+              child: Text(
+                'No discount items available',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            );
+          }
+
+          // Display the list of discount items
           return ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: productProvider.discounts.length,
