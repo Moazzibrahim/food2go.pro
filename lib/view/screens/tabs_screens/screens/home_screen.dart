@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               _buildImageCarousel(),
               _buildCategoryList(),
-              const SizedBox(height: 80),
+              const SizedBox(height: 10),
               _buildDealsSection(),
               const SizedBox(height: 10),
               _buildPopularFoodHeader(),
@@ -306,14 +306,14 @@ class _HomeScreenState extends State<HomeScreen> {
         final categories = [allCategory, ...categoriesProvider.categories];
 
         // Split categories into two groups
-        final firstRowCategories = categories.take(3).toList();
-        final secondRowCategories = categories.skip(3).toList();
+        final firstRowCategories = categories.take(4).toList();
+        final secondRowCategories = categories.skip(4).toList();
 
         return Column(
           children: [
             // Non-scrollable row
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: firstRowCategories.map((category) {
@@ -374,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Container(
         width: width,
-        height: 110,
+        height: 130,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
