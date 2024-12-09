@@ -289,7 +289,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           activeColor: maincolor,
         ),
         if (selectedPaymentMethod != null &&
-            selectedPaymentMethod != 'Cash' &&
+            selectedPaymentMethod != 'cash' &&
             selectedPaymentMethod == method.name)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),

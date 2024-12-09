@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/categories_model.dart';
+import 'package:food2go_app/view/screens/cart/product_details_screen.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -145,12 +146,24 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
                     final product = filteredProducts[index];
-                    return FoodCard(
-                      product: product,
-                      name: product.name,
-                      description: product.description,
-                      image: product.image,
-                      price: product.price,
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                      product: product,
+                                    )));
+                      },
+                      child: FoodCard(
+                        product: product,
+                        name: product.name,
+                        description: product.description,
+                        image: product.image,
+                        price: product.price,
+                        isFav: product.isFav,
+                        productId: product.id,
+                      ),
                     );
                   },
                 );
