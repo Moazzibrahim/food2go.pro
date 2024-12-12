@@ -28,15 +28,14 @@ class Deal {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      image: json['image'],
+      image: json['image_link'],
       price: json['price'].toDouble(),
       status: json['status'],
       daily: json['daily'] == 1,
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
-      times: (json['times'] as List)
-          .map((time) => Time.fromJson(time))
-          .toList(),
+      times:
+          (json['times'] as List).map((time) => Time.fromJson(time)).toList(),
     );
   }
 

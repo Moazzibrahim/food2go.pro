@@ -8,7 +8,7 @@ class Product {
   final String productTimeStatus;
   final String? from;
   final String? to;
-  final int numOfStock;
+  final int? numOfStock;
   final int status;
   final int reccomended;
   final bool inStock;
@@ -161,7 +161,7 @@ class Discount {
 class AddOns {
   final String name;
   double price;
-  final int quantityAdd;
+  final int? quantityAdd;
   final int id;
 
   AddOns(
@@ -173,7 +173,7 @@ class AddOns {
   factory AddOns.fromJson(Map<String, dynamic> json) => AddOns(
         name: json['name'],
         price: json['price'].toDouble(),
-        quantityAdd: json['quantity_add'],
+        quantityAdd: json['quantity_add'] ?? 0,
         id: json['id'],
       );
 
@@ -247,7 +247,7 @@ class Variation {
   final int? max;
   final int required;
   final int productId;
-  final int points;
+  final int? points;
   List<Option> options;
 
   Variation({
@@ -270,7 +270,7 @@ class Variation {
         max: json['max'],
         required: json['required'],
         productId: json['product_id'],
-        points: json['points'],
+        points: json['points']?? 0,
         options: (json['options'] as List)
             .map((option) => Option.fromJson(option))
             .toList(),

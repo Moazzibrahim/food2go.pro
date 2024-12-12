@@ -94,9 +94,7 @@ class _AddressScreenState extends State<AddressScreen> {
                                     context,
                                     token: token,
                                     icon: Icons.home,
-                                    title: address.type == 'work'
-                                        ? 'Work'
-                                        : 'Home',
+                                    title: address.type,
                                     address:
                                         '${address.zone.zone}, ${address.address}, ${address.street}, ${address.buildingNum}',
                                     addressId: address.id,
@@ -191,17 +189,40 @@ class _AddressScreenState extends State<AddressScreen> {
               bool? confirmDelete = await showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('Delete Address'),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  title: const Row(
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: maincolor),
+                      SizedBox(width: 8),
+                      Text('Delete Address'),
+                    ],
+                  ),
                   content: const Text(
-                      'Are you sure you want to delete this address?'),
+                    'Are you sure you want to delete this address? This action cannot be undone.',
+                    style: TextStyle(fontSize: 16),
+                  ),
                   actions: [
                     TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey,
+                      ),
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    TextButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: maincolor,
+                      ),
                       onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Delete'),
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),

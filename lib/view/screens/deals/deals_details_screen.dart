@@ -41,7 +41,7 @@ class DealsDetailsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Center(
-                    child: Image.asset(
+                    child: Image.network(
                       deal.image ?? 'assets/images/bigburger.png',
                       width: 120,
                       height: 120,

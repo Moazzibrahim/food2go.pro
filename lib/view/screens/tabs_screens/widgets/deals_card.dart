@@ -8,8 +8,8 @@ class DealsCard extends StatelessWidget {
       required this.price,
       required this.image,
       required this.title});
-  final String title;
 
+  final String title;
   final String description;
   final double price;
   final String image;
@@ -31,7 +31,14 @@ class DealsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.network(image),
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                ),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -48,9 +55,9 @@ class DealsCard extends StatelessWidget {
                         fontSize: 32,
                         fontWeight: FontWeight.w500,
                         color: maincolor),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
           const SizedBox(
@@ -66,7 +73,7 @@ class DealsCard extends StatelessWidget {
           Text(
             description,
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          )
+          ),
         ],
       ),
     );
