@@ -44,10 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
           .fetchUserProfile(context);
-      final userId = Provider.of<LoginProvider>(context, listen: false)
-          .userModel!
-          .user!
-          .id;
+      final userId = Provider.of<LoginProvider>(context, listen: false).id;
       Provider.of<NotificationController>(context, listen: false)
           .initFCMToken(userId!);
     });

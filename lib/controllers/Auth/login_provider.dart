@@ -16,12 +16,14 @@ import '../../view/screens/Auth/login_screen.dart';
 class LoginProvider with ChangeNotifier {
   LoginModel? userModel;
   String? token;
+  int? id;
   bool isLoading = false;
 
   // Method to check if a token exists in SharedPreferences
   Future<void> checkToken(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    id = prefs.getInt('user_id');
 
     if (token != null) {
       final role = prefs.getString('role');
@@ -64,12 +66,14 @@ class LoginProvider with ChangeNotifier {
         final responseData = jsonDecode(response.body);
         userModel = LoginModel.fromJson(responseData);
         token = userModel?.token;
+        id = userModel?.user!.id;
         log('Token: $token');
 
         if (token != null) {
           // Save the token and user role in SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
+          await prefs.setInt('user_id', id!);
           await prefs.setString('role', userModel!.user?.role ?? '');
 
           if (userModel!.user?.role == "customer") {
