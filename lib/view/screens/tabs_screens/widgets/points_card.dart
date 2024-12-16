@@ -38,8 +38,10 @@ class PointsCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Flexible(
-                        child: Image.network(image),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(image,fit: BoxFit.cover,)),
                       ),
                     ],
                   ),

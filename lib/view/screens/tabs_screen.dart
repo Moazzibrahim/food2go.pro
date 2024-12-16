@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/tabs_controller.dart';
 import 'package:food2go_app/view/screens/cart/cart_details.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/favourites_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
@@ -30,16 +31,20 @@ class _TabsScreenState extends State<TabsScreen> {
             child: PageView(
               controller: _pageController,
               onPageChanged: (index) {
+                Provider.of<TabsController>(context, listen: false).setIndex(index);
                 setState(() {
                   _currentIndex = index;
                 });
               },
-              children: const [
-                HomeScreen(),
-                FavouritesScreen(),
-                CartDetailssScreen(),
-                PointsItemsScreen(),
-                ProfileScreen(),
+              children: [
+                const HomeScreen(),
+                const FavouritesScreen(),
+                CartDetailssScreen(onBack: (int lastIndex) {
+                  Provider.of<TabsController>(context, listen: false).setIndex(lastIndex);
+                  _pageController.jumpToPage(lastIndex);
+                }),
+                const PointsItemsScreen(),
+                const ProfileScreen(),
               ],
             ),
           ),
@@ -112,7 +117,19 @@ class _TabsScreenState extends State<TabsScreen> {
       child: Stack(
         alignment: Alignment.topRight,
         children: [
-          SvgPicture.asset(isSelected ? iconOn ?? iconOff : iconOff),
+          index == 2
+              ? Container(
+                  padding: const EdgeInsets.all(8),
+                  height: 50,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.white),
+                  child: SvgPicture.asset(
+                    isSelected ? iconOn ?? iconOff : iconOff,
+                    // ignore: deprecated_member_use
+                    color: maincolor,
+                  ))
+              : SvgPicture.asset(isSelected ? iconOn ?? iconOff : iconOff),
           if (showCartLength)
             Consumer<ProductProvider>(
               builder: (context, productProvider, child) {
@@ -125,7 +142,7 @@ class _TabsScreenState extends State<TabsScreen> {
                           radius: 10,
                           backgroundColor: Colors.green,
                           child: Text(
-                            '$cartLength',   
+                            '$cartLength',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white,

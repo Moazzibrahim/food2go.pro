@@ -24,6 +24,19 @@ class CategoryDetailsScreen extends StatefulWidget {
 
 class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   String? selectedSubCategoryId;
+  String selectedFilter = 'All';
+  String getDynamicImageLink() {
+    if (selectedSubCategoryId == null) {
+      // Show category image when "All" is selected.
+      return widget.category?.imageLink ?? widget.bannerCategory?.imageLink ?? '';
+    } else {
+      // Find the sub-category with the selected ID and return its image.
+      final selectedSubCategory = widget.category?.subCategories.firstWhere(
+        (subCategory) => subCategory.id.toString() == selectedSubCategoryId,
+      );
+      return selectedSubCategory?.imageLink ?? '';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +50,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   bottomRight: Radius.circular(100.0),
                 ),
                 child: Image.network(
-                  widget.category?.imageLink ??
-                      widget.bannerCategory?.imageLink ??
-                      '',
+                  getDynamicImageLink(),
                   width: double.infinity,
                   height: 250,
                   fit: BoxFit.cover,
@@ -101,6 +112,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                     isSelected: selectedSubCategoryId == null,
                     onSelected: (isSelected) {
                       setState(() {
+                        selectedFilter = 'All';
                         selectedSubCategoryId = null; // Show all products
                       });
                     },
@@ -112,6 +124,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                           selectedSubCategoryId == subCategory.id.toString(),
                       onSelected: (isSelected) {
                         setState(() {
+                          selectedFilter = subCategory.name;
                           selectedSubCategoryId =
                               isSelected ? subCategory.id.toString() : null;
                         });
@@ -141,7 +154,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                     childAspectRatio: 1,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    mainAxisExtent: 230,
+                    mainAxisExtent: 205,
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {

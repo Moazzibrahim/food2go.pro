@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(width: 50,),
           Consumer<GetProfileProvider>(
             builder: (context, profileProvider, child) {
               final points = profileProvider.userProfile?.points ?? 0;

@@ -34,9 +34,12 @@ class DealsCard extends StatelessWidget {
               SizedBox(
                 width: 100,
                 height: 100,
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Column(

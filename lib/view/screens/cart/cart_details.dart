@@ -3,12 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/controllers/tabs_controller.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/checkout/checkout_screen.dart';
 import 'package:provider/provider.dart';
 
 class CartDetailssScreen extends StatefulWidget {
-  const CartDetailssScreen({super.key});
+  const CartDetailssScreen({super.key, required this.onBack});
+  final Function(int lastIndex) onBack;
 
   @override
   _CartDetailssScreenState createState() => _CartDetailssScreenState();
@@ -27,7 +29,12 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Center(child: Text('Details cart')),
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+          onPressed: (){
+            final tabsProvider = Provider.of<TabsController>(context,listen: false);
+            widget.onBack(tabsProvider.prevIndex);
+          }, 
+          icon: const Icon(Icons.arrow_back)),
         ),
         body: Consumer<ProductProvider>(
           builder: (context, cartProvider, _) {
@@ -37,6 +44,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
               );
             } else {
               originalTotalPrice = 0;
+              totalDiscount = 0;
               for (var e in cartProvider.cart) {
                 originalTotalPrice += e.product.price;
               }
@@ -152,8 +160,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                       Row(
                                         children: [
                                           IconButton(
-                                            onPressed: () => cartProvider
-                                                .decreaseProductQuantity(index),
+                                            onPressed: () => cartProvider.decreaseProductQuantity(index),
                                             icon: const Icon(Icons.remove),
                                           ),
                                           Text(

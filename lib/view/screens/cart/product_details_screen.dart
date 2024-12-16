@@ -121,8 +121,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: CircleAvatar(
                       radius: 120,
                       child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/pastaa.png',
+                        child: Image.network(
+                          widget.product!.image,
                           height: 200,
                           width: 200,
                           fit: BoxFit.cover,

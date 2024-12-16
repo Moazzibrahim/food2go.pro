@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food2go_app/controllers/chat/userChat/get_messages_provider.dart';
 import 'package:food2go_app/controllers/chat/userChat/send_message_provider.dart';
+import 'package:food2go_app/controllers/tabs_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:food2go_app/controllers/Auth/forget_password_provider.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => GetMessagesProvider()),
         ChangeNotifierProvider(create: (_) => SendMessageProvider()),
+        ChangeNotifierProvider(create: (_) => TabsController()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
