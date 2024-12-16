@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
-import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
 
 class FavouritesScreen extends StatefulWidget {
@@ -39,9 +38,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
               Expanded(
                 child: Consumer<ProductProvider>(
                   builder: (context, productProvider, _) {
-                    // Check if both favourites and favouritediscounts are empty
-                    if (productProvider.favorites.isEmpty &&
-                        productProvider.favouritediscounts.isEmpty) {
+                    if (productProvider.favorites.isEmpty) {
                       return const Center(
                         child: Text('No Favorites yet!'),
                       );
@@ -49,47 +46,12 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                       // List to hold widgets
                       List<Widget> contentWidgets = [];
 
-                      // Add Favourite Discounts if available
-                      if (productProvider.favouritediscounts.isNotEmpty) {
-                        contentWidgets.add(
-                          GridView.builder(
-                            shrinkWrap:
-                                true, // To make the grid scrollable inside Column
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              mainAxisExtent: 160,
-                            ),
-                            itemCount:
-                                productProvider.favouritediscounts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final discountProduct =
-                                  productProvider.favouritediscounts[index];
-                              return DiscountCard(
-                                description: discountProduct.description,
-                                image: discountProduct.image,
-                                name: discountProduct.name,
-                                price: discountProduct.price,
-                                productId: discountProduct.id,
-                                isFav: discountProduct.isFav,
-                                product: discountProduct,
-                              );
-                            },
-                          ),
-                        );
-                      }
-
-                      // Add Favourite Products if available
                       if (productProvider.favorites.isNotEmpty) {
                         contentWidgets.add(
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GridView.builder(
-                              shrinkWrap:
-                                  true, // To make the grid scrollable inside Column
+                              shrinkWrap: true, 
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -117,7 +79,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         );
                       }
 
-                      // Return both content widgets (Discounts and Products)
                       return ListView(
                         children: contentWidgets,
                       );

@@ -36,6 +36,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                 child: Text('No Items in Cart yet'),
               );
             } else {
+              originalTotalPrice = 0;
               for (var e in cartProvider.cart) {
                 originalTotalPrice += e.product.price;
               }
@@ -62,7 +63,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                         return Column(
                           children: [
                             Container(
-                              margin: const EdgeInsets.all(16.0),
+                              margin: const EdgeInsets.all(16),
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -78,20 +79,22 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  // Text(
-                                  //   cartItem.product.image,
-                                  //   // height: 70,
-                                  //   // width: 70,
-                                  // ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      cartItem.product.image,
+                                      width: 75, 
+                                      height: 71, 
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               cartItem.product.name,
@@ -109,12 +112,6 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                 : const SizedBox()
                                           ],
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          cartItem.product.description,
-                                          style: const TextStyle(
-                                              color: Colors.grey),
-                                        ),
                                         const SizedBox(height: 8),
                                         Column(
                                           crossAxisAlignment:
@@ -124,7 +121,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                             if (cartItem
                                                 .product.discountId.isNotEmpty)
                                               Text(
-                                                '\$${cartItem.product.price.toString()}',
+                                                'EGP${cartItem.product.price.toString()}',
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 14,
@@ -137,8 +134,8 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                             Text(
                                               cartItem.product.discountId
                                                       .isEmpty
-                                                  ? '\$${cartItem.product.price.toString()}'
-                                                  : '\$${(cartItem.product.price - (cartItem.product.price * (cartItem.product.discount.amount / 100))).toStringAsFixed(2)}',
+                                                  ? 'EGP${cartItem.product.price.toString()}'
+                                                  : 'EGP${(cartItem.product.price - (cartItem.product.price * (cartItem.product.discount.amount / 100))).toStringAsFixed(2)}',
                                               style: const TextStyle(
                                                 color: maincolor,
                                                 fontWeight: FontWeight.bold,
@@ -173,8 +170,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          cartProvider
-                                              .removeProductFromCart(index);
+                                          cartProvider.removeProductFromCart(index);
                                         },
                                         icon: const Icon(Icons.delete,
                                             color: maincolor),
@@ -213,8 +209,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    cartItem
-                                                        .extra[extraIndex].name,
+                                                    cartItem.extra[extraIndex].name,
                                                     style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -242,16 +237,11 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                           .decreaseExtraQuantity(
                                                               index,
                                                               extraIndex),
-                                                      icon: const Icon(
-                                                          Icons.remove),
+                                                      icon: const Icon(Icons.remove),
                                                     ),
                                                     Text(
-                                                        cartItem
-                                                            .extra[extraIndex]
-                                                            .extraQuantity
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                            fontSize: 16)),
+                                                        cartItem.extra[extraIndex].extraQuantity.toString(),
+                                                        style: const TextStyle(fontSize: 16)),
                                                     IconButton(
                                                       onPressed: () => cartProvider
                                                           .increaseExtraQuantity(

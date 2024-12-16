@@ -13,7 +13,6 @@ import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget
 import 'package:food2go_app/view/screens/tabs_screens/screens/category_details_screen.dart';
 import 'package:food2go_app/view/screens/deals/deals_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screens/screens/filter_screen.dart';
-import 'package:food2go_app/view/screens/tabs_screens/widgets/discount_card.dart';
 import 'package:provider/provider.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/categories/categories_provider.dart';
@@ -532,11 +531,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDiscountList() {
     return SizedBox(
-      height: 180,
+      height: 200,
       child: Consumer<ProductProvider>(
         builder: (context, productProvider, _) {
           if (productProvider.discounts.isEmpty) {
-            // Display a message when there are no discount items
             return const Center(
               child: Text(
                 'No discount items available',
@@ -549,13 +547,12 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          // Display the list of discount items
           return ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: productProvider.discounts.length,
             itemBuilder: (context, index) {
               final product = productProvider.discounts[index];
-              return DiscountCard(
+              return FoodCard(
                 name: product.name,
                 image: product.image,
                 description: product.description,

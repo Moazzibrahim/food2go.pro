@@ -38,7 +38,7 @@ class _FoodCardState extends State<FoodCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
+      width: 135,
       height: 180, // Set the height as requested
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
@@ -47,100 +47,130 @@ class _FoodCardState extends State<FoodCard> {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, right: 8.0),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Consumer<ProductProvider>(
-                builder: (context, favProvider, _) {
-                  return GestureDetector(
-                    onTap: () {
-                      favProvider.makeFavourites(
-                          context, isFavorite ? 0 : 1, widget.productId ?? 0);
-                      setState(() {
-                        isFavorite = !isFavorite;
-                      });
-                    },
-                    child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? maincolor : Colors.grey,
-                      size: 23,
-                    ),
-                  );
-                },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              widget.product!.discount.amount == 0 ? const SizedBox(width: 5,) : Container(
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                color: maincolor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              child: Text(
+                '${widget.product!.discount.amount} %',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  widget.image,
-                  width: 71,
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                child: Consumer<ProductProvider>(
+                  builder: (context, favProvider, _) {
+                    return GestureDetector(
+                      onTap: () {
+                        favProvider.makeFavourites(
+                            context, isFavorite ? 0 : 1, widget.productId ?? 0);
+                        setState(() {
+                          isFavorite = !isFavorite;
+                        });
+                      },
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? maincolor : Colors.grey,
+                        size: 23,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.name,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  widget.description,
-                  style: const TextStyle(
-                    fontSize: 7,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 3),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${widget.price} EGP',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: maincolor,
-                        fontWeight: FontWeight.bold,
-                      ),
+          Container(
+            height: 71,
+            width: 85,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[200], // Placeholder color
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                widget.image,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 98,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.name,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
                     ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProductDetailsScreen(
-                                      product: widget.product,
-                                    )));
-                      },
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: maincolor),
-                        child: const Center(
-                          child: Icon(Icons.add, color: Colors.white, size: 16),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    widget.description,
+                    style: const TextStyle(
+                      fontSize: 7,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${widget.price} EGP',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: maincolor,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProductDetailsScreen(
+                                        product: widget.product,
+                                      )));
+                        },
+                        child: Container(
+                          height: 24,
+                          width: 24,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: maincolor),
+                          child: const Center(
+                            child: Icon(Icons.add, color: Colors.white, size: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

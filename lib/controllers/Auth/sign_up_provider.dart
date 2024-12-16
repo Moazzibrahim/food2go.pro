@@ -1,13 +1,17 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:food2go_app/models/Auth/sign_up_model.dart';
-import 'package:food2go_app/view/screens/tabs_screens/screens/home_screen.dart';
+import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/models/Auth/login_model.dart';
+import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpProvider with ChangeNotifier {
-  SignUpModel? signUpModel;
+  LoginModel? signUpModel;
   String? errorMessage; // Store error messages
   bool isLoading = false; // Store loading state
 
@@ -41,19 +45,24 @@ class SignUpProvider with ChangeNotifier {
       final response = await http.post(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json', // Set the content type to JSON
+          'Content-Type': 'application/json',
         },
-        body: jsonEncode(body), // Encode the body to JSON format
+        body: jsonEncode(body), 
       );
 
       // Check the response status
       if (response.statusCode == 200) {
-        // Successful signup
         final responseData = jsonDecode(response.body);
-        signUpModel = SignUpModel.fromJson(responseData);
+        signUpModel = LoginModel.fromJson(responseData);
+        final tokenProvider = Provider.of<LoginProvider>(context!,listen: false);
+        tokenProvider.token = signUpModel!.token;
+        final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', signUpModel!.user!.token!);
+          await prefs.setString('role', signUpModel!.user?.role ?? '');
         print('User signed up successfully: ${signUpModel?.user?.name}');
+        log('response body: ${response.body}');
 
-        ScaffoldMessenger.of(context!).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
                 'Sign up successful! Welcome, ${signUpModel?.user?.name}.'),
@@ -63,7 +72,7 @@ class SignUpProvider with ChangeNotifier {
           const Duration(seconds: 2),
           () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
+                MaterialPageRoute(builder: (context) => const TabsScreen()));
           },
         );
       } else {

@@ -27,9 +27,6 @@ class ProductProvider with ChangeNotifier {
   List<Product> _discounts = [];
   List<Product> get discounts => _discounts;
 
-  List<Product> _favouritediscounts = [];
-  List<Product> get favouritediscounts => _favouritediscounts;
-
   final List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
@@ -122,8 +119,6 @@ class ProductProvider with ChangeNotifier {
         _popularProducts = _products.where((e) => e.reccomended == 1).toList();
         _favorites = _products.where((e) => e.isFav).toList();
         _discounts = _products.where((e) => e.discountId.isNotEmpty).toList();
-        _favouritediscounts =
-            _discounts.where((element) => element.isFav).toList();
         log('discounts: ${_discounts.map((e) => e.name)}');
         notifyListeners();
       } else {
@@ -216,17 +211,7 @@ class ProductProvider with ChangeNotifier {
         product.isFav = isFavorite;
       }
     }
-
-    for (var discountProduct in _discounts) {
-      if (discountProduct.id == id) {
-        discountProduct.isFav = isFavorite;
-      }
-    }
-    // Refresh favorites and favorite discounts
     _favorites = _products.where((product) => product.isFav).toList();
-    _favouritediscounts =
-        _discounts.where((discount) => discount.isFav).toList();
-
     notifyListeners();
   }
 

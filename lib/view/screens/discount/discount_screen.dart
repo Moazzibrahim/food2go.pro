@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
+import 'package:food2go_app/view/screens/popular_food/widget/popular_food_widget.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
-import '../tabs_screens/widgets/discount_card.dart';
 
 class DiscountScreen extends StatelessWidget {
   const DiscountScreen({super.key});
@@ -37,7 +37,7 @@ class DiscountScreen extends StatelessWidget {
               itemCount: productProvider.discounts.length,
               itemBuilder: (context, index) {
                 final product = productProvider.discounts[index];
-                return DiscountCard(
+                return FoodCard(
                   name: product.name,
                   image: product.image,
                   description: product.description,
