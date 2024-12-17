@@ -50,7 +50,7 @@ class _PointsItemsScreenState extends State<PointsItemsScreen> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const TabsScreen()),
+                MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)),
               );
             },
           ),

@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(4.0),
           child: ListView(
             children: [
               _buildHeader(),
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 50,),
+          const SizedBox(width: 40,),
           Consumer<GetProfileProvider>(
             builder: (context, profileProvider, child) {
               final points = profileProvider.userProfile?.points ?? 0;

@@ -72,7 +72,7 @@ class SignUpProvider with ChangeNotifier {
           const Duration(seconds: 2),
           () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const TabsScreen()));
+                MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)));
           },
         );
       } else {

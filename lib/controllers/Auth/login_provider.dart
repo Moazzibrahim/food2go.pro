@@ -30,7 +30,7 @@ class LoginProvider with ChangeNotifier {
       if (role == "customer") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const TabsScreen()),
+          MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)),
         );
       } else if (role == "delivery") {
         Navigator.pushReplacement(
@@ -79,7 +79,7 @@ class LoginProvider with ChangeNotifier {
           if (userModel!.user?.role == "customer") {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const TabsScreen()),
+              MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)),
             );
           } else if (userModel!.user?.role == "delivery") {
             Navigator.pushReplacement(

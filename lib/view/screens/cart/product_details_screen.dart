@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
@@ -7,7 +6,6 @@ import 'package:food2go_app/view/screens/cart/widgets/addon_selection_widget.dar
 import 'package:food2go_app/view/screens/cart/widgets/extras_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import '../../widgets/show_top_snackbar.dart';
 import '../tabs_screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -141,11 +139,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        widget.product!.name,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          widget.product!.name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2, // Limit to 2 lines
+                          overflow: TextOverflow
+                              .ellipsis, // Show ellipsis if text exceeds 2 lines
+                          softWrap: true, // Allow wrapping to the next line
                         ),
                       ),
                       Text(
@@ -348,28 +352,58 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               for (var e in selectedVariations) {
                                 e.options = selectedOptionsObject
                                     .where(
-                                      (option) => option.variationId == e.id,
-                                    )
+                                        (option) => option.variationId == e.id)
                                     .toList();
                               }
                               selectedProduct.variations = selectedVariations;
                               selectedProduct.excludes = selectedExcludesList;
                               productProvider.addtoCart(
-                                  selectedProduct,
-                                  selectedExtrasList,
-                                  selectedOptionsObject,
-                                  addons,
-                                  selectedExcludesList);
-                              showTopSnackBar(
-                                  context,
-                                  'Add To cart successful',
-                                  Icons.check,
-                                  maincolor,
-                                  const Duration(seconds: 2));
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const TabsScreen()),
+                                selectedProduct,
+                                selectedExtrasList,
+                                selectedOptionsObject,
+                                addons,
+                                selectedExcludesList,
+                              );
+
+                              // Show Dialog
+                              showDialog(
+                                context: context,
+                                builder: (ctx) {
+                                  return AlertDialog(
+                                    title: const Text('Item Added to Cart'),
+                                    content: const Text(
+                                        'What would you like to do next?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>const TabsScreen(initialIndex: 0,),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text('Continue',style: TextStyle(color: maincolor)),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>const TabsScreen(initialIndex: 2,),
+                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: maincolor,
+                                          foregroundColor: Colors.white
+                                        ),
+                                        child: const Text('CheckOut'),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                             style: ElevatedButton.styleFrom(

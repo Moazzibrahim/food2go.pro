@@ -139,7 +139,7 @@ class MyOrderScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TabsScreen()));
+                        builder: (context) => const TabsScreen(initialIndex: 0,)));
               },
               child: const Text(
                 'Explore Menu',

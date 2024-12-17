@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen({super.key, required this.initialIndex});
+  final int initialIndex;
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -19,7 +20,14 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   var _currentIndex = 0;
-  final PageController _pageController = PageController();
+  PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex; // Set the initial index
+    _pageController = PageController(initialPage: _currentIndex); // Initialize PageController with initial index
+  }
 
   @override
   Widget build(BuildContext context) {
