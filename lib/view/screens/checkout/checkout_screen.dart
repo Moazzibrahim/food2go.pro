@@ -289,7 +289,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           activeColor: maincolor,
         ),
         if (selectedPaymentMethod != null &&
-            selectedPaymentMethod != 'cash' &&
+            selectedPaymentMethod != 'cash on delivery' &&
+            selectedPaymentMethod != 'paymob' &&
             selectedPaymentMethod == method.name)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -437,7 +438,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           if (selectedPayment == null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid payment method selected')),
+              const SnackBar(content: Text('try another payment please')),
             );
             return;
           }
@@ -448,12 +449,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           // Format delivery time
           String deliveryTime = deliveryNow
-              ? formatTimeOfDay(TimeOfDay.now()) // "HH:mm" format for 'now'
-              : deliveryTimeController.text; // Already in "HH:mm"
+              ? formatTimeOfDay(TimeOfDay.now()) 
+              : deliveryTimeController.text;
 
           final orderId =
-              await Provider.of<ProductProvider>(context, listen: false)
-                  .postCart(
+              await Provider.of<ProductProvider>(context, listen: false).postCart(
             context,
             products: widget.cartProducts,
             date: deliveryTime,

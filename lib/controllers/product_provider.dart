@@ -10,6 +10,7 @@ import 'package:food2go_app/constants/strings.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/models/categories/cart_model.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
+import 'package:food2go_app/view/screens/checkout/payment_web_view.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -274,10 +275,26 @@ class ProductProvider with ChangeNotifier {
         log(response.body);
         log('Order posted successfully');
         final responseData = jsonDecode(response.body);
-        return responseData['success']['id']; // Extracting the order ID
+
+        if (responseData.containsKey('paymentLink')) {
+          final String paymentLink = responseData['paymentLink'];
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => PaymentWebView(url: paymentLink),
+            ),
+          );
+        }
+
+        if (responseData.containsKey('success')) {
+          final successId = responseData['success'];
+          log('Order ID: $successId');
+          return successId as int?;
+        } else {
+          log('No success ID found in response.');
+          return null;
+        }
       } else {
         log(response.body);
-
         log('Failed to post order: ${response.statusCode}');
         return null;
       }
