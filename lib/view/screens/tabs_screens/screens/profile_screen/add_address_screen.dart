@@ -19,6 +19,7 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   String selectedCategory = 'Home';
   GoogleMapController? _mapController;
@@ -286,23 +287,38 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              Provider.of<AddressProvider>(context,
-                                      listen: false)
-                                  .addAddress(
-                                context: context,
-                                zoneId: int.parse(selectedZoneId!),
-                                address: addressController.text,
-                                street: streetController.text,
-                                buildingNum: buildingNumController.text,
-                                floorNum: floorNumController.text,
-                                apartment: apartmentController.text,
-                                additionalData: additionalDataController.text,
-                                type: selectedCategory,
-                              );
-                            }
-                          },
+                          onPressed: _isLoading
+                              ? null 
+                              : () async {
+                                  if (_formKey.currentState?.validate() ??
+                                      false) {
+                                    setState(() {
+                                      _isLoading = true; 
+                                    });
+
+                                    try {
+                                      await Provider.of<AddressProvider>(
+                                              context,
+                                              listen: false)
+                                          .addAddress(
+                                        context: context,
+                                        zoneId: int.parse(selectedZoneId!),
+                                        address: addressController.text,
+                                        street: streetController.text,
+                                        buildingNum: buildingNumController.text,
+                                        floorNum: floorNumController.text,
+                                        apartment: apartmentController.text,
+                                        additionalData:
+                                            additionalDataController.text,
+                                        type: selectedCategory,
+                                      );
+                                    } finally {
+                                      setState(() {
+                                        _isLoading = false; 
+                                      });
+                                    }
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: maincolor,
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -310,16 +326,21 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          child: const Text(
-                            'Save Address',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : const Text(
+                                  'Save Address',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),

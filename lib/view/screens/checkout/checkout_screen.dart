@@ -128,6 +128,88 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  Widget _buildDeliveryLocationCard(List<Address> addresses) {
+    return Column(
+      children: [
+        ...addresses.map((address) {
+          return _buildSelectionTile(
+            address.id, // Pass the unique id
+            address.type,
+            address.address,
+            selectedAdressId, // Update this to use the unique id
+            (value) {
+              setState(() {
+                selectedDeliveryLocation = address.type; // Update display text
+                selectedAdressId = value; // Update selected id
+              });
+            },
+          );
+        }),
+        const SizedBox(height: 15),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.all(16.0),
+              backgroundColor: maincolor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddAddressScreen(),
+                ),
+              );
+            },
+            child: const Text(
+              'Add New Address',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectionTile(int id, String? name, String? address,
+      int? selectedValue, ValueChanged<int?> onChanged) {
+    return RadioListTile<int?>(
+      value: id, // Use id as the unique identifier
+      groupValue: selectedValue,
+      onChanged: onChanged,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name!,
+            style: TextStyle(
+              color: selectedValue == id ? Colors.white : maincolor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            address!,
+            style: TextStyle(
+              color: selectedValue == id ? Colors.white70 : Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+      activeColor: maincolor,
+      tileColor: selectedValue == id ? maincolor : Colors.white,
+      selected: selectedValue == id,
+      selectedTileColor: maincolor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    );
+  }
+
   String _capitalize(String input) =>
       input[0].toUpperCase() + input.substring(1);
 
@@ -139,42 +221,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         fontWeight: FontWeight.bold,
         color: maincolor,
       ),
-    );
-  }
-
-  Widget _buildSelectionTile(String? name, String? address,
-      String? selectedValue, ValueChanged<String?> onChanged) {
-    return RadioListTile<String?>(
-      value: name,
-      groupValue: selectedValue,
-      onChanged: onChanged,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name!,
-            style: TextStyle(
-              color: selectedValue == name ? Colors.white : maincolor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            address!,
-            style: TextStyle(
-              color: selectedValue == name ? Colors.white70 : Colors.grey[700],
-            ),
-          ),
-        ],
-      ),
-      activeColor: maincolor,
-      tileColor: selectedValue == name ? maincolor : Colors.white,
-      selected: selectedValue == name,
-      selectedTileColor: maincolor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     );
   }
 
@@ -201,64 +247,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       children: branches.map((branch) {
         return _buildSelectionTile(
+          branch.id, // Use branch.id as the unique identifier
           branch.name,
           branch.address,
-          selectedBranch,
+          selectedBranchId, // Use selectedBranchId for selection tracking
           (value) {
             setState(() {
-              selectedBranch = value;
-              selectedBranchId = branch.id;
+              selectedBranch = branch.name; // Update the display name
+              selectedBranchId = value; // Update the selected ID
             });
           },
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildDeliveryLocationCard(List<Address> addresses) {
-    return Column(
-      children: [
-        ...addresses.map((address) {
-          return _buildSelectionTile(
-            address.type,
-            address.address,
-            selectedDeliveryLocation,
-            (value) {
-              setState(() {
-                selectedDeliveryLocation = value;
-                selectedAdressId = address.id;
-              });
-            },
-          );
-        }),
-        const SizedBox(
-          height: 15,
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(16.0),
-              backgroundColor: maincolor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddAddressScreen(),
-                ),
-              );
-            },
-            child: const Text(
-              'Add New Address',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -449,11 +449,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           // Format delivery time
           String deliveryTime = deliveryNow
-              ? formatTimeOfDay(TimeOfDay.now()) 
+              ? formatTimeOfDay(TimeOfDay.now())
               : deliveryTimeController.text;
 
           final orderId =
-              await Provider.of<ProductProvider>(context, listen: false).postCart(
+              await Provider.of<ProductProvider>(context, listen: false)
+                  .postCart(
             context,
             products: widget.cartProducts,
             date: deliveryTime,
