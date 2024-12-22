@@ -11,6 +11,7 @@ import 'package:food2go_app/controllers/Auth/login_provider.dart';
 import 'package:food2go_app/models/categories/cart_model.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/view/screens/checkout/payment_web_view.dart';
+import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -216,7 +217,7 @@ class ProductProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int?> postCart(
+  Future<void> postCart(
     BuildContext context, {
     required List<Product> products,
     String? receipt,
@@ -278,29 +279,24 @@ class ProductProvider with ChangeNotifier {
 
         if (responseData.containsKey('paymentLink')) {
           final String paymentLink = responseData['paymentLink'];
-          await Navigator.of(context).push(
+          final int orderId = responseData['success'];
+          final result = await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (ctx) => PaymentWebView(url: paymentLink),
             ),
           );
-        }
-
-        if (responseData.containsKey('success')) {
-          final successId = responseData['success'];
-          log('Order ID: $successId');
-          return successId as int?;
-        } else {
-          log('No success ID found in response.');
-          return null;
+          if (result == true) {
+            await checkCallBack(context, orderId);
+          } else {
+            log('WebView closed without completing the payment');
+          }
         }
       } else {
         log(response.body);
         log('Failed to post order: ${response.statusCode}');
-        return null;
       }
     } catch (e) {
       log('Error in post order: $e');
-      return null;
     }
   }
 
@@ -313,4 +309,54 @@ class ProductProvider with ChangeNotifier {
         addons: addons,
         excludes: excludes));
   }
-}
+
+  Future<void> checkCallBack(BuildContext context, int id) async {
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    final String token = loginProvider.token!;
+    
+      try {
+        final response = await http.get(
+          Uri.parse(
+              'https://bcknd.food2go.online/customer/make_order/callback_status/$id'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          log('The order submitted successfully');
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => OrderTrackingScreen(orderId: id),
+            ),
+          );
+          return;
+        } else if (response.statusCode == 400) {
+          log('Something went wrong');
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Payment Failed'),
+              content: const Text(
+                  'The payment could not be completed. Please try again or use a different payment method.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          log('response body: ${response.body}');
+          log('response statuscode: ${response.statusCode}');
+        }
+      } catch (e) {
+        log('Error in callback: $e');
+      }
+    }
+  }

@@ -50,7 +50,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Paymob Payment')),
+      appBar: AppBar(title: const Text('Paymob Payment'),
+      leading: IconButton(onPressed: (){
+        Navigator.of(context).pop(true);
+      }, icon: const Icon(Icons.arrow_back)),
+      ),
       body: WebViewWidget(controller: controller),
     );
   }
