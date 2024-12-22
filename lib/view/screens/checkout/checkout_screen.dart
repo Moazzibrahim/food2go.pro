@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 import 'package:food2go_app/models/checkout/place_order_model.dart';
-import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/custom_appbar.dart';
-import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import '../../../controllers/address/get_address_provider.dart';
@@ -451,9 +449,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           String deliveryTime = deliveryNow
               ? formatTimeOfDay(TimeOfDay.now()) 
               : deliveryTimeController.text;
-
-          final orderId =
-              await Provider.of<ProductProvider>(context, listen: false).postCart(
+              
+            await Provider.of<ProductProvider>(context, listen: false).postCart(
             context,
             products: widget.cartProducts,
             date: deliveryTime,
@@ -466,21 +463,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             notes: noteController.text,
           );
 
-          showTopSnackBar(context, 'Your order was placed successfully',
-              Icons.check, maincolor, const Duration(seconds: 2));
+          // showTopSnackBar(context, 'Your order was placed successfully',
+          //     Icons.check, maincolor, const Duration(seconds: 2));
 
-          if (orderId != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OrderTrackingScreen(orderId: orderId),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to place order')),
-            );
-          }
+          // if (orderId != null) {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => OrderTrackingScreen(orderId: orderId),
+          //     ),
+          //   );
+          // } else {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(content: Text('Failed to place order')),
+          //   );
+          // }
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${e.toString()}')),
