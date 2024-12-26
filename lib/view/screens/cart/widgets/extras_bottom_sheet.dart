@@ -22,22 +22,12 @@ class ExtrasBottomSheet extends StatefulWidget {
 }
 
 class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
-  Map<int, int> extraQuantities = {};
   Set<int> selectedExtras = {};
   Set<int> selectedExcludes = {};
 
   @override
   void initState() {
     super.initState();
-    final productProvider =
-        Provider.of<ProductProvider>(context, listen: false);
-
-    final extras =
-        productProvider.getExtras(widget.product!, widget.selectedVariation);
-    for (int i = 0; i < extras.length; i++) {
-      extraQuantities[i] = 1;
-    }
-
     for (int i = 0; i < widget.product!.excludes.length; i++) {
       selectedExcludes.add(i);
     }
@@ -46,21 +36,13 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   double getTotalPrice(List<Extra> extras) {
     double totalPrice = 0.0;
     for (var index in selectedExtras) {
-      totalPrice += extras[index].price * (extraQuantities[index] ?? 1);
+      totalPrice += extras[index].price;
     }
     return totalPrice;
   }
 
   List<Extra> getSelectedExtras(List<Extra> extras) {
-    return selectedExtras.map((index) {
-      final extra = extras[index];
-      return Extra(
-        id: extra.id,
-        productId: extra.productId,
-        name: extra.name,
-        price: extra.price,
-      );
-    }).toList();
+    return selectedExtras.map((index) => extras[index]).toList();
   }
 
   List<Excludes> getDeselectedExcludes(List<Excludes> excludes) {
@@ -76,8 +58,7 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   Widget build(BuildContext context) {
     return Consumer<ProductProvider>(
       builder: (context, productProvider, _) {
-        final extras = productProvider.getExtras(
-            widget.product!, widget.selectedVariation);
+        final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
         final excludes = widget.product!.excludes;
 
         if (extras.isEmpty) {
@@ -89,168 +70,141 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
           );
         }
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Extras',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              const SizedBox(height: 10),
-              ...List.generate(
-                extras.length,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Extras',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    ...List.generate(
+                      extras.length,
+                      (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Checkbox(
+                                      value: selectedExtras.contains(index),
+                                      activeColor: maincolor,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value == true) {
+                                            selectedExtras.add(index);
+                                          } else {
+                                            selectedExtras.remove(index);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      extras[index].name,
+                                      style: const TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '+${extras[index].price.toStringAsFixed(2)}',
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        'Total: \$${getTotalPrice(extras).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: maincolor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    const Text(
+                      'Excludes',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    ...List.generate(
+                      excludes.length,
+                      (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                excludes[index].name,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
                               Checkbox(
-                                value: selectedExtras.contains(index),
+                                value: selectedExcludes.contains(index),
                                 activeColor: maincolor,
                                 onChanged: (value) {
                                   setState(() {
                                     if (value == true) {
-                                      selectedExtras.add(index);
+                                      selectedExcludes.add(index);
                                     } else {
-                                      selectedExtras.remove(index);
+                                      selectedExcludes.remove(index);
                                     }
                                   });
                                 },
                               ),
-                              const SizedBox(width: 10),
-                              Text(
-                                extras[index].name,
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove_circle_outline),
-                              onPressed: selectedExtras.contains(index) &&
-                                      extraQuantities[index]! > 1
-                                  ? () {
-                                      setState(() {
-                                        extraQuantities[index] =
-                                            (extraQuantities[index] ?? 1) - 1;
-                                      });
-                                    }
-                                  : null,
-                            ),
-                            Text(
-                              '${extraQuantities[index]}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add_circle_outline),
-                              onPressed: selectedExtras.contains(index)
-                                  ? () {
-                                      setState(() {
-                                        extraQuantities[index] =
-                                            (extraQuantities[index] ?? 1) + 1;
-                                      });
-                                    }
-                                  : null,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '+${extras[index].price.toStringAsFixed(2)}',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  'Total: \$${getTotalPrice(extras).toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: maincolor,
-                  ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-              const SizedBox(height: 30),
-              const Text(
-                'Excludes',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              const SizedBox(height: 10),
-              ...List.generate(
-                excludes.length,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          excludes[index].name,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        Checkbox(
-                          value: selectedExcludes.contains(index),
-                          activeColor: maincolor,
-                          onChanged: (value) {
-                            setState(() {
-                              if (value == true) {
-                                selectedExcludes.add(index);
-                              } else {
-                                selectedExcludes.remove(index);
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  );
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  final selectedExtrasList = getSelectedExtras(extras);
+                  final deselectedExcludesList = getDeselectedExcludes(excludes);
+                  widget.onSelectedExtras(selectedExtrasList);
+                  widget.onSelectedExcludes(deselectedExcludesList);
+                  Navigator.pop(context);
                 },
-              ),
-              const SizedBox(height: 30),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final selectedExtrasList = getSelectedExtras(extras);
-                    final deselectedExcludesList =
-                        getDeselectedExcludes(excludes);
-                    widget.onSelectedExtras(selectedExtrasList);
-                    widget.onSelectedExcludes(deselectedExcludesList);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: maincolor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 24.0),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: maincolor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: const Text(
-                    'Add to Order',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                ),
+                child: const Text(
+                  'Edit on Order',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+          ],
         );
       },
     );

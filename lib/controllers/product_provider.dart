@@ -15,6 +15,7 @@ import 'package:food2go_app/view/screens/order_tracing_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductProvider with ChangeNotifier {
   List<Product> _products = [];
@@ -29,8 +30,10 @@ class ProductProvider with ChangeNotifier {
   List<Product> _discounts = [];
   List<Product> get discounts => _discounts;
 
-  final List<CartItem> _cart = [];
+  List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
+
+  static const String _cartKey = 'cart_items';
 
   double _totalPrice = 0.0;
   double _totalTax = 0.0;
@@ -52,14 +55,9 @@ class ProductProvider with ChangeNotifier {
     return _totalPrice;
   }
 
-  void removeProductFromCart(int index) {
-    cart.removeAt(index);
-    notifyListeners();
-  }
 
   void increaseProductQuantity(int index) {
-    double defaultPrice =
-        cart[index].product.price / cart[index].product.quantity;
+    double defaultPrice = cart[index].product.price / cart[index].product.quantity;
     cart[index].product.quantity++;
     cart[index].product.price = defaultPrice * cart[index].product.quantity;
     notifyListeners();
@@ -149,12 +147,6 @@ class ProductProvider with ChangeNotifier {
   }
 
   List<Extra> getExtras(Product product, int selectedVariation) {
-    // Return an empty list if the selectedVariation is invalid
-    if (selectedVariation < 0 ||
-        selectedVariation >= product.variations.length) {
-      return [];
-    }
-
     if (product.extra.isEmpty) {
       List<Extra> extras = [];
       final options = product.variations[selectedVariation].options;
@@ -228,6 +220,8 @@ class ProductProvider with ChangeNotifier {
     int? addressId,
     required int paymentMethodId,
     required String orderType,
+    required double zonePrice,
+    double? totalDiscount,
   }) async {
     final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     final String token = loginProvider.token!;
@@ -246,18 +240,17 @@ class ProductProvider with ChangeNotifier {
           'payment_method_id': paymentMethodId,
           'receipt': receipt,
           'branch_id': branchId,
-          'amount': totalPrice,
+          'amount': totalPrice + zonePrice,
           'total_tax': totalTax,
-          'total_discount': 50,
+          'total_discount': totalDiscount,
           'address_id': addressId,
-          'order_type': 'delivery',
-          'products': products
-              .map((product) => {
+          'order_type': orderType,
+          'delivery_price': zonePrice,
+          'products': products.map((product) => {
                     'product_id': product.id,
                     'count': product.quantity,
                     'addons': product.addons
-                        .map((addon) => {'addon_id': addon.id, 'count': 1})
-                        .toList(),
+                        .map((addon) => {'addon_id': addon.id, 'count': 1}).toList(),
                     'variation': product.variations
                         .map((variation) => {
                               'variation_id': variation.id,
@@ -271,10 +264,10 @@ class ProductProvider with ChangeNotifier {
               .toList(),
         }),
       );
+      log('total amount: ${totalPrice + zonePrice}');
 
       if (response.statusCode == 200) {
-        log(response.body);
-        log('Order posted successfully');
+        clearCart();
         final responseData = jsonDecode(response.body);
 
         if (responseData.containsKey('paymentLink')) {
@@ -290,6 +283,13 @@ class ProductProvider with ChangeNotifier {
           } else {
             log('WebView closed without completing the payment');
           }
+        }else{
+          final int orderId = responseData['success'];
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => OrderTrackingScreen(orderId: orderId),
+            ),
+          );
         }
       } else {
         log(response.body);
@@ -300,14 +300,47 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  void addtoCart(Product product, List<Extra> extra, List<Option> options,
-      List<AddOns> addons, List<Excludes> excludes) {
+  Future<void> addToCart(Product product, List<Extra> extra, List<Option> options,
+      List<AddOns> addons, List<Excludes> excludes) async {
     _cart.add(CartItem(
         product: product,
         extra: extra,
         options: options,
         addons: addons,
         excludes: excludes));
+    await saveCart();
+    notifyListeners();
+  }
+
+  Future<void> removeFromCart(int index) async {
+    _cart.removeAt(index);
+    await saveCart();
+    notifyListeners();
+  }
+
+  Future<void> clearCart() async {
+    _cart.clear();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cartKey);
+    notifyListeners();
+  }
+
+  Future<void> saveCart() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String cartJson = jsonEncode(_cart.map((item) => item.toJson()).toList());
+    await prefs.setString(_cartKey, cartJson);
+  }
+
+  Future<void> loadCart() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? cartJson = prefs.getString(_cartKey);
+    if (cartJson != null) {
+      final List<dynamic> decoded = jsonDecode(cartJson);
+      _cart = decoded.map((item) => CartItem.fromJson(item)).toList();
+    } else {
+      _cart = [];
+    }
+    notifyListeners();
   }
 
   Future<void> checkCallBack(BuildContext context, int id) async {

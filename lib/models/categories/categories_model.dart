@@ -1,3 +1,5 @@
+import 'package:food2go_app/models/categories/product_model.dart';
+
 class Category {
   final String name;
   final String imageLink;
@@ -6,6 +8,7 @@ class Category {
   final int activity;
   final int priority;
   final List<SubCategory> subCategories;
+  final List<AddOns> addons;
 
   Category(
       {required this.name,
@@ -15,6 +18,7 @@ class Category {
       required this.activity,
       required this.priority,
       required this.subCategories,
+      required this.addons
       });
 
   factory Category.fromJson(Map<String, dynamic> json) {
@@ -28,6 +32,9 @@ class Category {
         priority: json['priority'],
         subCategories: (json['sub_categories'] as List<dynamic>)
           .map((item) => SubCategory.fromJson(item))
+          .toList(),
+        addons: (json['addons'] as List<dynamic>)
+          .map((item) => AddOns.fromJson(item))
           .toList(),
       );
   }

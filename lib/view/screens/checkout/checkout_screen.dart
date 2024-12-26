@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/product_provider.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
@@ -14,8 +16,10 @@ import '../../../models/address/user_address_model.dart';
 import '../tabs_screens/screens/profile_screen/add_address_screen.dart'; // Replace this with your actual constants import
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key, required this.cartProducts});
+  const CheckoutScreen({super.key, required this.cartProducts, required this.totalTax, required this.totalDiscount});
   final List<Product> cartProducts;
+  final double totalTax;
+  final double totalDiscount;
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -29,21 +33,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String? selectedBranch;
   String? selectedDeliveryLocation;
   bool deliveryNow = true;
-  double totalTax = 0.0;
+  double zonePrice = 0.0;
+  bool isChosen = false;
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    totalTax = Provider.of<ProductProvider>(context, listen: false)
-        .getTotalTax(widget.cartProducts);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<OrderTypesAndPaymentsProvider>(context, listen: false)
           .fetchOrderTypesAndPayments(context);
-      Provider.of<AddressProvider>(context, listen: false)
-          .fetchAddresses(context); // Fetch addresses
+      Provider.of<AddressProvider>(context, listen: false).fetchAddresses(context);
     });
   }
 
@@ -127,9 +128,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildDeliveryLocationCard(List<Address> addresses) {
+    double price = 0.0;
     return Column(
       children: [
         ...addresses.map((address) {
+          price = address.zone.price;
           return _buildSelectionTile(
             address.id, // Pass the unique id
             address.type,
@@ -139,8 +142,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               setState(() {
                 selectedDeliveryLocation = address.type; // Update display text
                 selectedAdressId = value; // Update selected id
+                zonePrice = price;
+                isChosen = true;
               });
+              log('zone price: $zonePrice');
             },
+            price
           );
         }),
         const SizedBox(height: 15),
@@ -173,8 +180,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildSelectionTile(int id, String? name, String? address,
-      int? selectedValue, ValueChanged<int?> onChanged) {
+      int? selectedValue, ValueChanged<int?> onChanged,[double? price= 0]) {
     return RadioListTile<int?>(
+      subtitle: price == 0? null : Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text('Delivery fees: +$price EGP', style: TextStyle(color: isChosen?Colors.white : maincolor,fontSize: 16)),
+        ],
+      ),
       value: id, // Use id as the unique identifier
       groupValue: selectedValue,
       onChanged: onChanged,
@@ -455,29 +468,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             products: widget.cartProducts,
             date: deliveryTime,
             branchId: selectedBranchId,
-            totalTax: totalTax,
+            totalTax: widget.totalTax,
             addressId: selectedAdressId,
             orderType: selectedDeliveryOption!,
             paymentMethodId: selectedPayment.id,
             receipt: receiptBase64,
             notes: noteController.text,
+            zonePrice: zonePrice,
+            totalDiscount: widget.totalDiscount,
           );
-
-          // showTopSnackBar(context, 'Your order was placed successfully',
-          //     Icons.check, maincolor, const Duration(seconds: 2));
-
-          // if (orderId != null) {
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => OrderTrackingScreen(orderId: orderId),
-          //     ),
-          //   );
-          // } else {
-          //   ScaffoldMessenger.of(context).showSnackBar(
-          //     const SnackBar(content: Text('Failed to place order')),
-          //   );
-          // }
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${e.toString()}')),

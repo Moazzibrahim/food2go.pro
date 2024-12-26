@@ -70,7 +70,7 @@ class Zone {
   final int id;
   final int cityId;
   final int? branchId;
-  final int price;
+  final double price;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String zone;
@@ -90,7 +90,7 @@ class Zone {
       id: json['id'],
       cityId: json['city_id'],
       branchId: json['branch_id'],
-      price: json['price'],
+      price: json['price'].toDouble(),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
@@ -98,7 +98,7 @@ class Zone {
           ? DateTime.parse(json['updated_at'])
           : null,
       zone: json['zone'] ??
-          '', // Provide a default value or handle null appropriately
+          '',
     );
   }
 

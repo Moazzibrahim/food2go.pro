@@ -5,14 +5,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
-import 'package:food2go_app/view/widgets/custom_appbar.dart';
+import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class OrderTrackingScreen extends StatelessWidget {
   final int? orderId;
   int? deliveryManId;
   OrderTrackingScreen({super.key, this.orderId, this.deliveryManId});
+
   Future<Map<String, dynamic>> fetchOrderDetails(BuildContext context) async {
     final url = Uri.parse(
         'https://Bcknd.food2go.online/customer/orders/order_status/$orderId');
@@ -38,108 +40,158 @@ class OrderTrackingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context, 'Order Tracking'),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: fetchOrderDetails(context),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data found'));
-          } else {
-            final data = snapshot.data!;
-            final status = data['status'] ?? 'unknown';
-            final setting = data['delivery_time']['setting'] ?? 'Not Available';
-            final createdAtString = data['delivery_time']['created_at'] ?? '';
-            final timedeliverd = data['time_delivered'] ?? 'unknown';
-
-            // Parse created_at to DateTime
-            DateTime createdAt;
-            int differenceInMinutes = 0;
-            try {
-              createdAt = DateTime.parse(createdAtString);
-              differenceInMinutes =
-                  DateTime.now().difference(createdAt).inMinutes;
-            } catch (e) {
-              log('Error parsing created_at: $e');
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Delivery time: $timedeliverd',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Text(
-                  //   'Created At: $createdAtString',
-                  //   style: const TextStyle(
-                  //     fontSize: 16,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 8),
-                  // Text(
-                  //   'Time Difference: $differenceInMinutes minutes',
-                  //   style: const TextStyle(
-                  //     fontSize: 16,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        _buildOrderStatusItem(
-                          icon: Icons.pending_actions,
-                          title: 'Pending',
-                          isActive: status == 'pending' ||
-                              status == 'confirmed' ||
-                              status == 'processing' ||
-                              status == 'out_for_delivery' ||
-                              status == 'scheduled' ||
-                              status == 'delivered',
-                          isLast: false,
-                        ),
-                        _buildOrderStatusItem(
-                          icon: Icons.kitchen,
-                          title: 'Preparing',
-                          isActive: status == 'processing' ||
-                              status == 'out_for_delivery' ||
-                              status == 'scheduled' ||
-                              status == 'delivered',
-                          isLast: false,
-                        ),
-                        _buildOrderStatusItem(
-                          icon: Icons.delivery_dining,
-                          title: 'Out for Delivery',
-                          isActive: status == 'out_for_delivery' ||
-                              status == 'delivered',
-                          isLast: false,
-                        ),
-                        _buildOrderStatusItem(
-                          icon: Icons.check_circle_outline,
-                          title: 'Delivered',
-                          isActive: status == 'delivered',
-                          isLast: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const TabsScreen(initialIndex: 0),
+          ),
+        );
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Order Tracking',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+          ),
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const TabsScreen(initialIndex: 0,)
+                ),
+              );
+            },
+            child: Container(
+              height: 32,
+              width: 32,
+              margin: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
               ),
-            );
-          }
-        },
+              child: const Center(
+                  child: Icon(
+                Icons.arrow_back_ios,
+                color: maincolor,
+              )),
+            ),
+          ),
+        ),
+        body: FutureBuilder<Map<String, dynamic>>(
+          future: fetchOrderDetails(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data found'));
+            } else {
+              final data = snapshot.data!;
+              final status = data['status'] ?? 'unknown';
+              final setting = data['delivery_time']['setting'] ?? 'Not Available';
+              final createdAtString = data['delivery_time']['created_at'] ?? '';
+              var timedeliverd = data['time_delivered'] ?? 'unknown';
+      
+              DateTime? deliveredTime;
+              int differenceInMinutes = 0;
+      
+              try {
+                if (timedeliverd != 'unknown') {
+                  if (timedeliverd.contains("T")) {
+                    deliveredTime = DateTime.parse(timedeliverd);
+                  } else {
+                    DateFormat format = DateFormat("hh:mm:ss a");
+                    deliveredTime = format.parse(timedeliverd);
+                    deliveredTime = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      deliveredTime.hour,
+                      deliveredTime.minute,
+                      deliveredTime.second,
+                    );
+                  }
+                  differenceInMinutes =
+                      - DateTime.now().difference(deliveredTime).inMinutes;
+                }
+              } catch (e) {
+                log('Error parsing time_delivered: $e');
+                deliveredTime = null;
+              }
+      
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      deliveredTime != null
+                          ? 'Delivery time: ${DateFormat('hh:mm:ss a').format(deliveredTime)}'
+                          : 'Delivery time: unknown',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Time Difference: $differenceInMinutes minutes',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          _buildOrderStatusItem(
+                            icon: Icons.pending_actions,
+                            title: 'Pending',
+                            isActive: status == 'pending' ||
+                                status == 'confirmed' ||
+                                status == 'processing' ||
+                                status == 'out_for_delivery' ||
+                                status == 'scheduled' ||
+                                status == 'delivered',
+                            isLast: false,
+                          ),
+                          _buildOrderStatusItem(
+                            icon: Icons.kitchen,
+                            title: 'Preparing',
+                            isActive: status == 'processing' ||
+                                status == 'out_for_delivery' ||
+                                status == 'scheduled' ||
+                                status == 'delivered',
+                            isLast: false,
+                          ),
+                          _buildOrderStatusItem(
+                            icon: Icons.delivery_dining,
+                            title: 'Out for Delivery',
+                            isActive: status == 'out_for_delivery' ||
+                                status == 'delivered',
+                            isLast: false,
+                          ),
+                          _buildOrderStatusItem(
+                            icon: Icons.check_circle_outline,
+                            title: 'Delivered',
+                            isActive: status == 'delivered',
+                            isLast: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }

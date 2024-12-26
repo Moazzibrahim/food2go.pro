@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<CategoriesProvider>(context, listen: false)
         .fetchCategories(context);
     Provider.of<ProductProvider>(context, listen: false).fetchProducts(context);
+    Provider.of<ProductProvider>(context,listen: false).loadCart();
     Provider.of<BannerProvider>(context, listen: false).fetchBanners(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<GetProfileProvider>(context, listen: false)
@@ -298,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
           activity: 1,
           priority: 0,
           subCategories: [],
+          addons: [],
         );
 
         final categories = [allCategory, ...categoriesProvider.categories];

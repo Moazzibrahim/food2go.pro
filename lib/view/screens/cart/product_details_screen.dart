@@ -13,8 +13,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final Product? product;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
@@ -104,7 +103,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                         onPressed: () {
                           setState(() {
-                            isFavorited = !isFavorited; // Toggle favorite state
+                            isFavorited = !isFavorited;
                           });
                         },
                       )
@@ -147,8 +146,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 2, // Limit to 2 lines
-                          overflow: TextOverflow
-                              .ellipsis, // Show ellipsis if text exceeds 2 lines
+                          overflow: TextOverflow.ellipsis, // Show ellipsis if text exceeds 2 lines
                           softWrap: true, // Allow wrapping to the next line
                         ),
                       ),
@@ -190,52 +188,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     onTap: () {
                                       setState(() {
                                         if (isMultipleSelection) {
-                                          if (selectedOptions
-                                              .contains(option.name)) {
+                                          if (selectedOptions.contains(option.name)) {
                                             selectedOptions.remove(option.name);
-                                            selectedOptionsObject
-                                                .remove(option);
-                                            widget.product!.price -=
-                                                option.price * quantity;
+                                            selectedOptionsObject.remove(option);
+                                            widget.product!.price -= option.price * quantity;
                                             defaultPrice -= option.price;
                                           } else {
                                             selectedOptions.add(option.name);
                                             selectedOptionsObject.add(option);
                                             selectedVariations.add(variation);
-                                            widget.product!.price +=
-                                                option.price * quantity;
+                                            widget.product!.price += option.price * quantity;
                                             defaultPrice += option.price;
                                           }
                                         } else {
                                           if (selectedOption == option.name) {
                                             selectedOption = null;
-                                            selectedOptionsObject
-                                                .remove(option);
-                                            widget.product!.price -=
-                                                option.price * quantity;
+                                            selectedOptionsObject.remove(option);
+                                            widget.product!.price -= option.price * quantity;
                                             defaultPrice -= option.price;
                                           } else {
                                             if (selectedOption != null) {
-                                              final previousOption = variation
-                                                  .options
-                                                  .firstWhere((opt) =>
-                                                      opt.name ==
-                                                      selectedOption);
-                                              widget.product!.price -=
-                                                  previousOption.price *
-                                                      quantity;
-                                              defaultPrice -=
-                                                  previousOption.price;
-                                              selectedOptionsObject
-                                                  .remove(previousOption);
-                                              selectedVariations
-                                                  .remove(variation);
+                                              final previousOption = 
+                                              variation.options.firstWhere((opt) =>opt.name == selectedOption);
+                                              widget.product!.price -= previousOption.price * quantity;
+                                              defaultPrice -= previousOption.price;
+                                              selectedOptionsObject.remove(previousOption);
+                                              selectedVariations.remove(variation);
                                             }
                                             selectedOptionsObject.add(option);
                                             selectedVariations.add(variation);
                                             selectedOption = option.name;
-                                            widget.product!.price +=
-                                                option.price * quantity;
+                                            widget.product!.price += option.price * quantity;
                                             defaultPrice += option.price;
                                           }
                                         }
@@ -243,9 +226,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     },
                                     child: SizeOption(
                                       text: option.name,
-                                      isSelected: isMultipleSelection
-                                          ? selectedOptions
-                                              .contains(option.name)
+                                      isSelected: isMultipleSelection? selectedOptions.contains(option.name)
                                           : selectedOption == option.name,
                                     ),
                                   );
@@ -310,13 +291,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text("Pasta, Basil, Cheese"),
+                  Text(widget.product!.description),
                   const SizedBox(height: 8),
                   AddonSelectionWidget(
                     product: widget.product!,
                     mainColor: maincolor,
                     onAddonsChanged: (selectedAddons, updatedPrice) {
                       updatePrice(selectedAddons, updatedPrice);
+                      setState(() {
+                        addons = selectedAddons;
+                      });
                     },
                   ),
                   const SizedBox(height: 20),
@@ -350,14 +334,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               selectedProduct.addons = addons;
                               selectedProduct.extra = selectedExtrasList;
                               for (var e in selectedVariations) {
-                                e.options = selectedOptionsObject
-                                    .where(
-                                        (option) => option.variationId == e.id)
-                                    .toList();
+                                e.options = selectedOptionsObject.where((option) => option.variationId == e.id).toList();
                               }
                               selectedProduct.variations = selectedVariations;
                               selectedProduct.excludes = selectedExcludesList;
-                              productProvider.addtoCart(
+                              productProvider.addToCart(
                                 selectedProduct,
                                 selectedExtrasList,
                                 selectedOptionsObject,

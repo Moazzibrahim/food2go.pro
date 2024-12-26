@@ -46,58 +46,43 @@ class CartItem {
   }
 }
 
-class Cart {
-  final List<CartItem> cartItems;
-  final double totalPrice;
-  final String date;
-  final int branchId;
-  final String paymentStatus;
-  final double totalTax;
-  final int addressId;
-  final String orderType;
-  final String paidBy;
+// class Cart {
+//   final List<CartItem> cartItems;
+//   final double totalPrice;
+//   final String date;
+//   final double totalTax;
+//   final String orderType;
 
-  Cart({
-    required this.cartItems,
-    required this.totalPrice,
-    required this.date,
-    required this.branchId,
-    required this.paymentStatus,
-    required this.totalTax,
-    required this.addressId,
-    required this.orderType,
-    required this.paidBy,
-  });
+//   Cart({
+//     required this.cartItems,
+//     required this.totalPrice,
+//     required this.date,
+//     required this.totalTax,
+//     required this.orderType,
+//   });
 
-  // Convert Cart to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'cartItems': cartItems.map((item) => item.toJson()).toList(),
-      'totalPrice': totalPrice,
-      'date': date,
-      'branchId': branchId,
-      'paymentStatus': paymentStatus,
-      'totalTax': totalTax,
-      'addressId': addressId,
-      'orderType': orderType,
-      'paidBy': paidBy,
-    };
-  }
+//   // Convert Cart to JSON
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'cartItems': cartItems.map((item) => item.toJson()).toList(),
+//       'totalPrice': totalPrice,
+//       'date': date,
 
-  // Create Cart from JSON
-  factory Cart.fromJson(Map<String, dynamic> json) {
-    return Cart(
-      cartItems: (json['cartItems'] as List<dynamic>)
-          .map((item) => CartItem.fromJson(item))
-          .toList(),
-      totalPrice: json['totalPrice'],
-      date: json['date'],
-      branchId: json['branchId'],
-      paymentStatus: json['paymentStatus'],
-      totalTax: json['totalTax'],
-      addressId: json['addressId'],
-      orderType: json['orderType'],
-      paidBy: json['paidBy'],
-    );
-  }
-}
+//       'totalTax': totalTax,
+//       'orderType': orderType,
+//     };
+//   }
+
+//   // Create Cart from JSON
+//   factory Cart.fromJson(Map<String, dynamic> json) {
+//     return Cart(
+//       cartItems: (json['cartItems'] as List<dynamic>)
+//           .map((item) => CartItem.fromJson(item))
+//           .toList(),
+//       totalPrice: json['totalPrice'],
+//       date: json['date'],
+//       totalTax: json['totalTax'],
+//       orderType: json['orderType'],
+//     );
+//   }
+// }

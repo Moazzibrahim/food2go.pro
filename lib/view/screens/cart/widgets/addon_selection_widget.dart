@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 
@@ -60,6 +61,7 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
                             selectedAddOnIndices.add(index);
                             addonQuantities[index] = 1;
                             selectedAddons.add(addon);
+                            log("Addons: $selectedAddons");
                             widget.product.price += addon.price;
                           } else {
                             selectedAddOnIndices.remove(index);

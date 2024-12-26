@@ -21,6 +21,12 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
   double originalTotalPrice = 0;
 
   @override
+  void initState() {
+    Provider.of<ProductProvider>(context,listen: false).loadCart();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -56,8 +62,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                       .toList());
               for (var e in cartProvider.cart) {
                 if (e.product.discountId.isNotEmpty) {
-                  double discountAmount =
-                      (originalTotalPrice * (e.product.discount.amount / 100));
+                  double discountAmount = (originalTotalPrice * (e.product.discount.amount / 100));
                   totalDiscount += discountAmount;
                 }
               }
@@ -133,12 +138,10 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 14,
-                                                  decoration: TextDecoration
-                                                      .lineThrough, // Adds the overline to original price
+                                                  decoration: TextDecoration.lineThrough, // Adds the overline to original price
                                                 ),
                                               ),
 
-                                            // Display the final price
                                             Text(
                                               cartItem.product.discountId
                                                       .isEmpty
@@ -166,8 +169,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                           Text(
                                               cartItem.product.quantity
                                                   .toString(),
-                                              style: const TextStyle(
-                                                  fontSize: 16)),
+                                              style: const TextStyle(fontSize: 16)),
                                           IconButton(
                                             onPressed: () => cartProvider
                                                 .increaseProductQuantity(index),
@@ -177,7 +179,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          cartProvider.removeProductFromCart(index);
+                                          cartProvider.removeFromCart(index);
                                         },
                                         icon: const Icon(Icons.delete,
                                             color: maincolor),
@@ -224,9 +226,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                   ),
                                                   const SizedBox(height: 8),
                                                   Text(
-                                                    cartItem
-                                                        .extra[extraIndex].price
-                                                        .toString(),
+                                                    cartItem.extra[extraIndex].price.toString(),
                                                     style: const TextStyle(
                                                         color: maincolor,
                                                         fontWeight:
@@ -250,12 +250,8 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                                         cartItem.extra[extraIndex].extraQuantity.toString(),
                                                         style: const TextStyle(fontSize: 16)),
                                                     IconButton(
-                                                      onPressed: () => cartProvider
-                                                          .increaseExtraQuantity(
-                                                              index,
-                                                              extraIndex),
-                                                      icon:
-                                                          const Icon(Icons.add),
+                                                      onPressed: () => cartProvider.increaseExtraQuantity(index,extraIndex),
+                                                      icon: const Icon(Icons.add),
                                                     ),
                                                   ],
                                                 ),
@@ -324,7 +320,7 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text('Discount'),
-                                Text('${totalDiscount.toStringAsFixed(2)} EGP'),
+                                Text('${originalTotalPrice - cartProvider.totalPrice} EGP'),
                               ],
                             ),
                             const Divider(thickness: 1),
@@ -363,6 +359,10 @@ class _CartDetailssScreenState extends State<CartDetailssScreen> {
                                       MaterialPageRoute(
                                           builder: (context) => CheckoutScreen(
                                                 cartProducts: cartProducts,
+                                                totalTax: cartProvider.getTotalTaxAmount(cartProvider.cart.map(
+                                          (e) => e.product,
+                                        ).toList()),
+                                        totalDiscount: originalTotalPrice - cartProvider.totalPrice,
                                               )));
                                 },
                                 child: const Text('Checkout',
