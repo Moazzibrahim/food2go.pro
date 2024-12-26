@@ -162,13 +162,16 @@ class AddOns {
   final String name;
   double price;
   final int? quantityAdd;
+  int selectedQuantity;
   final int id;
 
   AddOns(
       {required this.name,
       required this.price,
       required this.quantityAdd,
-      required this.id});
+      required this.id,
+      this.selectedQuantity = 1
+      });
 
   factory AddOns.fromJson(Map<String, dynamic> json) => AddOns(
         name: json['name'],

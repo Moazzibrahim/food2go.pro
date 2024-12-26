@@ -250,7 +250,7 @@ class ProductProvider with ChangeNotifier {
                     'product_id': product.id,
                     'count': product.quantity,
                     'addons': product.addons
-                        .map((addon) => {'addon_id': addon.id, 'count': 1}).toList(),
+                        .map((addon) => {'addon_id': addon.id, 'count': addon.selectedQuantity}).toList(),
                     'variation': product.variations
                         .map((variation) => {
                               'variation_id': variation.id,

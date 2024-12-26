@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/models/categories/product_model.dart';
 
@@ -12,7 +11,7 @@ class AddonSelectionWidget extends StatefulWidget {
 
   final Product product;
   final Color mainColor;
-  final Function(List<AddOns>, double) onAddonsChanged; // Updated signature
+  final Function(List<AddOns>, double) onAddonsChanged;
 
   @override
   State<AddonSelectionWidget> createState() => _AddonSelectionWidgetState();
@@ -26,8 +25,8 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
 
   @override
   void initState() {
-    defaultPrice = widget.product.price;
     super.initState();
+    defaultPrice = widget.product.price;
     for (int i = 0; i < widget.product.addons.length; i++) {
       addonQuantities[i] = 0;
     }
@@ -60,14 +59,15 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
                           if (value == true) {
                             selectedAddOnIndices.add(index);
                             addonQuantities[index] = 1;
+                            addon.selectedQuantity = 1;
                             selectedAddons.add(addon);
-                            log("Addons: $selectedAddons");
                             widget.product.price += addon.price;
                           } else {
                             selectedAddOnIndices.remove(index);
                             addonQuantities[index] = 0;
+                            addon.selectedQuantity = 0;
                             selectedAddons.remove(addon);
-                            widget.product.price = defaultPrice;
+                            widget.product.price -= addon.price * addon.selectedQuantity;
                           }
                           widget.onAddonsChanged(selectedAddons, widget.product.price);
                         });
@@ -81,7 +81,8 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
                             onPressed: () {
                               setState(() {
                                 if (addonQuantities[index]! > 1) {
-                                  addonQuantities[index] = addonQuantities[index]! - 1;
+                                  addonQuantities[index] = (addonQuantities[index] ?? 1) - 1;
+                                  addon.selectedQuantity--;
                                   widget.product.price -= addon.price;
                                   widget.onAddonsChanged(selectedAddons, widget.product.price);
                                 }
@@ -93,9 +94,19 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
                             icon: const Icon(Icons.add),
                             onPressed: () {
                               setState(() {
-                                addonQuantities[index] = addonQuantities[index]! + 1;
-                                widget.product.price += addon.price;
-                                widget.onAddonsChanged(selectedAddons, widget.product.price);
+                                if (addonQuantities[index]! < addon.quantityAdd!) {
+                                  addonQuantities[index] = (addonQuantities[index] ?? 0) + 1;
+                                  addon.selectedQuantity++;
+                                  widget.product.price += addon.price;
+                                  widget.onAddonsChanged(selectedAddons, widget.product.price);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "You can select a maximum of ${addon.quantityAdd} for ${addon.name}."),
+                                    ),
+                                  );
+                                }
                               });
                             },
                           ),
@@ -111,3 +122,4 @@ class _AddonSelectionWidgetState extends State<AddonSelectionWidget> {
     );
   }
 }
+
