@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:food2go_app/controllers/business_setup_controller.dart';
 import 'package:food2go_app/controllers/chat/userChat/get_messages_provider.dart';
 import 'package:food2go_app/controllers/chat/userChat/send_message_provider.dart';
 import 'package:food2go_app/controllers/tabs_controller.dart';
@@ -27,7 +28,6 @@ import 'package:food2go_app/controllers/profile/edit_profile_provider.dart';
 import 'package:food2go_app/controllers/profile/get_profile_provider.dart';
 import 'package:food2go_app/firebase_options.dart';
 import 'package:food2go_app/view/screens/splash_screen/logo_onboarding.dart';
-
 import 'controllers/chat/chat_delivery_provider.dart';
 import 'controllers/checkout/image_provider.dart';
 import 'controllers/offer/offer_provider.dart';
@@ -74,6 +74,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GetMessagesProvider()),
         ChangeNotifierProvider(create: (_) => SendMessageProvider()),
         ChangeNotifierProvider(create: (_) => TabsController()),
+        ChangeNotifierProvider(create: (_) => BusinessSetupController()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),

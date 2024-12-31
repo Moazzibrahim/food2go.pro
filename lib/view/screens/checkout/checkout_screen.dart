@@ -37,6 +37,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool isChosen = false;
   final TextEditingController noteController = TextEditingController();
   final TextEditingController deliveryTimeController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -421,6 +422,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return ElevatedButton(
       onPressed: () async {
+        setState(() {
+          isLoading = true;
+        });
         if (selectedPaymentMethod == null || selectedDeliveryOption == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -477,6 +481,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             zonePrice: zonePrice,
             totalDiscount: widget.totalDiscount,
           );
+          setState(() {
+          isLoading = false;
+        });
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${e.toString()}')),
@@ -490,8 +497,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      child: const Center(
-        child: Text(
+      child: Center(
+        child: isLoading? const CircularProgressIndicator(color: Colors.white,) : const Text(
           'Place Order',
           style: TextStyle(
             fontSize: 18,

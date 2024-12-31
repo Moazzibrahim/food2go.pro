@@ -3,12 +3,15 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food2go_app/constants/colors.dart';
+import 'package:food2go_app/controllers/business_setup_controller.dart';
 import 'package:food2go_app/delivery/views/tabs_delivery_screen.dart';
 import 'package:food2go_app/models/Auth/login_model.dart';
+import 'package:food2go_app/view/screens/splash_screen/maintainance_screen.dart';
 import 'package:food2go_app/view/screens/tabs_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';  // Add this import
 
 import '../../view/screens/Auth/login_screen.dart'; 
@@ -20,7 +23,7 @@ class LoginProvider with ChangeNotifier {
   bool isLoading = false;
 
   // Method to check if a token exists in SharedPreferences
-  Future<void> checkToken(BuildContext context) async {
+  Future<void> checkToken(BuildContext context ,bool maintainCustomer,bool maintainDelivery) async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     id = prefs.getInt('user_id');
@@ -28,18 +31,32 @@ class LoginProvider with ChangeNotifier {
     if (token != null) {
       final role = prefs.getString('role');
       if (role == "customer") {
-        Navigator.pushReplacement(
+        if(maintainCustomer){
+          Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)),
         );
+        }else{
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MaintainanceScreen()),
+        );  
+        }
       } else if (role == "delivery") {
-        Navigator.pushReplacement(
+        if(maintainDelivery){
+          Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const TabsDeliveryScreen()),
         );
+        }else{
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MaintainanceScreen()),
+        );
+        }
       }
     }else{
-      Navigator.of(context).push(
+        Navigator.of(context).push(
         MaterialPageRoute(builder: (ctx)=> const LoginScreen())
       );
     }
@@ -48,6 +65,7 @@ class LoginProvider with ChangeNotifier {
   Future<void> login(
       String email, String password, BuildContext context) async {
     final url = Uri.parse('https://Bcknd.food2go.online/api/user/auth/login');
+    final businussSetupProvdier = Provider.of<BusinessSetupController>(context, listen: false);
     try {
       isLoading = true;
       notifyListeners();
@@ -77,15 +95,29 @@ class LoginProvider with ChangeNotifier {
           await prefs.setString('role', userModel!.user?.role ?? '');
 
           if (userModel!.user?.role == "customer") {
-            Navigator.pushReplacement(
+            if(businussSetupProvdier.businessSetup!.login){
+              Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const TabsScreen(initialIndex: 0,)),
             );
+            }else{
+              Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MaintainanceScreen()),
+            );
+            }
           } else if (userModel!.user?.role == "delivery") {
-            Navigator.pushReplacement(
+            if(businussSetupProvdier.businessSetup!.loginDelivery){
+              Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const TabsDeliveryScreen()),
             );
+            }else{
+              Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MaintainanceScreen()),
+            );
+            }
           } else {
             showTopSnackBar(
               context,

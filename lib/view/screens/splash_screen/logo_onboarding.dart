@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/controllers/business_setup_controller.dart';
+import 'package:food2go_app/models/business_setup.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:food2go_app/constants/colors.dart';
@@ -21,15 +23,19 @@ class _LogoOnboardingState extends State<LogoOnboarding> {
     _navigateToNextScreen();
   }
 
+  BusinessSetup? businessSetup;
+
   Future<void> _navigateToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
-    final isNewUser = prefs.getBool('isNewUser') ?? true; // Default to true for new users
+    final isNewUser = prefs.getBool('isNewUser') ?? true;
+    Provider.of<BusinessSetupController>(context, listen: false).fetchBusinessSetup(context);
 
     Future.delayed(
-      const Duration(seconds: 3),
+      const Duration(seconds: 5),
       () {
+        businessSetup =
+            Provider.of<BusinessSetupController>(context, listen: false).businessSetup;
         if (isNewUser) {
-          // Navigate to Onboarding if user is new
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -37,8 +43,8 @@ class _LogoOnboardingState extends State<LogoOnboarding> {
             ),
           );
         } else {
-          // Navigate to Login if user is not new
-          Provider.of<LoginProvider>(context,listen: false).checkToken(context);
+          Provider.of<LoginProvider>(context, listen: false).checkToken(
+              context, businessSetup!.login, businessSetup!.loginDelivery);
         }
       },
     );

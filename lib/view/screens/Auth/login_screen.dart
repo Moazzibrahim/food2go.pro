@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:food2go_app/controllers/Auth/login_provider.dart';
+import 'package:food2go_app/controllers/business_setup_controller.dart';
 import 'package:food2go_app/view/screens/Auth/forget_password_screen.dart';
 import 'package:food2go_app/view/widgets/show_top_snackbar.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isVisible = false; // To track password visibility
+  bool isVisible = false; 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -42,20 +43,25 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.10, // Adjust as needed
-            left: 0,
-            right: 0,
-            child: const Center(
-              child: Text(
-                'Food2go',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+          Consumer<BusinessSetupController>(
+            builder: (context, businussSetup, _) {
+              return Positioned(
+              top: MediaQuery.of(context).size.height * 0.10, // Adjust as needed
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  businussSetup.businessSetup!.companyInfo.name,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
+            );
+            },
+            
           ),
           // Card with curved bottom
           Positioned(

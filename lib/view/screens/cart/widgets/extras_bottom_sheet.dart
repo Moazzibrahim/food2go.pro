@@ -58,7 +58,7 @@ class _ExtrasBottomSheetState extends State<ExtrasBottomSheet> {
   Widget build(BuildContext context) {
     return Consumer<ProductProvider>(
       builder: (context, productProvider, _) {
-        final extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
+        List<Extra> extras = productProvider.getExtras(widget.product!, widget.selectedVariation);
         final excludes = widget.product!.excludes;
 
         if (extras.isEmpty) {

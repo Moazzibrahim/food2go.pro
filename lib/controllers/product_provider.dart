@@ -149,11 +149,15 @@ class ProductProvider with ChangeNotifier {
   List<Extra> getExtras(Product product, int selectedVariation) {
     if (product.extra.isEmpty) {
       List<Extra> extras = [];
-      final options = product.variations[selectedVariation].options;
+      if(selectedVariation == -1){
+        return [];
+      }else{
+        final options = product.variations[selectedVariation].options;
       for (var e in options) {
         extras.addAll(e.extra);
       }
       return extras;
+      }
     } else {
       return product.extra;
     }
